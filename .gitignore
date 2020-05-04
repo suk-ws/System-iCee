@@ -1,0 +1,8 @@
+
+# IDE
+.idea/
+.gradle/
+
+# workspace
+build/
+bin/

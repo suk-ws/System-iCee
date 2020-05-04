@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        maven {
+            url 'http://maven.aliyun.com/nexus/content/groups/public/'
+        }
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'net.dv8tion:JDA:3.5.0_329'
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'application'
+mainClassName='cc.sukazyo.icee.discord.iCee'
+shadowJar {
+    baseName = 'iCee-Discord'
+    classifier = null
+    version = '0.0.0'
+}
