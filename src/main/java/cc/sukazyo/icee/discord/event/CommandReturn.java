@@ -1,6 +1,6 @@
 package cc.sukazyo.icee.discord.event;
 
-import cc.sukazyo.icee.discord.RunState;
+import cc.sukazyo.icee.discord.system.RunState;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 

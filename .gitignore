@@ -3,6 +3,10 @@
 .idea/
 .gradle/
 
-# workspace
+#build
 build/
 bin/
+.project
+
+#systemself
+properties.ini

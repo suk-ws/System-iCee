@@ -1,4 +1,4 @@
-package cc.sukazyo.icee.discord;
+package cc.sukazyo.icee.discord.system;
 
 import net.dv8tion.jda.core.entities.User;
 
