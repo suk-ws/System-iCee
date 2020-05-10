@@ -26,11 +26,15 @@ dependencies {
     compile 'net.dv8tion:JDA:3.5.0_329'
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'application'
 mainClassName='cc.sukazyo.icee.discord.iCee'
 shadowJar {
     baseName = 'iCee-Discord'
     classifier = null
-    version = '0.0.0'
+    version = '0.0.0-build-3'
 }

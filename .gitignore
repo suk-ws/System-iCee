@@ -2,11 +2,13 @@
 # IDE
 .idea/
 .gradle/
+.settings/
 
 #build
-build/
-bin/
+/build/
+/bin/
 .project
 
 #systemself
-properties.ini
+/properties.ini
+/log/
