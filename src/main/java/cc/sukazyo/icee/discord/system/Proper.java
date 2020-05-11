@@ -4,14 +4,14 @@ import cc.sukazyo.icee.discord.iCee;
 import cc.sukazyo.icee.discord.util.Log;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.Properties;
 
 public class Proper {
 	
 	public static String TOKEN;
 	public static int logLevel = Log.DEBUG;
-	public static boolean logDebug;
+	public static boolean logDebug = false;
+	public static String lang = "en_us";
 	
 	static Properties ini = new Properties();
 	
@@ -26,17 +26,17 @@ public class Proper {
 				System.exit(0);
 			}
 		} catch (IOException e) {
-			System.err.println("[FATAL]Found unexcepted error while read properties.");
-			e.printStackTrace();
-			System.exit(1);
+			Log.fatal("Found unexcepted error while read properties.", e);
 		}
 		
 		try {
 			
 			ini.load(new BufferedInputStream(new FileInputStream(iniFile)));
 			
+			// 获取 Token
 			TOKEN = ini.getProperty("token");
 			
+			// 获取 LogLevel
 			if (iCee.DEBUG_MODE) {
 				logLevel = Log.DEBUG;
 				Log.debug("=======================================================");
@@ -62,9 +62,25 @@ public class Proper {
 				}
 			}
 			
+			// 获取 LogDebug
+			switch (ini.getProperty("log.debugsave")) {
+				case "true":
+					logDebug = true;
+					break;
+				case "false":
+					logDebug = false;
+					break;
+				default:
+					Log.error("Unsupported Log Level. Debug Log must be true/false");
+			}
+			
 		} catch (Exception e) {
 			Log.error("Found error while reading properties");
+			e.printStackTrace();
 		}
+		
+		// 获取 Lang
+		lang = ini.getProperty("lang");
 		
 	}
 	
@@ -73,7 +89,7 @@ public class Proper {
 			iniFile.delete();
 			FileOutputStream os = new FileOutputStream(iniFile);
 			Log.info("Start Copy Default Properties");
-			BufferedInputStream ins = new BufferedInputStream(Proper.class.getResourceAsStream("/properties.ini"));
+			BufferedInputStream ins = new BufferedInputStream(Proper.class.getResourceAsStream("/default/properties.ini"));
 			byte[] buf = new byte[4096];
 			while ((ins.read(buf))!=-1) {
 				os.write(buf);

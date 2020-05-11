@@ -1,0 +1,5 @@
+reply.ping=Pong!
+
+command.shutdown.start=**__Dangerous!!__**\nAre you sure to shutting down system?\nType `yes` to confirm.
+command.shutdown.confirm=System Shutdown.
+command.shutdown.cancel=Shutdown canceled.

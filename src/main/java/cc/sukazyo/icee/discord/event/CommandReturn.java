@@ -1,5 +1,6 @@
 package cc.sukazyo.icee.discord.event;
 
+import cc.sukazyo.icee.discord.system.Lang;
 import cc.sukazyo.icee.discord.system.RunState;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -24,10 +25,9 @@ public class CommandReturn extends ListenerAdapter {
 		}
 		
 		if (event.getMessage().getContentRaw().equals("ping")) {
-			event.getChannel().sendMessage("Pong!").queue();
+			event.getChannel().sendMessage(Lang.get("reply.ping")).queue();
 		} if (event.getMessage().getContentRaw().equals("^# shutdown")) {
-			event.getChannel().sendMessage("Are you sure to shutting down?\nType `yes` to make sure.").queue();
-			System.out.println("[INFO]Run into Shuttingdown Mode.");
+			event.getChannel().sendMessage(Lang.get("command.shutdown.start")).queue();
 			RunState.shutdownRun = true;
 			RunState.eventer = event.getAuthor();
 		}
@@ -36,11 +36,11 @@ public class CommandReturn extends ListenerAdapter {
 	private void shutdownSure (MessageReceivedEvent event) {
 		if (event.getAuthor().equals(RunState.eventer)) {
 			if (event.getMessage().getContentRaw().equals("yes")) {
-				event.getChannel().sendMessage("System Shutdown.").queue();
+				event.getChannel().sendMessage(Lang.get("command.shutdown.confirm")).queue();
 				System.out.println("[INFO]shutdown.");
 				System.exit(0);
 			} else {
-				event.getChannel().sendMessage("Shutdown canceled.").queue();
+				event.getChannel().sendMessage(Lang.get("command.shutdown.cancel")).queue();
 				System.out.println("[INFO]Shutdown canceled.");
 				RunState.shutdownRun = false;
 				RunState.eventer = null;

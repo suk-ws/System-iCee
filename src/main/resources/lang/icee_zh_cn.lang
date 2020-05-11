@@ -1,0 +1,5 @@
+reply.ping=啪! 啪! 啪!
+
+command.shutdown.start=**__危险操作!!__**\n你确定要关闭系统吗?\n输入 `yes` 确认关闭.
+command.shutdown.confirm=System Shutdown.
+command.shutdown.cancel=Shutdown canceled.

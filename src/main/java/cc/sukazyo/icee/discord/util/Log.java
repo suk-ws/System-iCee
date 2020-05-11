@@ -28,9 +28,7 @@ public class Log {
 			deb = new FileWriter("./log/debug.log");
 			loaded = true;
 		} catch (IOException e) {
-			System.err.println("[FATAL]Caught an error while create log file.");
-			e.printStackTrace();
-			System.exit(1);
+			fatal("Caught an error while create log file.", e);
 		}
 	}
 	
@@ -44,9 +42,8 @@ public class Log {
 				file.write(info + "\n");
 				file.flush();
 			} catch (IOException e) {
-				System.err.println("[FATAL]Caught an error while writing log file.");
-				e.printStackTrace();
-				System.exit(1);
+				loaded = false;
+				fatal("Caught an error while writing log file.", e);
 			}
 		}
 	}
@@ -60,11 +57,19 @@ public class Log {
 				deb.write(info + "\n");
 				deb.flush();
 			} catch (IOException e) {
-				System.err.println("[FATAL]Caught an error while writing log file.");
-				e.printStackTrace();
-				System.exit(1);
+				loaded = false;
+				fatal("Caught an error while writing log file.", e);
 			}
 		}
+	}
+	
+	public static void fatal (String info, Exception e) {
+		out("[FATAL]" + info);
+		if (Proper.logDebug) {
+			outDebug("[FATAL]" + info);
+		}
+		e.printStackTrace();
+		System.exit(1);
 	}
 	
 	public static void debug (String info) {
