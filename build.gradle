@@ -23,7 +23,8 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile 'net.dv8tion:JDA:3.5.0_329'
+    implementation "net.dv8tion:JDA:4.1.1_127"
+    implementation 'com.google.code.gson:gson:2.8.6'
 }
 
 tasks.withType(JavaCompile) {
@@ -36,5 +37,5 @@ mainClassName='cc.sukazyo.icee.discord.iCee'
 shadowJar {
     baseName = 'iCee-Discord'
     classifier = null
-    version = '0.1.0-build-4'
+    version = '0.1.0-dev-build-5'
 }

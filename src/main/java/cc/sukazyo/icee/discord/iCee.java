@@ -5,19 +5,21 @@ import cc.sukazyo.icee.discord.system.Lang;
 import cc.sukazyo.icee.discord.system.Proper;
 import cc.sukazyo.icee.discord.system.RunState;
 import cc.sukazyo.icee.discord.util.Log;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 
 import javax.security.auth.login.LoginException;
 
 public class iCee {
 	
 	public static final String APPID = "icee-dc";
-	public static final String VERSION = "0.1.0";
-	public static final int BUILD_VER = 4;
+	public static final String VERSION = "0.1.0-dev";
+	public static final int BUILD_VER = 5;
 	public static final boolean DEBUG_MODE = true;
 	
-	public static JDABuilder builder;
+	public static JDA discord;
 	
 	public static void main (String[] args) {
 		
@@ -35,14 +37,16 @@ public class iCee {
 	
 	private static void discordBot () {
 		
-		builder = new JDABuilder(AccountType.BOT);
+		JDABuilder builder = new JDABuilder(AccountType.BOT);
 		builder.setToken(Proper.TOKEN);
 		
-		builder.addEventListener(new CommandReturn());
+		builder.setActivity(Activity.of(Activity.ActivityType.WATCHING, "Sukazyo debug iCee"));
+		
+		builder.addEventListeners(new CommandReturn());
 		
 		for (int i = 0; i < 3 && RunState.discord == RunState.STARTING; i++) {
 			try {
-				builder.buildAsync();
+				discord = builder.build();
 				RunState.discord = RunState.RUNNING;
 				return;
 			} catch (LoginException e) {
