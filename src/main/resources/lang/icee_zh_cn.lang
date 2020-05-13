@@ -1,5 +1,9 @@
 reply.ping=啪! 啪! 啪!
+reply.noreply=理解不能...确实是这样...
+reply.hi=hi!
 
 command.shutdown.start=**__危险操作!!__**\n你确定要关闭系统吗?\n输入 `yes` 确认关闭.
 command.shutdown.confirm=System Shutdown.
 command.shutdown.cancel=Shutdown canceled.
+
+command.debug.channel=**当前服务器名**：__{{guildname}}__\n**当前服务器Id**：`{{guildid}}`\n**当前频道名**：__{{channelname}}__\n**当前频道Id**：`{{channelid}}`

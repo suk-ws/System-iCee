@@ -1,78 +1,69 @@
 package cc.sukazyo.icee.discord.event;
 
+import cc.sukazyo.icee.discord.iCee;
 import cc.sukazyo.icee.discord.system.Lang;
-import cc.sukazyo.icee.discord.system.RunState;
 import cc.sukazyo.icee.discord.util.Log;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class CommandReturn extends ListenerAdapter {
+import java.util.Objects;
 
-	@Override
-	public void onMessageReceived(MessageReceivedEvent event) {
-		Log.debug("Received: \"" + event.getMessage().getContentDisplay() + "\" from \"" + event.getAuthor().getName() + "\"");
-
-		if (RunState.shutdownRun) {
-			shutdownSure(event);
-		} else {
-			normalMessageReplay(event);
+public class CommandReturn {
+	
+	protected static String command (String[] comm, MessageReceivedEvent event) {
+		String ret;
+		
+		switch (comm[0]) {
+			case "debug" :
+				ret = debug(comm, event);
+				break;
+			case "info":
+				ret = info();
+				break;
+			default:
+				Log.debug("Unknown command : " + comm[0]);
+				ret = Lang.get("command.unknown").replaceAll("\\{\\{command}}", comm[0]);
 		}
+		return ret;
 	}
-
-	private void normalMessageReplay (MessageReceivedEvent event) {
-		if (event.getAuthor().isBot()) {
-			System.out.println("[INFO]Checked self message");
-			return;
+	
+	private static String debug (String[] comm, MessageReceivedEvent event) {
+		String ret;
+		switch (comm[1]) {
+			case "user":
+				ret = Lang.get("command.debug.user");
+				ret = ret.replaceAll("\\{\\{avatarId}}", Objects.requireNonNull(event.getAuthor().getAvatarId()));
+				ret = ret.replaceAll("\\{\\{avatarIdDefault}}", event.getAuthor().getDefaultAvatarId());
+				ret = ret.replaceAll("\\{\\{avatarUrl}}", Objects.requireNonNull(event.getAuthor().getAvatarUrl()));
+				ret = ret.replaceAll("\\{\\{username}}", event.getAuthor().getName());
+				ret = ret.replaceAll("\\{\\{userid}}", event.getAuthor().getId());
+				ret = ret.replaceAll("\\{\\{nick}}", ((event.getGuild().getMember(event.getAuthor())).getNickname() == null ? "Null" : event.getGuild().getMember(event.getAuthor()).getNickname()));
+				break;
+			case "channel":
+				ret = Lang.get("command.debug.channel");
+				ret = ret.replaceAll("\\{\\{guildname}}", event.getGuild().getName());
+				ret = ret.replaceAll("\\{\\{guildid}}", event.getGuild().getId());
+				ret = ret.replaceAll("\\{\\{channelname}}", event.getChannel().getName());
+				ret = ret.replaceAll("\\{\\{channelid}}", event.getChannel().getId());
+				break;
+			case "guild":
+				ret = Lang.get("command.debug.guild");
+				ret = ret.replaceAll("\\{\\{guildname}}", event.getGuild().getName());
+				ret = ret.replaceAll("\\{\\{guildid}}", event.getGuild().getId());
+				ret = ret.replaceAll("\\{\\{guilddescription}}", (event.getGuild().getDescription() == null ? "Null" : event.getGuild().getDescription()));
+				ret = ret.replaceAll("\\{\\{guildowner}}", Objects.requireNonNull(event.getGuild().getOwner()).getAsMention());
+				break;
+			default:
+				ret = Lang.get("command.unknown.child").replaceAll("\\{\\{command}}", comm[1]);
 		}
-
-		String todo;
-		if (event.getMessage().getContentRaw().equals("ping")) {
-			event.getChannel().sendMessage(Lang.get("reply.ping")).queue();
-		} if (event.getMessage().getContentRaw().equals("^# shutdown")) {
-			event.getChannel().sendMessage(Lang.get("command.shutdown.start")).queue();
-			RunState.shutdownRun = true;
-			RunState.eventer = event.getAuthor();
-		} else if (event.getMessage().getContentRaw().equals("=userinfo")) {
-			Log.debug("userinfo");
-			todo = event.getAuthor().getAvatarId() + '\n';
-			todo += event.getAuthor().getDefaultAvatarId() + '\n';
-			todo += event.getAuthor().getAvatarUrl() + '\n';
-			todo += event.getAuthor().getDefaultAvatarUrl() + '\n';
-			todo += event.getAuthor().getName() + '\n';
-			todo += event.getAuthor().getId() + '\n';
-			todo += event.getAuthor().toString() + '\n';
-			Log.debug(todo);
-			event.getChannel().sendMessage(todo).queue();
-		} else if (event.getMessage().getContentRaw().equals("=channel")) {
-			Log.debug("channel");
-			todo = event.getChannel().toString();
-			Log.debug(todo);
-			event.getChannel().sendMessage(todo).queue();
-		} else if (event.getMessage().getContentRaw().equals("=private")) {
-			Log.debug("private");
-			event.getAuthor().openPrivateChannel().complete().sendMessage("privating...").queue();
-		} else if (event.getMessage().getContentRaw().equals("=at me")) {
-			Log.debug("at me");
-			todo = event.getAuthor().getAsMention() + ' ' + "hi";
-			Log.debug(todo);
-			event.getAuthor().getJDA().retrieveUserById(event.getAuthor().getId()).queue();
-			event.getChannel().sendMessage(todo).queue();
-		}
+		return ret;
 	}
-
-	private void shutdownSure (MessageReceivedEvent event) {
-		if (event.getAuthor().equals(RunState.eventer)) {
-			if (event.getMessage().getContentRaw().equals("yes")) {
-				event.getChannel().sendMessage(Lang.get("command.shutdown.confirm")).queue();
-				Log.info("shutdown");
-				System.exit(0);
-			} else {
-				event.getChannel().sendMessage(Lang.get("command.shutdown.cancel")).queue();
-				Log.info("shutdown canceled");
-				RunState.shutdownRun = false;
-				RunState.eventer = null;
-			}
-		}
+	
+	private static String info () {
+		String ret = Lang.get("command.info");
+		ret = ret.replaceAll("\\{\\{appid}}", iCee.APPID);
+		ret = ret.replaceAll("\\{\\{ver}}", iCee.VERSION);
+		ret = ret.replaceAll("\\{\\{buildver}}", String.valueOf(iCee.BUILD_VER));
+		return ret;
 	}
 
 }

@@ -1,6 +1,6 @@
 package cc.sukazyo.icee.discord;
 
-import cc.sukazyo.icee.discord.event.CommandReturn;
+import cc.sukazyo.icee.discord.event.TextMessageListener;
 import cc.sukazyo.icee.discord.system.Lang;
 import cc.sukazyo.icee.discord.system.Proper;
 import cc.sukazyo.icee.discord.system.RunState;
@@ -15,9 +15,9 @@ import javax.security.auth.login.LoginException;
 public class iCee {
 	
 	public static final String APPID = "icee-dc";
-	public static final String VERSION = "0.1.0-dev";
-	public static final int BUILD_VER = 5;
-	public static final boolean DEBUG_MODE = true;
+	public static final String VERSION = "0.1.0-pre1";
+	public static final int BUILD_VER = 6;
+	public static final boolean DEBUG_MODE = false;
 	
 	public static JDA discord;
 	
@@ -42,7 +42,7 @@ public class iCee {
 		
 		builder.setActivity(Activity.of(Activity.ActivityType.WATCHING, "Sukazyo debug iCee"));
 		
-		builder.addEventListeners(new CommandReturn());
+		builder.addEventListeners(new TextMessageListener());
 		
 		for (int i = 0; i < 3 && RunState.discord == RunState.STARTING; i++) {
 			try {
