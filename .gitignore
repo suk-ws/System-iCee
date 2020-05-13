@@ -2,7 +2,14 @@
 # IDE
 .idea/
 .gradle/
+.settings/
+/src/test/*
 
-# workspace
-build/
-bin/
+#build
+/build/
+/bin/
+.project
+
+#systemself
+/properties.ini
+/log/

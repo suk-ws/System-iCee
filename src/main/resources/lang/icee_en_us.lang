@@ -1,0 +1,16 @@
+reply.ping=Pong!
+reply.noreply=Exception Meaning...okay it sure is.
+reply.hi=hi!
+
+command.shutdown.start=**__Dangerous!!__**\nAre you sure to shutting down system?\nType `yes` to confirm.
+command.shutdown.confirm=System Shutdown.
+command.shutdown.cancel=Shutdown canceled.
+
+command.debug.user=**Your Name** : __{{username}}__\n**Your Nick Name Here** : __{{nick}}__\n**Your Discord Id** : `{{userid}}`\n**Your avatar Id** : `{{avatarId}}`\n**Your avatar Url** : __{{avatarUrl}}__\n**Your Default avatar Id** : `{{avatarIdDefault}}`
+command.debug.channel=**Current Guild Name** : __{{guildname}}__\n**Current Guild Id** : `{{guildid}}`\n**Current Channel Name** : __{{channelname}}__\n**Current Channel Id** : `{{channelid}}`
+command.debug.guild=**Current Guild Name** : __{{guildname}}__\n**Current Guild Id** : `{{guildid}}`\n**Current Guild Description** : __{{guilddescription}}__\n**Current Guild Owner** : {{guildowner}}
+
+command.info=**__ Info of iCee System __**\n\n**App Id** : {{appid}}\n**System Version** : {{ver}} (build {{buildver}})\n\n*COPYRIGHT © SUKAZYO WORKSHOP 2019 - 2020*\n*Service iCee | since 2020*
+
+command.unknown=Unknown Command {{command}}, please make sure more once time.
+command.unknown.child=Unknown Child Command {{command}}, please make sure more once time.
