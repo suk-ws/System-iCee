@@ -1,6 +1,6 @@
-package cc.sukazyo.icee.discord.util;
+package cc.sukazyo.icee.util;
 
-import cc.sukazyo.icee.discord.system.Proper;
+import cc.sukazyo.icee.system.Proper;
 
 import java.io.*;
 import java.text.SimpleDateFormat;

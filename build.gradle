@@ -18,6 +18,8 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    google()
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap'}
     jcenter()
 }
 
@@ -25,6 +27,8 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     implementation "net.dv8tion:JDA:4.1.1_127"
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation "net.mamoe:mirai-core:1.0-RC2-1"
+    implementation "net.mamoe:mirai-core-qqandroid:1.0-RC2-1"
 }
 
 tasks.withType(JavaCompile) {

@@ -1,6 +1,6 @@
-package cc.sukazyo.icee.discord.system;
+package cc.sukazyo.icee.system;
 
-import cc.sukazyo.icee.discord.util.Log;
+import cc.sukazyo.icee.util.Log;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

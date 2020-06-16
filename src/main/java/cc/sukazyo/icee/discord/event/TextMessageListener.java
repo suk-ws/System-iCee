@@ -1,9 +1,9 @@
 package cc.sukazyo.icee.discord.event;
 
-import cc.sukazyo.icee.discord.system.Lang;
-import cc.sukazyo.icee.discord.system.RunState;
-import cc.sukazyo.icee.discord.util.CommandHelper;
-import cc.sukazyo.icee.discord.util.Log;
+import cc.sukazyo.icee.system.Lang;
+import cc.sukazyo.icee.system.RunState;
+import cc.sukazyo.icee.util.CommandHelper;
+import cc.sukazyo.icee.util.Log;
 import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

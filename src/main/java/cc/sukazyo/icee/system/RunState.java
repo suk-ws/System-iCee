@@ -1,6 +1,6 @@
-package cc.sukazyo.icee.discord.system;
+package cc.sukazyo.icee.system;
 
-import cc.sukazyo.icee.discord.system.call.State;
+import cc.sukazyo.icee.system.call.State;
 import net.dv8tion.jda.api.entities.User;
 
 import java.util.ArrayList;

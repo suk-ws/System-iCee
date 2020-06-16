@@ -1,0 +1,38 @@
+package cc.sukazyo.icee.mirai;
+
+import cc.sukazyo.icee.util.Log;
+import net.mamoe.mirai.event.EventHandler;
+import net.mamoe.mirai.event.ListenerHost;
+import net.mamoe.mirai.event.events.BotOfflineEvent;
+import net.mamoe.mirai.event.events.BotOnlineEvent;
+import net.mamoe.mirai.event.events.MessageSendEvent;
+import net.mamoe.mirai.message.GroupMessageEvent;
+
+public class EventHandle implements ListenerHost {
+	
+	@EventHandler
+	public void onGroupMessage(GroupMessageEvent event) {
+		String msg = event.getMessage().toString();
+		if (event.getGroup().getId() == 651637726L) {
+			Log.debug("iCee QQ Get: " + msg);
+		}
+	}
+	
+	@EventHandler
+	public void onOnline(BotOnlineEvent event) {
+		event.getBot().getGroup(651637726L).sendMessage("iCee 上线啦！");
+		Log.info("确认 Mirai Bot 上线。");
+	}
+	
+	@EventHandler
+	public void onOffline(BotOfflineEvent event) {
+		event.getBot().getGroup(651637726L).sendMessage("iCee 下线啦！");
+		Log.info("Mirai Bot 已下线。");
+	}
+	
+	@EventHandler
+	public void onSelfSend(MessageSendEvent event) {
+		Log.debug("iCee QQ Send: ");
+	}
+	
+}
