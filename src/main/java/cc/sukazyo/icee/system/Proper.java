@@ -1,104 +1,86 @@
 package cc.sukazyo.icee.system;
 
-import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.util.Log;
+import com.google.gson.Gson;
+import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigRenderOptions;
 
 import java.io.*;
-import java.util.Properties;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+import java.util.Scanner;
 
 public class Proper {
 	
-	public static String TOKEN;
-	public static int logLevel = Log.DEBUG;
-	public static boolean logDebug = false;
-	public static String lang = "en_us";
-	
-	static Properties ini = new Properties();
+	public static ProperTemplate user = new ProperTemplate();
 	
 	public static void load () {
 		
-		File iniFile = new File("./properties.ini");
+		File iniFile = new File("./properties.conf");
 		
 		try {
 			if (!iniFile.isFile()) {
-				Log.warn("检测到没有配置文件，请等待系统生成默认配置文件后填写配置信息");
+				Log.logger.info("检测到没有配置文件，请等待系统生成默认配置文件后填写配置信息");
 				init(iniFile);
 				System.exit(0);
 			}
 		} catch (IOException e) {
-			Log.fatal("Found unexcepted error while read properties.", e);
+			Log.logger.error("Found unexcepted error while read properties.", e);
 		}
 		
 		try {
 			
-			ini.load(new BufferedInputStream(new FileInputStream(iniFile)));
+			// 加载用户配置文件
+			Scanner fscan = new Scanner(iniFile.toPath(), StandardCharsets.UTF_8.name());
+			user = new Gson().fromJson(
+					ConfigFactory.parseString(fscan.useDelimiter("\\A").next()).root().render(ConfigRenderOptions.concise()),
+					ProperTemplate.class);
+			fscan.close();
 			
-			// 获取 Token
-			TOKEN = ini.getProperty("token");
-			
-			// 获取 LogLevel
-			if (iCee.DEBUG_MODE) {
-				logLevel = Log.DEBUG;
-				Log.debug("=======================================================");
-				Log.debug("                   !!! Confirm !!!");
-				Log.debug("             !!! You are being DEBUG MODE !!!");
-				Log.debug("=======================================================");
-			} else {
-				switch (ini.getProperty("log.level")) {
-					case "DEBUG":
-						logLevel = Log.DEBUG;
-						break;
-					case "INFO":
-						logLevel = Log.INFO;
-						break;
-					case "WARN":
-						logLevel = Log.WARN;
-						break;
-					case "ERROR":
-						logLevel = Log.ERROR;
-						break;
-					default:
-						Log.error("Unsupported Log Level. Log level must be DEBUG/INFO/WARN/ERROR");
-				}
+			try {
+				BufferedInputStream ins = new BufferedInputStream(Proper.class.getResourceAsStream(
+						"/assets/lang/icee_" + user.lang + ".lang"));
+				ins.read();
+				ins.close();
+			} catch (IOException ee) {
+				Log.logger.error("No this language support!!!", ee);
 			}
 			
-			// 获取 LogDebug
-			switch (ini.getProperty("log.debugsave")) {
-				case "true":
-					logDebug = true;
-					break;
-				case "false":
-					logDebug = false;
-					break;
-				default:
-					Log.error("Unsupported Log Level. Debug Log must be true/false");
-			}
+			
 			
 		} catch (Exception e) {
-			Log.error("Found error while reading properties");
-			e.printStackTrace();
+			Log.logger.error("Found error while reading properties", e);
 		}
-		
-		// 获取 Lang
-		lang = ini.getProperty("lang");
 		
 	}
 	
 	private static void init (File iniFile) throws IOException {
+		BufferedInputStream ins = new BufferedInputStream(Proper.class.getResourceAsStream(
+				"/assets/default/properties_" + Locale.getDefault().toString().toLowerCase() + ".conf"));
+		try {
+			ins.mark(1);
+			ins.read();
+			ins.reset();
+			Log.logger.info("Using your locale language to extract properties");
+		} catch (IOException e) {
+			ins.close();
+			ins = new BufferedInputStream(Proper.class.getResourceAsStream(
+					"/assets/default/properties.conf"));
+			Log.logger.info("Your locale language not support, using default en_us to extract properties");
+		}
 		if (iniFile.createNewFile()) {
-			iniFile.delete();
 			FileOutputStream os = new FileOutputStream(iniFile);
-			Log.info("Start Copy Default Properties");
-			BufferedInputStream ins = new BufferedInputStream(Proper.class.getResourceAsStream("/default/properties.ini"));
+			Log.logger.info("Start Copy Default Properties");
 			byte[] buf = new byte[4096];
-			while ((ins.read(buf))!=-1) {
+			while (ins.read(buf) != -1) {
 				os.write(buf);
 			}
 			os.close(); ins.close();
-			Log.info("Summon default properties done.");
+			Log.logger.info("Summon default properties done.");
 		} else {
-			throw new IOException("Create properties.ini Error");
+			throw new IOException("Create properties.conf Error");
 		}
 	}
 	
 }
+

@@ -11,5 +11,5 @@
 .project
 
 #systemself
-/properties.ini
+/properties.conf
 /log/

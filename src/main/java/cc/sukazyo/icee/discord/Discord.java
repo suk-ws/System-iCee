@@ -16,13 +16,14 @@ public class Discord {
 	public JDA bot;
 	
 	public Discord() {
-		init();
-	}
-	
-	private void init () {
+		
+		if (!Proper.user.bot.discord.apply) {
+			Log.logger.info("Discord Bot doesn't apply to use");
+			return;
+		}
 		
 		JDABuilder builder = new JDABuilder(AccountType.BOT);
-		builder.setToken(Proper.TOKEN);
+		builder.setToken(Proper.user.bot.discord.token);
 		
 		builder.setActivity(Activity.of(Activity.ActivityType.WATCHING, "Sukazyo debug iCee"));
 		
@@ -34,7 +35,7 @@ public class Discord {
 				RunState.discord = RunState.RUNNING;
 				return;
 			} catch (LoginException e) {
-				Log.error("Login times:" + (i + 1) + " failed.");
+				Log.logger.error("Login times:" + (i + 1) + " failed.");
 			}
 			try {
 				Thread.sleep(3000);
@@ -44,7 +45,7 @@ public class Discord {
 				System.exit(1);
 			}
 		}
-		Log.error("Login failed 3 times, please check your TOKEN or your NETWORK!");
+		Log.logger.error("Login failed 3 times, please check your TOKEN or your NETWORK!");
 	}
 	
 }

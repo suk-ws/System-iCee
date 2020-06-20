@@ -17,18 +17,18 @@ public class TextMessageListener extends ListenerAdapter {
 		
 		if (event.getMessage().getType().equals(MessageType.DEFAULT)) {
 			
-			Log.debug(
+			Log.logger.debug(
 					"From <" + event.getAuthor().getName() +
 							"> on [" + event.getChannel().getName() +
 							"] received following Message:\n" + event.getMessage().getContentRaw());
 			
 			if (RunState.getState(event.getAuthor()) == -1) {
-				Log.debug("No exist event");
+				Log.logger.debug("No exist event");
 				
 				if (event.getMessage().getContentDisplay().startsWith("@iCee $ ")) {
 					
 					String[] comm = CommandHelper.format(event.getMessage().getContentDisplay().replaceFirst("@iCee \\$ ", ""));
-					Log.debug("Called command : " + comm[0]);
+					Log.logger.debug("Called command : " + comm[0]);
 					event.getChannel().sendMessage(CommandReturn.command(comm, event)).queue();
 					
 				} else if (event.getMessage().getContentDisplay().contains("@iCee")) {
@@ -38,7 +38,7 @@ public class TextMessageListener extends ListenerAdapter {
 				}
 				
 			} else {
-				Log.debug("Checked exist event on this user");
+				Log.logger.debug("Checked exist event on this user");
 			}
 		}
 		
@@ -46,10 +46,10 @@ public class TextMessageListener extends ListenerAdapter {
 	
 	private void iceeAtReturn (MessageReceivedEvent event) {
 		if (Pattern.matches("^\\s*@iCee\\s*$", event.getMessage().getContentDisplay())) {
-			Log.debug("icee hello");
+			Log.logger.debug("icee hello");
 			event.getChannel().sendMessage(Lang.get("reply.hi")).queue();
 		} else {
-			Log.info("Caught unexist things");
+			Log.logger.info("Caught unexist things");
 			event.getChannel().sendMessage(Lang.get("reply.noreply")).queue();
 		}
 	}

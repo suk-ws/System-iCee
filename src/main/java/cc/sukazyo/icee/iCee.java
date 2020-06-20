@@ -5,6 +5,11 @@ import cc.sukazyo.icee.mirai.MiraiQQ;
 import cc.sukazyo.icee.system.Lang;
 import cc.sukazyo.icee.system.Proper;
 import cc.sukazyo.icee.util.Log;
+import org.slf4j.Logger;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class iCee {
 	
@@ -18,17 +23,23 @@ public class iCee {
 	
 	public static void main (String[] args) {
 		
-		Log.info("Starting iCee Discord");
+		Log.init();
+		
+		Log.logger.info("================================================");
+		Log.logger.info("");
+		Log.logger.info("             Starting iCee Discord");
+		Log.logger.info("");
+		Log.logger.info("                        at " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()));
+		Log.logger.info("================================================");
 		
 		Proper.load();
-		Log.init();
 		Lang.init();
 		
-//		discord = new Discord();
+		discord = new Discord();
 		qq = new MiraiQQ();
 		
-		Log.info("System Done!");
-		
+		Log.logger.info("System Done!");
+
 	}
 	
 }

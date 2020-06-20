@@ -20,7 +20,7 @@ public class CommandReturn {
 				ret = info();
 				break;
 			default:
-				Log.debug("Unknown command : " + comm[0]);
+				Log.logger.debug("Unknown command : " + comm[0]);
 				ret = Lang.get("command.unknown").replaceAll("\\{\\{command}}", comm[0]);
 		}
 		return ret;
