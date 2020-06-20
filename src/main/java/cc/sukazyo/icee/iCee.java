@@ -14,8 +14,8 @@ import java.util.Date;
 public class iCee {
 	
 	public static final String APPID = "icee-dc";
-	public static final String VERSION = "0.1.0-pre1";
-	public static final int BUILD_VER = 6;
+	public static final String VERSION = "0.2.0-dev";
+	public static final int BUILD_VER = 8;
 	public static final boolean DEBUG_MODE = true;
 	
 	public static Discord discord;
