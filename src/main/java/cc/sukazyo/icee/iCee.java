@@ -5,17 +5,15 @@ import cc.sukazyo.icee.mirai.MiraiQQ;
 import cc.sukazyo.icee.system.Lang;
 import cc.sukazyo.icee.system.Proper;
 import cc.sukazyo.icee.util.Log;
-import org.slf4j.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class iCee {
 	
-	public static final String APPID = "icee-dc";
-	public static final String VERSION = "0.2.0-dev";
-	public static final int BUILD_VER = 8;
+	public static final String APPID = "icee";
+	public static final String VERSION = "0.2.0";
+	public static final int BUILD_VER = 9;
 	public static final boolean DEBUG_MODE = true;
 	
 	public static Discord discord;
@@ -34,12 +32,14 @@ public class iCee {
 		
 		Proper.load();
 		Lang.init();
-		
 		discord = new Discord();
 		qq = new MiraiQQ();
 		
-		Log.logger.info("System Done!");
-
+		discord.start();
+		qq.start();
+		
+		Log.logger.info("System Call Done!");
+	
 	}
 	
 }

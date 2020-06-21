@@ -71,7 +71,7 @@ public class Proper {
 		if (iniFile.createNewFile()) {
 			FileOutputStream os = new FileOutputStream(iniFile);
 			Log.logger.info("Start Copy Default Properties");
-			byte[] buf = new byte[4096];
+			byte[] buf = new byte[1];
 			while (ins.read(buf) != -1) {
 				os.write(buf);
 			}

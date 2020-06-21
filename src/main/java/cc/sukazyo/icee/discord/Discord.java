@@ -11,14 +11,17 @@ import net.dv8tion.jda.api.entities.Activity;
 
 import javax.security.auth.login.LoginException;
 
-public class Discord {
+public class Discord extends Thread {
 	
 	public JDA bot;
 	
-	public Discord() {
+	public Discord() { this.setName("Discord Start"); }
+	
+	@Override
+	public void run() {
 		
 		if (!Proper.user.bot.discord.apply) {
-			Log.logger.info("Discord Bot doesn't apply to use");
+			Log.logger.info("Discord Bot doesn't applied");
 			return;
 		}
 		

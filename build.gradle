@@ -40,9 +40,9 @@ tasks.withType(JavaCompile) {
 
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'application'
-mainClassName='cc.sukazyo.icee.discord.iCee'
+mainClassName='cc.sukazyo.icee.iCee'
 shadowJar {
-    baseName = 'iCee-Discord'
+    baseName = 'System_iCee'
     classifier = null
-    version = '0.2.0-dev-build-8'
+    version = '0.2.0-dev-build-9'
 }

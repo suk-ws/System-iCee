@@ -1,26 +1,23 @@
 package cc.sukazyo.icee.mirai;
 
-import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.system.Proper;
 import cc.sukazyo.icee.util.Log;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactoryJvm;
 import net.mamoe.mirai.event.Events;
 import net.mamoe.mirai.utils.BotConfiguration;
-import net.mamoe.mirai.utils.MiraiLogger;
-import net.mamoe.mirai.utils.SimpleLogger;
 
-import javax.security.auth.login.Configuration;
-
-public class MiraiQQ {
+public class MiraiQQ extends Thread {
 	
 	public Bot bot;
 	
 	
-	public MiraiQQ() {
+	public MiraiQQ() { this.setName("Mirai Start"); }
+	
+	public void run() {
 		
 		if (!Proper.user.bot.mirai.apply) {
-			Log.logger.info("Mirai QQ doesn't apply to use");
+			Log.logger.info("Mirai QQ doesn't applied");
 			return;
 		}
 		
