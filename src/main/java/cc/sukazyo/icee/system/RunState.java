@@ -7,10 +7,9 @@ import java.util.ArrayList;
 
 public class RunState {
 	
-	public static final int RUNNING = 0;
-	public static final int STARTING = 1;
-	
-	public static int discord = RunState.STARTING;
+	public static final int OFF = -1;
+	public static final int STARTING = 0;
+	public static final int RUNNING = 1;
 	
 	public static ArrayList<State> eventer = new ArrayList<>();
 	

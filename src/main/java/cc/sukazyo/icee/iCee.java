@@ -4,6 +4,7 @@ import cc.sukazyo.icee.discord.Discord;
 import cc.sukazyo.icee.mirai.MiraiQQ;
 import cc.sukazyo.icee.system.Lang;
 import cc.sukazyo.icee.system.Proper;
+import cc.sukazyo.icee.util.CScanner;
 import cc.sukazyo.icee.util.Log;
 
 import java.text.SimpleDateFormat;
@@ -13,31 +14,45 @@ public class iCee {
 	
 	public static final String APPID = "icee";
 	public static final String VERSION = "0.2.0";
-	public static final int BUILD_VER = 9;
+	public static final int BUILD_VER = 10;
 	public static final boolean DEBUG_MODE = true;
 	
+	public static CScanner console;
+	
 	public static Discord discord;
-	public static MiraiQQ qq;
+	public static MiraiQQ mirai;
 	
 	public static void main (String[] args) {
 		
 		Log.init();
 		
-		Log.logger.info("================================================");
-		Log.logger.info("");
-		Log.logger.info("             Starting iCee Discord");
-		Log.logger.info("");
-		Log.logger.info("                        at " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()));
-		Log.logger.info("================================================");
+		Log.logger.info("==================================================================================================");
+		Log.logger.info("                                                                                                  ");
+		Log.logger.info("        ___                                                             ___                       ");
+		Log.logger.info("      //   ) )                                                        //   ) )                    ");
+		Log.logger.info("     ((                  ___    __  ___  ___      _   __         ( ) //         ___      ___      ");
+		Log.logger.info("       \\\\     //   / / ((   ) )  / /   //___) ) // ) )  ) )     / / //        //___) ) //___) )   ");
+		Log.logger.info("         ) ) ((___/ /   \\ \\     / /   //       // / /  / /     / / //        //       //          ");
+		Log.logger.info("  ((___ / /      / / //   ) )  / /   ((____   // / /  / /     / / ((____/ / ((____   ((____       ");
+		Log.logger.info("                / /                                                                               ");
+		Log.logger.info("          /((  / /                                                     by   Sukazyo Workshop      ");
+		Log.logger.info("         //__ / /                                                                                 ");
+		Log.logger.info("                                                 Running at " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()));
+		Log.logger.info("=================================================================================================");
 		
+		Log.logger.info("Loading System Module.");
 		Proper.load();
 		Lang.init();
+		Log.logger.info("System Module Load Complete.");
+		
+		Log.logger.info("Loading Bot Module.");
 		discord = new Discord();
-		qq = new MiraiQQ();
+		mirai = new MiraiQQ();
+		Log.logger.info("Bot Module Load Complete.");
 		
-		discord.start();
-		qq.start();
-		
+		console = new CScanner();
+		console.start();
+		Log.logger.info("Console input opened.");
 		Log.logger.info("System Call Done!");
 	
 	}
