@@ -1,11 +1,11 @@
 package cc.sukazyo.icee;
 
-import cc.sukazyo.icee.discord.Discord;
-import cc.sukazyo.icee.mirai.MiraiQQ;
+import cc.sukazyo.icee.bot.discord.Discord;
+import cc.sukazyo.icee.bot.mirai.MiraiQQ;
 import cc.sukazyo.icee.system.Lang;
 import cc.sukazyo.icee.system.Proper;
 import cc.sukazyo.icee.util.CScanner;
-import cc.sukazyo.icee.util.Log;
+import cc.sukazyo.icee.system.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -14,7 +14,7 @@ public class iCee {
 	
 	public static final String APPID = "icee";
 	public static final String VERSION = "0.2.0";
-	public static final int BUILD_VER = 10;
+	public static final int BUILD_VER = 11;
 	public static final boolean DEBUG_MODE = true;
 	
 	public static CScanner console;

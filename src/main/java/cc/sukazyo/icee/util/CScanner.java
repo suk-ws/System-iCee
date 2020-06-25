@@ -1,6 +1,7 @@
 package cc.sukazyo.icee.util;
 
 import cc.sukazyo.icee.iCee;
+import cc.sukazyo.icee.system.Log;
 
 import java.util.Scanner;
 

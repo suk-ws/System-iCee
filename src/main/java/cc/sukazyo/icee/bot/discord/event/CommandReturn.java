@@ -1,8 +1,8 @@
-package cc.sukazyo.icee.discord.event;
+package cc.sukazyo.icee.bot.discord.event;
 
 import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.system.Lang;
-import cc.sukazyo.icee.util.Log;
+import cc.sukazyo.icee.system.Log;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.Objects;

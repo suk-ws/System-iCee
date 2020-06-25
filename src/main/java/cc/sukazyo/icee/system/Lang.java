@@ -1,7 +1,5 @@
 package cc.sukazyo.icee.system;
 
-import cc.sukazyo.icee.util.Log;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -17,7 +15,7 @@ public class Lang {
 			current = new Properties();
 			defaulted = new Properties();
 			current.load(new InputStreamReader(
-					Proper.class.getResourceAsStream("/assets/lang/icee_" + Proper.user.lang +".lang"),
+					Proper.class.getResourceAsStream("/assets/lang/icee_" + Proper.system.lang +".lang"),
 					StandardCharsets.UTF_8));
 			defaulted.load(Proper.class.getResourceAsStream("/assets/lang/icee_en_us.lang"));
 		} catch (IOException e) {

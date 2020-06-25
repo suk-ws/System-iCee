@@ -10,6 +10,8 @@
 /bin/
 .project
 
-#systemself
-/properties.conf
+#system datas
+/system.conf
+/bot.conf
 /log/
+/data/

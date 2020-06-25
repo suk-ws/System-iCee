@@ -1,9 +1,10 @@
-package cc.sukazyo.icee.discord.event;
+package cc.sukazyo.icee.bot.discord.event;
 
+import cc.sukazyo.icee.bot.BotHelper;
 import cc.sukazyo.icee.system.Lang;
 import cc.sukazyo.icee.system.RunState;
 import cc.sukazyo.icee.util.CommandHelper;
-import cc.sukazyo.icee.util.Log;
+import cc.sukazyo.icee.system.Log;
 import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -25,18 +26,18 @@ public class TextMessageListener extends ListenerAdapter {
 			if (RunState.getState(event.getAuthor()) == -1) {
 				Log.logger.debug("No exist event");
 				
-				if (event.getMessage().getContentDisplay().startsWith("@iCee $ ")) {
-					
-					String[] comm = CommandHelper.format(event.getMessage().getContentDisplay().replaceFirst("@iCee \\$ ", ""));
-					Log.logger.debug("Called command : " + comm[0]);
-					event.getChannel().sendMessage(CommandReturn.command(comm, event)).queue();
-					
-				} else if (event.getMessage().getContentDisplay().contains("@iCee")) {
-					
-					iceeAtReturn(event);
-					
+				String exec = BotHelper.isBotCalled(event.getMessage().getContentRaw(), event.getMessage().getContentDisplay());
+				if (exec != null) {
+					if (exec.startsWith("$ ")) {
+						
+						String[] comm = CommandHelper.format(exec.replaceFirst("\\$ ", ""));
+						Log.logger.debug("Called command : " + comm[0]);
+						event.getChannel().sendMessage(CommandReturn.command(comm, event)).queue();
+						
+					} else {
+						iceeAtReturn(event);
+					}
 				}
-				
 			} else {
 				Log.logger.debug("Checked exist event on this user");
 			}
@@ -45,13 +46,8 @@ public class TextMessageListener extends ListenerAdapter {
 	}
 	
 	private void iceeAtReturn (MessageReceivedEvent event) {
-		if (Pattern.matches("^\\s*@iCee\\s*$", event.getMessage().getContentDisplay())) {
-			Log.logger.debug("icee hello");
-			event.getChannel().sendMessage(Lang.get("reply.hi")).queue();
-		} else {
-			Log.logger.info("Caught unexist things");
-			event.getChannel().sendMessage(Lang.get("reply.noreply")).queue();
-		}
+		Log.logger.debug("icee hello");
+		event.getChannel().sendMessage(Lang.get("reply.hi")).queue();
 	}
 	
 }

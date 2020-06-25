@@ -1,8 +1,8 @@
-package cc.sukazyo.icee.mirai;
+package cc.sukazyo.icee.bot.mirai;
 
 import cc.sukazyo.icee.system.Proper;
 import cc.sukazyo.icee.system.RunState;
-import cc.sukazyo.icee.util.Log;
+import cc.sukazyo.icee.system.Log;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactoryJvm;
 import net.mamoe.mirai.event.Events;
@@ -21,19 +21,18 @@ public class MiraiQQ extends Thread {
 		
 		// 执行配置
 		BotConfiguration conf = BotConfiguration.getDefault();
-		
 		conf.setBotLoggerSupplier(bot1 -> new LoggerMirai());
 		conf.setNetworkLoggerSupplier(bot1 -> new LoggerMirai());
 		
 		// 生成 bot 实例
 		bot = BotFactoryJvm.newBot(
-				Proper.user.bot.mirai.qqId,
-				Proper.user.bot.mirai.password,
+				Proper.system.bot.mirai.qqId,
+				Proper.system.bot.mirai.password,
 				conf
 		);
 		
 		// 启动 Mirai
-		if (Proper.user.bot.mirai.apply) {
+		if (Proper.system.bot.mirai.apply) {
 			start();
 		} else {
 			Log.logger.info("Mirai QQ doesn't applied");

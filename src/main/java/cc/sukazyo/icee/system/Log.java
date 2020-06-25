@@ -1,4 +1,4 @@
-package cc.sukazyo.icee.util;
+package cc.sukazyo.icee.system;
 
 import cc.sukazyo.icee.iCee;
 import org.apache.log4j.Logger;

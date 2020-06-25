@@ -2,28 +2,52 @@ package cc.sukazyo.icee.system;
 
 public class ProperTemplate {
 	
-	int format = 1;
-	
-	String lang;
-	
-	public static class Log {
-		String level;
-		boolean debugsave;
-	} Log log;
-	
-	public static class Bot {
+	public static class ConfTemplateSystem {
 		
-		public static class Discord {
-			public boolean apply;
-			public String token;
-		} public Discord discord;
+		int format = 1;
 		
-		public static class Mirai {
-			public boolean apply;
-			public long qqId;
-			public String password;
-		} public Mirai mirai;
+		String lang;
 		
-	} public Bot bot;
+		public static class ConfTemplateLog {
+			
+			String level;
+			boolean debugsave;
+			
+		} ConfTemplateLog log;
+		
+		public static class ConfTemplateBot {
+			
+			public static class ConfTemplateDiscord {
+				
+				public boolean apply;
+				public String token;
+				
+			} public ConfTemplateDiscord discord;
+			
+			public static class ConfTemplateMirai {
+				
+				public boolean apply;
+				public long qqId;
+				public String password;
+				
+			} public ConfTemplateMirai mirai;
+			
+		} public ConfTemplateBot bot;
+		
+	}
+	
+	public static class ConfTemplateBot {
+		
+		public int format = 1;
+		
+		public static class ConfTemplateCall {
+			
+			public String mode;
+			public String[] raw;
+			public String[] text;
+			
+		} public ConfTemplateCall call;
+		
+	}
 	
 }

@@ -1,6 +1,6 @@
-package cc.sukazyo.icee.mirai;
+package cc.sukazyo.icee.bot.mirai;
 
-import cc.sukazyo.icee.util.Log;
+import cc.sukazyo.icee.system.Log;
 import net.mamoe.mirai.utils.MiraiLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

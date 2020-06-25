@@ -44,5 +44,5 @@ mainClassName='cc.sukazyo.icee.iCee'
 shadowJar {
     baseName = 'System_iCee'
     classifier = null
-    version = '0.2.0-dev-build-10'
+    version = '0.2.0-dev-build-11'
 }
