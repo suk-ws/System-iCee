@@ -4,16 +4,17 @@ public class ProperTemplate {
 	
 	public static class ConfTemplateSystem {
 		
-		int format = 1;
+		int format = 2;
 		
 		String lang;
 		
-		public static class ConfTemplateLog {
+		public static class ConfTemplateHttp {
 			
-			String level;
-			boolean debugsave;
+			public boolean apply;
 			
-		} ConfTemplateLog log;
+			public int port;
+			
+		} public ConfTemplateHttp http;
 		
 		public static class ConfTemplateBot {
 			
