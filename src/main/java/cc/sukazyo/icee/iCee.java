@@ -7,7 +7,6 @@ import cc.sukazyo.icee.system.Lang;
 import cc.sukazyo.icee.system.Proper;
 import cc.sukazyo.icee.util.CScanner;
 import cc.sukazyo.icee.system.Log;
-import cc.sukazyo.icee.util.http.HttpServer;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,8 +39,8 @@ public class iCee {
 		Log.logger.info("                / /                                                                               ");
 		Log.logger.info("          /((  / /                                                     by   Sukazyo Workshop      ");
 		Log.logger.info("         //__ / /                                                                                 ");
-		Log.logger.info("                                                 Running at " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()));
-		Log.logger.info("=================================================================================================");
+		Log.logger.info("                                                 Running at " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()) + "                   ");
+		Log.logger.info("==================================================================================================");
 		
 		Log.logger.info("Loading System Module.");
 		Proper.load();

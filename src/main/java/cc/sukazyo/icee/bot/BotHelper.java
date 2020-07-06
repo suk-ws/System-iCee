@@ -7,7 +7,10 @@ import java.util.regex.Pattern;
 
 public class BotHelper {
 	
-	public static String isBotCalled (String raw, String text) {
+	public static String isBotCalled (CommonBotMessage messsage) {
+		
+		String raw = messsage.getMessageRaw();
+		String text = messsage.getMessageText();
 		
 		for (String focus : Proper.bot.call.raw) {
 			

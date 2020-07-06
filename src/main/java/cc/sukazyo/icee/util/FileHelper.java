@@ -1,9 +1,9 @@
 package cc.sukazyo.icee.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import cc.sukazyo.icee.system.Proper;
+
+import java.io.*;
+import java.util.Locale;
 
 public class FileHelper {
 	
@@ -17,6 +17,23 @@ public class FileHelper {
 	
 	public static String getNamePured (File file) {
 		return file.getName().substring(0, file.getName().lastIndexOf("."));
+	}
+	
+	public static String getResourcesContent (String path) throws IOException {
+		
+		BufferedInputStream ins = new BufferedInputStream(Proper.class.getResourceAsStream(path));
+		byte[] buffer = new byte[1024];
+		int bytesRead = 0;
+		StringBuilder chunk = new StringBuilder();
+		//从文件中按字节读取内容，到文件尾部时read方法将返回-1
+		while ((bytesRead = ins.read(buffer)) != -1)
+		{
+			//将读取的字节转为字符串对象
+			chunk.append(new String(buffer, 0, bytesRead));
+		}
+		
+		return chunk.toString();
+		
 	}
 	
 }

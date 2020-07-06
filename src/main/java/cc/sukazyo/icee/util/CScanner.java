@@ -17,14 +17,16 @@ public class CScanner extends Thread {
 		
 		while (true) {
 			
+			Log.printPromot();
+			Log.openInput();
 			String tmp = scanner.nextLine();
+			Log.closeInput();
 			Log.logger.info("Console execute command : " + tmp );
 			command = CommandHelper.format(tmp);
 			
 			switch (command[0]) {
 				case "stop":
 					Log.logger.info("Stopping System.");
-					System.out.print("\b\b\b\b");
 					System.exit(0);
 				case "discord":
 					switch (command[1]) {
