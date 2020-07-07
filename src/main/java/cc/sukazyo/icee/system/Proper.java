@@ -17,6 +17,8 @@ public class Proper {
 	
 	public static void load () {
 		
+		Log.logger.info("Start loading properties");
+		
 		File sysConf = new File("./system.conf");
 		File botConf = new File("./bot.conf");
 		
@@ -67,6 +69,8 @@ public class Proper {
 		} catch (Exception e) {
 			Log.logger.error("Found error while reading properties", e);
 		}
+		
+		Log.logger.info("Properties load complete!");
 		
 	}
 	

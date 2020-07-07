@@ -1,12 +1,18 @@
 package cc.sukazyo.icee.bot;
 
+import cc.sukazyo.icee.system.Lang;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.Variable;
 import cc.sukazyo.icee.util.CommandHelper;
+import cc.sukazyo.icee.util.FileHelper;
+import cc.sukazyo.icee.util.SimpleUtils;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.mamoe.mirai.message.FriendMessageEvent;
 import net.mamoe.mirai.message.GroupMessageEvent;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,12 +40,34 @@ public class CommonBotMessage {
 		type = Type.DISCORD;
 		jdaEvent = event;
 		msg = new Message(event.getMessage().getContentRaw(), event.getMessage().getContentDisplay());
-		Log.logger.debug(
-				"From <" + event.getChannel().getName() +
-				">[" + event.getAuthor().getName() +
-				"] Received : \n\t" +
-				event.getMessage().getContentRaw().replaceAll("\\n", "\n\t")
+		Log.logger.debug("From <" + event.getChannel().getName() +
+						">[" + event.getAuthor().getName() +
+						"] Received : \n\t" +
+						event.getMessage().getContentRaw().replaceAll("\\n", "\n\t")
 		);
+		event.getMessage().getAttachments().forEach(node -> {
+			if (node.isImage()) {
+				Log.logger.info("IMAGE");
+				if (!event.getAuthor().isBot()) {
+					try {
+						File msg = new File("./data/" + SimpleUtils.randomId() + ".png");
+						CompletableFuture<File> task = node.downloadToFile(msg);
+						long time = System.currentTimeMillis();
+						while (!task.isDone()) { if (System.currentTimeMillis() > time+10000) throw new InterruptedException("Download time out"); }
+						Log.logger.info("Reupload image called" + msg.getName());
+						event.getChannel().sendFile(msg).queue();
+						Thread.sleep(10000);
+						msg.delete();
+					} catch (InterruptedException e) {
+						Log.logger.error("Some error excepted while waiting", e);
+						event.getChannel().sendMessage(Lang.get("bot.repeat-error")).queue();
+					}
+				}
+			} else if (node.isVideo())
+				Log.logger.info("VIDEO");
+			else
+				Log.logger.info("DEFAULT");
+		});
 	}
 	
 	/**
@@ -78,15 +106,23 @@ public class CommonBotMessage {
 	
 	public void doReply() {
 		
+		// 检查消息是否呼叫了 Bot
 		String call = BotHelper.isBotCalled(this);
 		if (call == null) { return; }
 		
-		String returned = "";
+		// 定义返回字符串
+		String returned;
 		
 		Matcher commander = Pattern.compile("^\\s*\\$\\s*([\\s\\S]*)").matcher(call);
 		if (commander.find()) {
 			Log.logger.debug("Process command : " + commander.group(1));
 			returned = CommandReturn.command(CommandHelper.format(commander.group(1)), this);
+		} else {
+			try {
+				returned = FileHelper.getDataContent("./data/debug.txt");
+			} catch (IOException e) {
+				returned = "Error";
+			}
 		}
 		
 		returnMsg = new Message(Variable.compile(returned, this));
@@ -123,7 +159,7 @@ class Message {
 	
 	Type type;
 	
-	private final String raw;
+	private String raw;
 	private String text;
 	
 	// 下一个消息对象的指针，用于链性消息
@@ -141,7 +177,7 @@ class Message {
 	}
 	
 	public String getRaw() {
-		StringBuilder msg = new StringBuilder("");
+		StringBuilder msg = new StringBuilder();
 		if (type == Type.TEXT) {
 			msg.append(raw);
 		}
@@ -152,7 +188,7 @@ class Message {
 	}
 	
 	public String getText() {
-		StringBuilder msg = new StringBuilder("");
+		StringBuilder msg = new StringBuilder();
 		if (type == Type.TEXT) {
 			msg.append(text);
 		}
@@ -160,6 +196,11 @@ class Message {
 			msg.append(next.getText());
 		}
 		return msg.toString();
+	}
+	
+	public void setRawAndFlush (String msg) {
+		raw = msg;
+		next = null;
 	}
 	
 	// 向链中添加一个消息

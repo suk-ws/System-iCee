@@ -3,7 +3,8 @@ package cc.sukazyo.icee.util;
 import cc.sukazyo.icee.system.Proper;
 
 import java.io.*;
-import java.util.Locale;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 
 public class FileHelper {
 	
@@ -23,7 +24,7 @@ public class FileHelper {
 		
 		BufferedInputStream ins = new BufferedInputStream(Proper.class.getResourceAsStream(path));
 		byte[] buffer = new byte[1024];
-		int bytesRead = 0;
+		int bytesRead;
 		StringBuilder chunk = new StringBuilder();
 		//从文件中按字节读取内容，到文件尾部时read方法将返回-1
 		while ((bytesRead = ins.read(buffer)) != -1)
@@ -34,6 +35,13 @@ public class FileHelper {
 		
 		return chunk.toString();
 		
+	}
+	
+	public static String getDataContent (String path) throws IOException {
+		Scanner in = new Scanner(new File(path).toPath(), StandardCharsets.UTF_8.name());
+		String ret = in.useDelimiter("\\A").next();
+		in.close();
+		return ret;
 	}
 	
 }

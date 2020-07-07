@@ -2,6 +2,8 @@ package cc.sukazyo.icee.util;
 
 import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.system.Log;
+import cc.sukazyo.icee.system.Proper;
+import net.dv8tion.jda.api.entities.Activity;
 
 import java.util.Scanner;
 
@@ -39,6 +41,30 @@ public class CScanner extends Thread {
 						case "stop":
 							iCee.discord.stop();
 							break;
+						case "activity":
+							switch (command[2]) {
+								case "playing":
+									iCee.discord.setBotActivity(Activity.ActivityType.DEFAULT, command[3]);
+									Log.logger.info("Activity set success! The Value will be apply next start.");
+									break;
+								case "listening":
+									iCee.discord.setBotActivity(Activity.ActivityType.LISTENING, command[3]);
+									Log.logger.info("Activity set success! The Value will be apply next start.");
+									break;
+								case "watching":
+									iCee.discord.setBotActivity(Activity.ActivityType.WATCHING, command[3]);
+									Log.logger.info("Activity set success! The Value will be apply next start.");
+									break;
+								case "streaming":
+									iCee.discord.setBotActivity(Activity.ActivityType.STREAMING, command[3]);
+									break;
+								default:
+									Log.logger.warn("No Activity " + command[2] + ", please check your spell.");
+							}
+							break;
+						case "send":
+							iCee.discord.sendDebug(706505304489197568L);
+							break;
 						default:
 							Log.logger.warn("No option <" + command[1] + "> exist!");
 					}
@@ -58,6 +84,9 @@ public class CScanner extends Thread {
 						default:
 							Log.logger.warn("No option <" + command[1] + "> exist!");
 					}
+					break;
+				case "flush":
+					Proper.load();
 					break;
 				default:
 					Log.logger.warn("Command <" + command[0] + "> not found.");

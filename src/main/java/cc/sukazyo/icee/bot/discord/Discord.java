@@ -4,12 +4,17 @@ import cc.sukazyo.icee.bot.discord.event.TextMessageListener;
 import cc.sukazyo.icee.system.Proper;
 import cc.sukazyo.icee.system.RunState;
 import cc.sukazyo.icee.system.Log;
+import cc.sukazyo.icee.util.FileHelper;
+import com.google.gson.Gson;
 import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import javax.security.auth.login.LoginException;
+import java.io.IOException;
 
 public class Discord {
 	
@@ -71,6 +76,32 @@ public class Discord {
 			Log.logger.warn("Discord Bot have already stoped!");
 		}
 		
+	}
+	
+	public void setBotActivity (Activity.ActivityType activityType, String activity) {
+		bot.getPresence().setActivity(Activity.of(activityType, activity));
+		Log.logger.info("Activity set success!");
+	}
+	
+	public void sendDebug (long channelId) {
+		try {
+			MessageEmbed msg =
+					new EmbedBuilder()
+							.setColor(0x7db9de)
+							.setTitle("iCee Message")
+							.setThumbnail("https://srv.sukazyo.cc/assets/icee-icon.png")
+							.setFooter("System iCee | since 2020\nCOPYFALSE © SUKAZYO WORKSHOP 2019 - 2020", "https://srv.sukazyo.cc/assets/icee-icon.png")
+							.addField("iCee Hi", FileHelper.getDataContent("./data/debug.txt"), false)
+							.addField("iCee Debug", "awodapi ndoa dpanw p", true)
+							.addField("iCee Debug", "awo dpanw p", true)
+							.addField("iCee Debug", "aw ndoa dp p", true)
+							.build();
+			bot.getTextChannelById(channelId).sendMessage(msg).queue();
+			bot.getTextChannelById(channelId).sendMessage(new Gson().toJson(msg.toData())).queue();
+			Log.logger.info("Successed send debug info : " + new Gson().toJson(msg.toData()));
+		} catch (IOException e) {
+			Log.logger.error("Read Debug Message Failed", e);
+		}
 	}
 	
 	public int getState() {
