@@ -91,7 +91,7 @@ public class Discord {
 							.setTitle("iCee Message")
 							.setThumbnail("https://srv.sukazyo.cc/assets/icee-icon.png")
 							.setFooter("System iCee | since 2020\nCOPYFALSE © SUKAZYO WORKSHOP 2019 - 2020", "https://srv.sukazyo.cc/assets/icee-icon.png")
-							.addField("iCee Hi", FileHelper.getDataContent("./data/debug.txt"), false)
+							.addField("iCee Hi", FileHelper.getDataContent("/debug.txt"), false)
 							.addField("iCee Debug", "awodapi ndoa dpanw p", true)
 							.addField("iCee Debug", "awo dpanw p", true)
 							.addField("iCee Debug", "aw ndoa dp p", true)

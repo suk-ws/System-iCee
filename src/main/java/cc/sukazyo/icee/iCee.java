@@ -15,7 +15,7 @@ public class iCee {
 	
 	public static final String APPID = "icee";
 	public static final String VERSION = "0.2.0";
-	public static final int BUILD_VER = 12;
+	public static final int BUILD_VER = 14;
 	public static final boolean DEBUG_MODE = true;
 	
 	public static CScanner console;

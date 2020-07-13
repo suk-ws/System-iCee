@@ -1,18 +1,18 @@
 package cc.sukazyo.icee.bot;
 
-import cc.sukazyo.icee.system.Lang;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.Variable;
 import cc.sukazyo.icee.util.CommandHelper;
 import cc.sukazyo.icee.util.FileHelper;
-import cc.sukazyo.icee.util.SimpleUtils;
+import com.google.gson.Gson;
+import kotlin.Unit;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.mamoe.mirai.message.FriendMessageEvent;
 import net.mamoe.mirai.message.GroupMessageEvent;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
+import java.io.InputStream;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,35 +39,48 @@ public class CommonBotMessage {
 	public CommonBotMessage(MessageReceivedEvent event) {
 		type = Type.DISCORD;
 		jdaEvent = event;
-		msg = new Message(event.getMessage().getContentRaw(), event.getMessage().getContentDisplay());
-		Log.logger.debug("From <" + event.getChannel().getName() +
-						">[" + event.getAuthor().getName() +
-						"] Received : \n\t" +
-						event.getMessage().getContentRaw().replaceAll("\\n", "\n\t")
-		);
-		event.getMessage().getAttachments().forEach(node -> {
-			if (node.isImage()) {
-				Log.logger.info("IMAGE");
-				if (!event.getAuthor().isBot()) {
+		StringBuilder messageDescrbition = new StringBuilder();
+		if (event.getMessage().isSuppressedEmbeds()) {
+			event.getMessage().getEmbeds().forEach(node ->
+				messageDescrbition.append("EMBED Message : ").append(new Gson().toJson(node.toData())).append('\n'));
+		} else {
+			event.getMessage().getAttachments().forEach(node -> {
+				if (node.isImage()) {
 					try {
-						File msg = new File("./data/" + SimpleUtils.randomId() + ".png");
-						CompletableFuture<File> task = node.downloadToFile(msg);
-						long time = System.currentTimeMillis();
-						while (!task.isDone()) { if (System.currentTimeMillis() > time+10000) throw new InterruptedException("Download time out"); }
-						Log.logger.info("Reupload image called" + msg.getName());
-						event.getChannel().sendFile(msg).queue();
-						Thread.sleep(10000);
-						msg.delete();
-					} catch (InterruptedException e) {
-						Log.logger.error("Some error excepted while waiting", e);
-						event.getChannel().sendMessage(Lang.get("bot.repeat-error")).queue();
+						appendMessage(new Message(node.retrieveInputStream().get(), node.getFileName(), Message.Type.IMAGE));
+						messageDescrbition.append("IMAGE Message : ").append(node.getUrl()).append("\n");
+					} catch (ExecutionException | InterruptedException e) {
+						messageDescrbition.append("IMAGE Message Error of ").append(node.getUrl()).append("\n");
+						Log.logger.error("Some error excepted while opening file stream", e);
+					}
+				} else if (node.isVideo()) {
+					try {
+						appendMessage(new Message(node.retrieveInputStream().get(), node.getFileName(), Message.Type.VIDEO));
+						messageDescrbition.append("VIDEO Message : ").append(node.getUrl()).append("\n");
+					} catch (ExecutionException | InterruptedException e) {
+						messageDescrbition.append("VIDEO Message Error of ").append(node.getUrl()).append("\n");
+						Log.logger.error("Some error excepted while opening file stream", e);
+					}
+				} else {
+					try {
+						appendMessage(new Message(node.retrieveInputStream().get(), node.getFileName(), Message.Type.FILE));
+						messageDescrbition.append("FILE Message : ").append(node.getUrl()).append("\n");
+					} catch (ExecutionException | InterruptedException e) {
+						messageDescrbition.append("FILE Message Error of ").append(node.getUrl()).append("\n");
+						Log.logger.error("Some error excepted while opening file stream", e);
 					}
 				}
-			} else if (node.isVideo())
-				Log.logger.info("VIDEO");
-			else
-				Log.logger.info("DEFAULT");
-		});
+			});
+		}
+		if (!event.getMessage().getContentRaw().equals("")) {
+			messageDescrbition.append(event.getMessage().getContentRaw());
+			msg = new Message(event.getMessage().getContentRaw(), event.getMessage().getContentDisplay());
+		}
+		Log.logger.debug("From <" + event.getChannel().getName() +
+				">[" + event.getAuthor().getName() +
+				"] Received : \n\t" +
+				messageDescrbition.toString().replaceAll("\\n", "\n\t")
+		);
 	}
 	
 	/**
@@ -78,13 +91,33 @@ public class CommonBotMessage {
 	public CommonBotMessage(GroupMessageEvent event) {
 		type = Type.MIRAI_GROUP;
 		miraiGroupEvent = event;
-		msg = new Message(event.getMessage().contentToString(), event.getMessage().contentToString());
+		StringBuilder msgRev = new StringBuilder();
+		event.getMessage().forEachContent(node -> {
+			if (node instanceof net.mamoe.mirai.message.data.Image) {
+				Log.logger.info("IMAGE");
+			} else if (node instanceof net.mamoe.mirai.message.data.PlainText) {
+				Log.logger.info("PLAIN_TEXT");
+			} else if (node instanceof net.mamoe.mirai.message.data.At) {
+				Log.logger.info("AT");
+			} else if (node instanceof net.mamoe.mirai.message.data.Face) {
+				Log.logger.info("FACE");
+			} else if (node instanceof net.mamoe.mirai.message.data.Voice) {
+				Log.logger.info("VOICE");
+			} else {
+				Log.logger.info("UNDEFIENED");
+			}
+			return Unit.INSTANCE;
+		});
+		if(!event.getMessage().contentToString().equals("")) {
+			msgRev.append(event.getMessage().contentToString());
+			appendMessage(new Message(event.getMessage().contentToString()));
+		}
 		Log.logger.debug(
 				"From <" +
 				event.getGroup().getName() +
 				">[" + event.getSenderName() +
 				"] Received : \n\t" +
-				event.getMessage().contentToString().replaceAll("\\n", "\n\t")
+				msgRev.toString().replaceAll("\\n", "\n\t")
 		);
 	}
 	
@@ -105,6 +138,17 @@ public class CommonBotMessage {
 	}
 	
 	public void doReply() {
+	
+//		if (type == Type.DISCORD && jdaEvent.getChannel().getIdLong() == 730371639723950158L) {
+//			if (jdaEvent.getAuthor().isBot()) { return; }
+//			if (msg.type == Message.Type.TEXT) {
+//				iCee.mirai.bot.getGroup(651637726).sendMessage(msg.getText() + "\n===========\nby " + jdaEvent.getAuthor().getName());
+//			} else if (msg.type == Message.Type.IMAGE) {
+//				MessageChain upd = iCee.mirai.bot.getGroup(651637726).uploadImage(msg.getFileStream()).plus("\n===========\nby " + jdaEvent.getAuthor().getName());
+//				iCee.mirai.bot.getGroup(651637726).sendMessage(upd);
+//			}
+//			return;
+//		}
 		
 		// 检查消息是否呼叫了 Bot
 		String call = BotHelper.isBotCalled(this);
@@ -119,7 +163,7 @@ public class CommonBotMessage {
 			returned = CommandReturn.command(CommandHelper.format(commander.group(1)), this);
 		} else {
 			try {
-				returned = FileHelper.getDataContent("./data/debug.txt");
+				returned = FileHelper.getDataContent("/debug.txt");
 			} catch (IOException e) {
 				returned = "Error";
 			}
@@ -142,8 +186,17 @@ public class CommonBotMessage {
 		
 	}
 	
+	
 	public enum Type {
 		DISCORD, MIRAI_GROUP, MIRAI_FRIEND
+	}
+	
+	private void appendMessage (Message msg) {
+		if (this.msg == null) {
+			this.msg = msg;
+		} else {
+			this.msg.append(msg);
+		}
 	}
 	
 	public String getMessageRaw () { return msg.getRaw() ; }
@@ -162,6 +215,9 @@ class Message {
 	private String raw;
 	private String text;
 	
+	private InputStream stream;
+	private String fileName;
+	
 	// 下一个消息对象的指针，用于链性消息
 	Message next = null;
 	
@@ -172,8 +228,15 @@ class Message {
 	}
 	
 	public Message(String msg) {
-		this.raw = msg;
+		this.raw = this.text = msg;
 		type = Type.TEXT;
+	}
+	
+	public Message (InputStream stream, String fileName, Type type) {
+		assert type == Type.FILE || type == Type.IMAGE || type == Type.VIDEO;
+		this.type = type;
+		this.fileName = fileName;
+		this.stream = stream;
 	}
 	
 	public String getRaw() {
@@ -187,7 +250,7 @@ class Message {
 		return msg.toString();
 	}
 	
-	public String getText() {
+	public String getText () {
 		StringBuilder msg = new StringBuilder();
 		if (type == Type.TEXT) {
 			msg.append(text);
@@ -197,6 +260,14 @@ class Message {
 		}
 		return msg.toString();
 	}
+	
+	public InputStream getFileStream () {
+		return stream;
+	}
+	
+	public String getFileName () { return fileName; }
+	
+	public String getFileSuffix () { return fileName.substring(fileName.lastIndexOf('.')); }
 	
 	public void setRawAndFlush (String msg) {
 		raw = msg;
@@ -213,7 +284,7 @@ class Message {
 	}
 	
 	enum Type {
-		TEXT, IMAGE, VOICE, FILE
+		TEXT, IMAGE, VIDEO, VOICE, FILE
 	}
 	
 }

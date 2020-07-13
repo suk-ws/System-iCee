@@ -57,7 +57,7 @@ public class Proper {
 			
 			try {
 				BufferedInputStream ins = new BufferedInputStream(Proper.class.getResourceAsStream(
-						"/assets/lang/icee_" + system.lang + ".lang"));
+						"/assets/data/lang/icee_" + system.lang + ".lang"));
 				ins.read();
 				ins.close();
 			} catch (IOException ee) {
