@@ -1,4 +1,4 @@
-package cc.sukazyo.icee.discord.util;
+package cc.sukazyo.icee.util;
 
 import java.util.*;
 

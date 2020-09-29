@@ -1,41 +1,50 @@
 buildscript {
-    repositories {
-        maven {
-            url 'http://maven.aliyun.com/nexus/content/groups/public/'
-        }
-    }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
-    }
+	repositories {
+		maven {
+			url 'http://maven.aliyun.com/nexus/content/groups/public/'
+		}
+	}
+	dependencies {
+		classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
+	}
 }
 
 plugins {
-    id 'java'
+	id 'java'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+group 'cc.sukazyo'
+version VERSION
 
 repositories {
-    mavenCentral()
-    jcenter()
+	mavenCentral()
+	google()
+	maven { url 'https://dl.bintray.com/kotlin/kotlin-eap'}
+	maven { url 'https://jitpack.io' }
+	jcenter()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    implementation "net.dv8tion:JDA:4.1.1_127"
-    implementation 'com.google.code.gson:gson:2.8.6'
+	testCompile group: 'junit', name: 'junit', version: '4.12'
+	implementation "net.dv8tion:JDA:4.1.1_127"
+	implementation 'com.google.code.gson:gson:2.8.6'
+	implementation "net.mamoe:mirai-core:1.0-RC2-1"
+	implementation "net.mamoe:mirai-core-qqandroid:1.0-RC2-1"
+	implementation "com.typesafe:config:1.4.0"
+	implementation "log4j:log4j:1.2.17"
+	implementation "org.slf4j:slf4j-log4j12:1.7.30"
+	implementation 'com.github.Eyre-S:ResourceTools:adf7e5bec2'
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
 }
 
 tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
+	options.encoding = "UTF-8"
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'application'
-mainClassName='cc.sukazyo.icee.discord.iCee'
+
 shadowJar {
-    baseName = 'iCee-Discord'
-    classifier = null
-    version = '0.1.0-pre1-build-6'
+	mainClassName = 'cc.sukazyo.icee.iCee'
+	archiveFileName = 'System_iCee-' + VERSION + '-build' + BUILD + '.jar'
 }

@@ -1,6 +1,4 @@
-package cc.sukazyo.icee.discord.system;
-
-import cc.sukazyo.icee.discord.util.Log;
+package cc.sukazyo.icee.system;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,11 +15,11 @@ public class Lang {
 			current = new Properties();
 			defaulted = new Properties();
 			current.load(new InputStreamReader(
-					Proper.class.getResourceAsStream("/lang/icee_" + Proper.lang +".lang"),
+					Proper.class.getResourceAsStream("/assets/data/lang/icee_" + Proper.system.lang +".lang"),
 					StandardCharsets.UTF_8));
-			defaulted.load(Proper.class.getResourceAsStream("/lang/icee_en_us.lang"));
+			defaulted.load(Proper.class.getResourceAsStream("/assets/data/lang/icee.lang"));
 		} catch (IOException e) {
-			Log.fatal("Caught an error while reading lang file, does the current lang not exist?", e);
+			Log.logger.error("Caught an error while reading lang file, does the current lang not exist?", e);
 		}
 	}
 	
