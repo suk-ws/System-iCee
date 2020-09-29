@@ -68,7 +68,7 @@ public class Variable {
 	}
 	
 	public static String compile (String msg) {
-		msg = msg.replaceAll("\\{\\{appid}}", iCee.APPID);
+		msg = msg.replaceAll("\\{\\{packid}}", iCee.PACKID);
 		msg = msg.replaceAll("\\{\\{version}}", iCee.VERSION);
 		msg = msg.replaceAll("\\{\\{build-ver}}", String.valueOf(iCee.BUILD_VER));
 		msg = msg.replaceAll("\\{\\{debug-mode}}", String.valueOf(iCee.DEBUG_MODE));

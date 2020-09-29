@@ -58,7 +58,7 @@ public class Proper {
 			try {
 				BufferedInputStream ins = new BufferedInputStream(Proper.class.getResourceAsStream(
 						"/assets/data/lang/icee_" + system.lang + ".lang"));
-				ins.read();
+				ins.available();
 				ins.close();
 			} catch (IOException ee) {
 				Log.logger.error("No this language support!!!", ee);
