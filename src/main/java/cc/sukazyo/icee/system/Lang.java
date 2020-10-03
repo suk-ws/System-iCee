@@ -15,9 +15,9 @@ public class Lang {
 			current = new Properties();
 			defaulted = new Properties();
 			current.load(new InputStreamReader(
-					Proper.class.getResourceAsStream("/assets/data/lang/icee_" + Proper.system.lang +".lang"),
+					Conf.class.getResourceAsStream("/assets/data/lang/icee_" + Conf.conf.getString("system.lang") +".lang"),
 					StandardCharsets.UTF_8));
-			defaulted.load(Proper.class.getResourceAsStream("/assets/data/lang/icee.lang"));
+			defaulted.load(Conf.class.getResourceAsStream("/assets/data/lang/icee.lang"));
 		} catch (IOException e) {
 			Log.logger.error("Caught an error while reading lang file, does the current lang not exist?", e);
 		}

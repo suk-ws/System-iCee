@@ -1,12 +1,16 @@
 package cc.sukazyo.icee.util;
 
-import cc.sukazyo.icee.system.Proper;
+import cc.sukazyo.icee.iCee;
+import cc.sukazyo.icee.system.Conf;
+import cc.sukazyo.restools.ResourcesPackage;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class FileHelper {
+	
+	public static ResourcesPackage pack = new ResourcesPackage(iCee.class, "assets");
 	
 	/**
 	 * 获取文件的不带后缀名的名称
@@ -19,21 +23,6 @@ public class FileHelper {
 	}
 	
 	/**
-	 * 以流的方式复制文件
-	 *
-	 * @param source 源文件流
-	 * @param target 目标文件位置流
-	 * @throws IOException 在文件读写时出现错误
-	 */
-	public static void copyFile (InputStream source, OutputStream target) throws IOException {
-		byte[] buf = new byte[1];
-		while (source.read(buf) != -1) {
-			target.write(buf);
-		}
-		source.close(); target.close();
-	}
-	
-	/**
 	 * 获取资源文件文本内容
 	 *
 	 * @param path 资源文件的路径(以assets目录为根目录)
@@ -42,7 +31,7 @@ public class FileHelper {
 	 */
 	public static String getResourcesContent (String path) throws IOException {
 		
-		BufferedInputStream ins = new BufferedInputStream(Proper.class.getResourceAsStream(path));
+		BufferedInputStream ins = new BufferedInputStream(Conf.class.getResourceAsStream(path));
 		byte[] buffer = new byte[1024];
 		int bytesRead;
 		StringBuilder chunk = new StringBuilder();

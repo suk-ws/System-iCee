@@ -1,6 +1,6 @@
 package cc.sukazyo.icee.bot.mirai;
 
-import cc.sukazyo.icee.system.Proper;
+import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.RunState;
 import cc.sukazyo.icee.system.Log;
 import net.mamoe.mirai.Bot;
@@ -26,13 +26,13 @@ public class MiraiQQ extends Thread {
 		
 		// 生成 bot 实例
 		bot = BotFactoryJvm.newBot(
-				Proper.system.bot.mirai.qqId,
-				Proper.system.bot.mirai.password,
+				Conf.conf.getLong("module.bot.mirai.qqId"),
+				Conf.conf.getString("module.bot.mirai.password"),
 				conf
 		);
 		
 		// 启动 Mirai
-		if (Proper.system.bot.mirai.apply) {
+		if (Conf.conf.getBoolean("module.bot.mirai.apply")) {
 			start();
 		} else {
 			Log.logger.info("Mirai QQ doesn't applied");

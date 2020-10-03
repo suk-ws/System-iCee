@@ -1,7 +1,7 @@
 package cc.sukazyo.icee.bot.discord;
 
 import cc.sukazyo.icee.bot.discord.event.TextMessageListener;
-import cc.sukazyo.icee.system.Proper;
+import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.RunState;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.util.FileHelper;
@@ -25,13 +25,13 @@ public class Discord {
 	
 	public Discord() {
 		
-		builder.setToken(Proper.system.bot.discord.token);
+		builder.setToken(Conf.conf.getString("module.bot.discord.token"));
 		
 		builder.setActivity(Activity.of(Activity.ActivityType.WATCHING, "Sukazyo debug iCee"));
 		
 		builder.addEventListeners(new TextMessageListener());
 		
-		if (Proper.system.bot.discord.apply) {
+		if (Conf.conf.getBoolean("module.bot.discord.apply")) {
 			start();
 		} else {
 			Log.logger.info("Discord Bot doesn't applied");

@@ -3,8 +3,8 @@ package cc.sukazyo.icee;
 import cc.sukazyo.icee.bot.discord.Discord;
 import cc.sukazyo.icee.bot.mirai.MiraiQQ;
 import cc.sukazyo.icee.http.HttpListener;
+import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.Lang;
-import cc.sukazyo.icee.system.Proper;
 import cc.sukazyo.icee.util.CScanner;
 import cc.sukazyo.icee.system.Log;
 
@@ -15,7 +15,7 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.2.0-dev";
-	public static final int BUILD_VER = 16;
+	public static final int BUILD_VER = 17;
 	public static final boolean DEBUG_MODE = true;
 	
 	public static CScanner console;
@@ -43,7 +43,7 @@ public class iCee {
 		Log.logger.info("==================================================================================================");
 		
 		Log.logger.info("Loading System Module.");
-		Proper.load();
+		Conf.load();
 		Lang.init();
 		console = new CScanner();
 		http = new HttpListener();

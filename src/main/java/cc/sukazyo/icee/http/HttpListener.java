@@ -1,7 +1,7 @@
 package cc.sukazyo.icee.http;
 
 import cc.sukazyo.icee.system.Log;
-import cc.sukazyo.icee.system.Proper;
+import cc.sukazyo.icee.system.Conf;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -14,9 +14,9 @@ public class HttpListener {
 	public HttpListener() {
 		
 		try {
-			server = HttpServer.create(new InetSocketAddress(Proper.system.http.port), 0);
+			server = HttpServer.create(new InetSocketAddress(Conf.conf.getInt("module.http.port")), 0);
 //			server.createContext("/mtppp/", new HttpMtpppReq()); // 暂时无用
-			if (Proper.system.http.apply) {
+			if (Conf.conf.getBoolean("module.http.apply")) {
 				server.start();
 				Log.logger.info("Start Http Server");
 			} else {
