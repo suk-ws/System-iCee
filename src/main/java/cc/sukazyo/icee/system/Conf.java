@@ -2,11 +2,11 @@ package cc.sukazyo.icee.system;
 
 import cc.sukazyo.icee.util.FileHelper;
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
 
 import java.io.*;
 import java.util.Locale;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Conf {
@@ -48,9 +48,90 @@ public class Conf {
 			Log.logger.info("Update properties done.");
 		}
 		
-		System.exit(0);
+		// 数据检查
+		def.getStringList("keys").forEach((key) -> {
+			if (!conf.hasPath(key)) {
+				Log.logger.fatal("Missing Config " + key + "!");
+				System.exit(6);
+			}
+			switch (def.getString(key + ".type")) {
+				case "int":
+					try {
+						conf.getInt(key);
+						if (def.hasPath(key + ".required") && (conf.getInt(key) > def.getIntList(key + ".required").get(1) || conf.getInt(key) < def.getIntList(key + ".required").get(0))) {
+							Log.logger.fatal("Value of " + key + " is out of requirment");
+							System.exit(7);
+						}
+					} catch (ConfigException.WrongType e) {
+						Log.logger.fatal(e.getMessage());
+						System.exit(7);
+					}
+					break;
+				case "long":
+					try {
+						conf.getLong(key);
+						if (def.hasPath(key + ".required") && (conf.getLong(key) > def.getLongList(key + ".required").get(1) || conf.getLong(key) < def.getLongList(key + ".required").get(0))) {
+							Log.logger.fatal("Value of " + key + " is out of requirment");
+							System.exit(7);
+						}
+					} catch (ConfigException.WrongType e) {
+						Log.logger.fatal(e.getMessage());
+						System.exit(7);
+					}
+					break;
+				case "boolean":
+					try {
+						conf.getBoolean(key);
+					} catch (ConfigException.WrongType e) {
+						Log.logger.fatal(e.getMessage());
+						System.exit(7);
+					}
+					break;
+				case "tag":
+					try {
+						conf.getString(key);
+						boolean isOK = false;
+						for (String s : def.getStringList(key + ".required")) {
+							if (conf.getString(key).equals(s)) isOK = true;
+						}
+						if (!isOK) {
+							Log.logger.fatal("value of " + key + " are not supported!");
+							System.exit(7);
+						}
+					} catch (ConfigException.WrongType e) {
+						Log.logger.fatal(e.getMessage());
+						System.exit(7);
+					} catch (ConfigException.Missing ee) {
+						Log.logger.fatal("Missing Tag Requirement on Config define file! Might the Application had been broken!");
+						System.exit(8);
+					}
+					break;
+				case "string":
+					try {
+						conf.getString(key);
+					} catch (ConfigException.WrongType e) {
+						Log.logger.fatal(e.getMessage());
+						System.exit(7);
+					}
+					break;
+				case "strlist" :
+					try {
+						conf.getStringList(key);
+					} catch (ConfigException.WrongType e) {
+						Log.logger.fatal(e.getMessage());
+						System.exit(7);
+					}
+					break;
+				default:
+					Log.logger.warn("Unsupported key type " + def.getString(key + ".type") + " define found on " + key);
+					System.exit(8);
+			}
+		});
 		
 		Log.logger.info("Properties load complete!");
+		
+		// Debug Exit Tag
+//		System.exit(0);
 		
 	}
 	
@@ -61,18 +142,29 @@ public class Conf {
 		String template = null;
 		try {
 			template = FileHelper.pack.getResource("default/" + confTag + "_" + Locale.getDefault().toString().toLowerCase() + ".conf").readAsString();
-		} catch (IOException e) {
+			if (ConfigFactory.parseString(template).getInt("format") < def.getInt("format"))
+				throw new Exception("Config Template Out of date");
+		} catch (Exception e) {
 			Log.logger.warn("Locale are not support on config " + confTag + ", using en_us to summon the default config file.");
 			try {
-				template = FileHelper.pack.getResource("default/" + confTag + "_" + Locale.getDefault().toString().toLowerCase() + ".conf").readAsString();
-			} catch (IOException ioException) {
-				Log.logger.fatal("en_us config template not found, might the package had benn broken!", e);
+				template = FileHelper.pack.getResource("default/" + confTag + "_en_us.conf").readAsString();
+				Log.logger.debug(template);
+				if (ConfigFactory.parseString(template).getInt("format") < def.getInt("format"))
+					throw new Exception("Config Template Out of date");
+			} catch (Exception exception) {
+				Log.logger.fatal("en_us config template not found or out of date, might the package had benn broken!", exception);
 				System.exit(5);
 			}
 		}
 		
 		pattern = Pattern.compile("<<(.*?)>>");
-		template = confTagReplace(template);
+		for (String key : def.getStringList("keys")) {
+			try {
+				template = template.replace("<<" + key + ">>", def.getString(key + ".def"));
+			} catch (ConfigException.WrongType e) {
+				template = template.replace("<<" + key + ">>", def.getAnyRefList(key + ".def").toString());
+			}
+		}
 		pattern = null;
 		Log.logger.debug(template);
 		
@@ -85,26 +177,12 @@ public class Conf {
 			if (iniFile.delete()) {
 				Log.logger.info("Cleared error configure file.");
 			}
-			System.exit(1);
+			System.exit(2);
 		} catch (IOException e) {
 			Log.logger.fatal("Can't copy config " + iniFile, e);
 			System.exit(3);
 		}
 		
-	}
-	
-	private static String confTagReplace (String confs) {
-		Matcher matcher = pattern.matcher(confs);
-		if (matcher.find()) {
-			Log.logger.debug(matcher.group(1));
-			Log.logger.debug(def.getString(matcher.group(1)));
-			if (conf != null && conf.hasPath(matcher.group(1)))
-				confs = matcher.replaceFirst(conf.getString(matcher.group(1)));
-			else
-				confs = matcher.replaceFirst(def.getString(matcher.group(1)));
-			confs = confTagReplace(confs);
-		}
-		return confs;
 	}
 	
 }
