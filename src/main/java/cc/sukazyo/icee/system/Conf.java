@@ -4,6 +4,7 @@ import cc.sukazyo.icee.util.FileHelper;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigRenderOptions;
 
 import java.io.*;
 import java.util.Locale;
@@ -19,11 +20,10 @@ public class Conf {
 	
 	public static void load () {
 		
-		Log.logger.info("Start loading properties");
+		Log.logger.info("Start loading Config");
 		
 		// 加载默认配置文件
 		try {
-			Log.logger.debug(FileHelper.pack.getResource("default/icee.conf").readAsString());
 			def = ConfigFactory.parseString(FileHelper.pack.getResource("default/icee.conf").readAsString());
 		} catch (IOException e) {
 			Log.logger.fatal("Default Config File Not Found, might the package had benn broken!", e);
@@ -45,6 +45,7 @@ public class Conf {
 		if (conf.getInt("format") < def.getInt("format")) {
 			Log.logger.warn("Config file out of date, updating...");
 			summonConf(FileHelper.getNamePured(sysConf));
+			conf = ConfigFactory.parseFile(sysConf);
 			Log.logger.info("Update properties done.");
 		}
 		
@@ -128,10 +129,19 @@ public class Conf {
 			}
 		});
 		
-		Log.logger.info("Properties load complete!");
+		Log.logger.info("Config load complete!");
 		
-		// Debug Exit Tag
-//		System.exit(0);
+		if (conf.getBoolean("system.proxy.enable")) {
+			System.setProperty("http.proxyHost", conf.getString("system.proxy.host"));
+			System.setProperty("http.proxyPort", conf.getString("system.proxy.port"));
+			System.setProperty("https.proxyHost", conf.getString("system.proxy.host"));
+			System.setProperty("https.proxyPort", conf.getString("system.proxy.port"));
+			StringBuilder bypassList = new StringBuilder();
+			conf.getStringList("system.proxy.bypass").forEach((x) -> bypassList.append(" | ").append(x));
+			System.setProperty("http.nonProxyHosts", bypassList.substring(3));
+		}
+		
+		Log.logger.info("System configuration applied.");
 		
 	}
 	
@@ -148,7 +158,6 @@ public class Conf {
 			Log.logger.warn("Locale are not support on config " + confTag + ", using en_us to summon the default config file.");
 			try {
 				template = FileHelper.pack.getResource("default/" + confTag + "_en_us.conf").readAsString();
-				Log.logger.debug(template);
 				if (ConfigFactory.parseString(template).getInt("format") < def.getInt("format"))
 					throw new Exception("Config Template Out of date");
 			} catch (Exception exception) {
@@ -159,14 +168,21 @@ public class Conf {
 		
 		pattern = Pattern.compile("<<(.*?)>>");
 		for (String key : def.getStringList("keys")) {
-			try {
-				template = template.replace("<<" + key + ">>", def.getString(key + ".def"));
-			} catch (ConfigException.WrongType e) {
-				template = template.replace("<<" + key + ">>", def.getAnyRefList(key + ".def").toString());
+			if (conf != null && conf.hasPath(key)) {
+				try {
+					template = template.replace("<<" + key + ">>", conf.getString(key));
+				} catch (ConfigException.WrongType e) {
+					template = template.replace("<<" + key + ">>", conf.getValue(key).render(ConfigRenderOptions.concise().setFormatted(true)));
+				}
+			} else {
+				try {
+					template = template.replace("<<" + key + ">>", def.getString(key + ".def"));
+				} catch (ConfigException.WrongType e) {
+					template = template.replace("<<" + key + ">>", def.getValue(key + ".def").render(ConfigRenderOptions.concise()));
+				}
 			}
 		}
 		pattern = null;
-		Log.logger.debug(template);
 		
 		FileOutputStream os;
 		try {
