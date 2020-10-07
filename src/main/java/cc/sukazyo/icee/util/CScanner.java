@@ -19,7 +19,7 @@ public class CScanner extends Thread {
 		
 		while (true) {
 			
-			Log.printPromot();
+			Log.showInput();
 			Log.openInput();
 			String tmp = scanner.nextLine();
 			Log.closeInput();
