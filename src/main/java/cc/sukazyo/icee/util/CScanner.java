@@ -2,7 +2,7 @@ package cc.sukazyo.icee.util;
 
 import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.system.Log;
-import cc.sukazyo.icee.system.Proper;
+import cc.sukazyo.icee.system.Conf;
 import net.dv8tion.jda.api.entities.Activity;
 
 import java.util.Scanner;
@@ -19,7 +19,7 @@ public class CScanner extends Thread {
 		
 		while (true) {
 			
-			Log.printPromot();
+			Log.showInput();
 			Log.openInput();
 			String tmp = scanner.nextLine();
 			Log.closeInput();
@@ -86,7 +86,7 @@ public class CScanner extends Thread {
 					}
 					break;
 				case "flush":
-					Proper.load();
+					Conf.load();
 					break;
 				default:
 					Log.logger.warn("Command <" + command[0] + "> not found.");
