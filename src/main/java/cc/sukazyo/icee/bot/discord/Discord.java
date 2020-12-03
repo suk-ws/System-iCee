@@ -1,8 +1,9 @@
 package cc.sukazyo.icee.bot.discord;
 
 import cc.sukazyo.icee.bot.discord.event.TextMessageListener;
+import cc.sukazyo.icee.module.RunState;
+import cc.sukazyo.icee.module.i.IBot;
 import cc.sukazyo.icee.system.Conf;
-import cc.sukazyo.icee.system.RunState;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.util.FileHelper;
 import com.google.gson.Gson;
@@ -16,9 +17,9 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 
-public class Discord {
+public class Discord implements IBot {
 	
-	private static int state = RunState.OFF;
+	private static RunState state = RunState.OFF;
 	
 	public JDA bot;
 	JDABuilder builder = new JDABuilder(AccountType.BOT);
@@ -39,9 +40,10 @@ public class Discord {
 		
 	}
 	
+	@Override
 	public void start() {
 		
-		if (state < 0) {
+		if (state.canStart()) {
 			state = RunState.STARTING;
 			for (int i = 0; i < 3 && state == RunState.STARTING; i++) {
 				try {
@@ -66,9 +68,10 @@ public class Discord {
 		}
 	}
 	
+	@Override
 	public void stop() {
 		
-		if (state > -1) {
+		if (state.canStart()) {
 			bot.shutdownNow();
 			state = RunState.OFF;
 			Log.logger.info("Discord Bot stoped.");
@@ -104,7 +107,8 @@ public class Discord {
 		}
 	}
 	
-	public int getState() {
+	@Override
+	public RunState getState() {
 		return state;
 	}
 	

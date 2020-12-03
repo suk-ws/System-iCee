@@ -10,7 +10,5 @@
 /bin/
 .project
 
-#system datas
-/icee.conf
-/log/
-/data/
+# debug dir
+/run/

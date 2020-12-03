@@ -25,7 +25,8 @@ public class CScanner extends Thread {
 			Log.closeInput();
 			Log.logger.info("Console execute command : " + tmp );
 			command = CommandHelper.format(tmp);
-			
+			if (command.length == 0)
+				continue;
 			switch (command[0]) {
 				case "stop":
 					Log.logger.info("Stopping System.");
@@ -79,7 +80,7 @@ public class CScanner extends Thread {
 							Log.logger.info("QQ Bot Mirai Now State : " + iCee.mirai.getState());
 							break;
 						case "stop":
-							iCee.mirai.stopMirai();
+							iCee.mirai.stop();
 							break;
 						default:
 							Log.logger.warn("No option <" + command[1] + "> exist!");
