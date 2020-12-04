@@ -19,14 +19,11 @@ public class CScanner extends Thread {
 		
 		while (true) {
 			
-			Log.showInput();
-			Log.openInput();
 			String tmp = scanner.nextLine();
-			Log.closeInput();
-			Log.logger.info("Console execute command : " + tmp );
 			command = CommandHelper.format(tmp);
 			if (command.length == 0)
 				continue;
+			Log.logger.info("Console execute command : " + tmp );
 			switch (command[0]) {
 				case "stop":
 					Log.logger.info("Stopping System.");

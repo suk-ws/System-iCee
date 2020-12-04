@@ -8,32 +8,31 @@ import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactoryJvm;
 import net.mamoe.mirai.event.Events;
 import net.mamoe.mirai.utils.BotConfiguration;
+import net.mamoe.mirai.utils.LoggerAdapters;
 
 public class MiraiQQ implements IBot {
 	
 	private final Runner RUNNER = new Runner();
-	private static class Runner extends Thread {
+	
+	private static class Runner implements Runnable {
+		final String THREAD_NAME = "Mirai QQ Docker";
 		Bot bot;
 		RunState state = RunState.OFF;
 		@Override
 		public void run() {
 			bot.login();
 			Events.registerEvents(bot, new EventHandle());
-			bot.getGroup(651637726).sendMessage("HI,iCee!");
+			bot.getFriend(863731218).sendMessage("HI,iCee!");
 			state = RunState.RUNNING;
-			bot.join();
 		}
 	}
 	
 	public MiraiQQ() {
 		
-		// 设置线程名
-		RUNNER.setName("Mirai QQ");
-		
 		// 执行配置
 		BotConfiguration conf = BotConfiguration.getDefault();
-		conf.setBotLoggerSupplier(bot1 -> new LoggerMirai());
-		conf.setNetworkLoggerSupplier(bot1 -> new LoggerMirai());
+		conf.setBotLoggerSupplier(bot1 -> LoggerAdapters.asMiraiLogger(Log.logger));
+		conf.setNetworkLoggerSupplier(bot1 -> LoggerAdapters.asMiraiLogger(Log.logger));
 		
 		// 生成 bot 实例
 		RUNNER.bot = BotFactoryJvm.newBot(
@@ -55,7 +54,7 @@ public class MiraiQQ implements IBot {
 	public void start () {
 		if (RUNNER.state.canStart()) {
 			RUNNER.state = RunState.STARTING;
-			RUNNER.start();
+			new Thread(RUNNER, RUNNER.THREAD_NAME).start();
 			Log.logger.info("Mirai Bot Called Starting.");
 		} else {
 			Log.logger.warn("Mirai Bot is already running or starting!");
@@ -65,11 +64,11 @@ public class MiraiQQ implements IBot {
 	@Override
 	public void stop () {
 		if (RUNNER.state.canStop()) {
-			Log.logger.warn("Mirai Bot is already stopped");
-		} else {
-			RUNNER.interrupt();
+			RUNNER.bot.close(new RuntimeException("Bot Should Been Shutdown"));
 			RUNNER.state = RunState.OFF;
 			Log.logger.info("Mirai Bot Stopped.");
+		} else {
+			Log.logger.warn("Mirai Bot is already stopped");
 		}
 	}
 	

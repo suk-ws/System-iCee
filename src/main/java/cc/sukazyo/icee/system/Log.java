@@ -1,14 +1,22 @@
 package cc.sukazyo.icee.system;
 
 import cc.sukazyo.icee.iCee;
-import org.apache.log4j.*;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.ConsoleAppender;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+
+import java.nio.charset.StandardCharsets;
 
 public class Log {
 	
+	public static final String CONSOLE_APPENDER_NAME = "Console";
 	public static String PROMPT;
-	public static final String INPUTER = "~@ ";
 	
-	public static Logger logger = Logger.getLogger(iCee.class.getName());
+	public static Logger logger = LogManager.getLogger(iCee.class.getName());
 	
 	public static void init () {
 		
@@ -17,24 +25,19 @@ public class Log {
 		else
 			PROMPT = "[%d{yyyy-MM-dd HH:mm:ss}][%t][%p]%m%n";
 		
-		PropertyConfigurator.configure(Log.class.getResourceAsStream("/assets/log4j.properties"));
-		
-		closeInput();
+		setAppender(iCee.DEBUG_MODE?Level.DEBUG:Level.INFO, PROMPT);
 		
 	}
 	
-	public static void openInput () {
-		StringBuilder p = new StringBuilder();
-		for (int i = 0; i < PROMPT.length(); i++) p.append('\b');
-		Logger.getRootLogger().getAppender("console").setLayout(new PatternLayout(p.append(PROMPT).append(INPUTER).toString()));
-	}
-	
-	public static void closeInput () {
-		Logger.getRootLogger().getAppender("console").setLayout(new PatternLayout(PROMPT));
-	}
-	
-	public static void showInput() {
-		System.out.print(INPUTER);
+	private static void setAppender(Level level, String pattern) {
+		final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+		final org.apache.logging.log4j.core.config.Configuration config = ctx.getConfiguration();
+		final PatternLayout layout = PatternLayout.newBuilder().withCharset(StandardCharsets.UTF_8).withConfiguration(config).withPattern(pattern).build();
+		final Appender appender = ConsoleAppender.newBuilder().setName(Log.CONSOLE_APPENDER_NAME).setLayout(layout).withImmediateFlush(true).build();
+		appender.start();
+		config.addAppender(appender);
+		config.getRootLogger().addAppender(appender, level, null);
+		ctx.updateLoggers(config);
 	}
 	
 }
