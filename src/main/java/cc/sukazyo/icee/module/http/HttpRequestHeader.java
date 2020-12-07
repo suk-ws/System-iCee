@@ -1,4 +1,4 @@
-package cc.sukazyo.icee.http;
+package cc.sukazyo.icee.module.http;
 
 import com.sun.net.httpserver.HttpExchange;
 

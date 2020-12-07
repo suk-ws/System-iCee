@@ -1,6 +1,6 @@
-package cc.sukazyo.icee.bot.discord.event;
+package cc.sukazyo.icee.module.bot.discord.event;
 
-import cc.sukazyo.icee.bot.CommonBotMessage;
+import cc.sukazyo.icee.module.bot.CommonBotMessage;
 import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

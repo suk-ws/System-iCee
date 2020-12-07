@@ -34,7 +34,7 @@ public class CScanner extends Thread {
 							iCee.discord.start();
 							break;
 						case "state":
-							Log.logger.info("Doscord Bot Now State : " + iCee.discord.getState());
+							Log.logger.info("Doscord Bot Now State : " + iCee.discord.getStatus());
 							break;
 						case "stop":
 							iCee.discord.stop();
@@ -74,7 +74,7 @@ public class CScanner extends Thread {
 							iCee.mirai.start();
 							break;
 						case "state":
-							Log.logger.info("QQ Bot Mirai Now State : " + iCee.mirai.getState());
+							Log.logger.info("QQ Bot Mirai Now State : " + iCee.mirai.getStatus());
 							break;
 						case "stop":
 							iCee.mirai.stop();

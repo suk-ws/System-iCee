@@ -1,4 +1,4 @@
-package cc.sukazyo.icee.bot;
+package cc.sukazyo.icee.module.bot;
 
 import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.util.SimpleUtils;

@@ -1,4 +1,4 @@
-package cc.sukazyo.icee.api.simple;
+package cc.sukazyo.icee.api;
 
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.util.FileHelper;

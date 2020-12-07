@@ -1,6 +1,6 @@
-package cc.sukazyo.icee.bot.mirai;
+package cc.sukazyo.icee.module.bot.mirai;
 
-import cc.sukazyo.icee.bot.CommonBotMessage;
+import cc.sukazyo.icee.module.bot.CommonBotMessage;
 import cc.sukazyo.icee.system.Log;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.ListenerHost;

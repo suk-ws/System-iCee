@@ -1,13 +1,12 @@
-package cc.sukazyo.icee.bot.discord;
+package cc.sukazyo.icee.module.bot.discord;
 
-import cc.sukazyo.icee.bot.discord.event.TextMessageListener;
-import cc.sukazyo.icee.module.RunState;
-import cc.sukazyo.icee.module.i.IBot;
+import cc.sukazyo.icee.module.bot.discord.event.TextMessageListener;
+import cc.sukazyo.icee.common.RunStatus;
+import cc.sukazyo.icee.module.bot.IBot;
 import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.util.FileHelper;
 import com.google.gson.Gson;
-import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -16,21 +15,20 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
+import java.util.Objects;
 
 public class Discord implements IBot {
 	
-	private static RunState state = RunState.OFF;
-	
 	public JDA bot;
-	JDABuilder builder = new JDABuilder(AccountType.BOT);
+	private final JDABuilder BUILDER;
 	
 	public Discord() {
 		
-		builder.setToken(Conf.conf.getString("module.bot.discord.token"));
+		BUILDER = JDABuilder.createDefault(Conf.conf.getString("module.bot.discord.token"));
 		
-		builder.setActivity(Activity.of(Activity.ActivityType.WATCHING, "Sukazyo debug iCee"));
+		BUILDER.setActivity(Activity.of(Activity.ActivityType.WATCHING, "Sukazyo debug iCee"));
 		
-		builder.addEventListeners(new TextMessageListener());
+		BUILDER.addEventListeners(new TextMessageListener());
 		
 		if (Conf.conf.getBoolean("module.bot.discord.apply")) {
 			start();
@@ -42,27 +40,13 @@ public class Discord implements IBot {
 	
 	@Override
 	public void start() {
-		
-		if (state.canStart()) {
-			state = RunState.STARTING;
-			for (int i = 0; i < 3 && state == RunState.STARTING; i++) {
-				try {
-					bot = builder.build();
-					state = RunState.RUNNING;
-					Log.logger.info("Discord Bot started.");
-					return;
-				} catch (LoginException e) {
-					Log.logger.error("Login times:" + (i + 1) + " failed.");
-				}
-				try {
-					Thread.sleep(3000);
-				} catch (InterruptedException e) {
-					System.err.println("[FATAL]System meet Exception while waiting discord login");
-					e.printStackTrace();
-					System.exit(1);
-				}
+		if (getStatus().canStart()) {
+			try {
+				bot = BUILDER.build();
+				Log.logger.info("Discord Bot started.");
+			} catch (LoginException e) {
+				Log.logger.error("Login failed., please check your token or your network", e);
 			}
-			Log.logger.error("Login failed 3 times, please check your TOKEN or your NETWORK!");
 		} else {
 			Log.logger.warn("Discord Bot is running or starting!");
 		}
@@ -70,10 +54,8 @@ public class Discord implements IBot {
 	
 	@Override
 	public void stop() {
-		
-		if (state.canStart()) {
+		if (getStatus().canStop()) {
 			bot.shutdownNow();
-			state = RunState.OFF;
 			Log.logger.info("Discord Bot stoped.");
 		} else {
 			Log.logger.warn("Discord Bot have already stoped!");
@@ -99,8 +81,8 @@ public class Discord implements IBot {
 							.addField("iCee Debug", "awo dpanw p", true)
 							.addField("iCee Debug", "aw ndoa dp p", true)
 							.build();
-			bot.getTextChannelById(channelId).sendMessage(msg).queue();
-			bot.getTextChannelById(channelId).sendMessage(new Gson().toJson(msg.toData())).queue();
+			Objects.requireNonNull(bot.getTextChannelById(channelId)).sendMessage(msg).queue();
+			Objects.requireNonNull(bot.getTextChannelById(channelId)).sendMessage(new Gson().toJson(msg.toData())).queue();
 			Log.logger.info("Successed send debug info : " + new Gson().toJson(msg.toData()));
 		} catch (IOException e) {
 			Log.logger.error("Read Debug Message Failed", e);
@@ -108,8 +90,34 @@ public class Discord implements IBot {
 	}
 	
 	@Override
-	public RunState getState() {
-		return state;
+	public RunStatus getStatus() {
+		if (bot == null)
+			return RunStatus.OFF;
+		switch (bot.getStatus()) {
+			case INITIALIZING:
+			case INITIALIZED:
+			case LOGGING_IN:
+			case CONNECTING_TO_WEBSOCKET:
+			case IDENTIFYING_SESSION:
+			case AWAITING_LOGIN_CONFIRMATION:
+			case LOADING_SUBSYSTEMS:
+				return RunStatus.STARTING;
+			case CONNECTED:
+				return RunStatus.ON;
+			case DISCONNECTED:
+				return RunStatus.WAITING;
+			case RECONNECT_QUEUED:
+			case WAITING_TO_RECONNECT:
+			case ATTEMPTING_TO_RECONNECT:
+				return RunStatus.RESTARTING;
+			case SHUTTING_DOWN:
+				return RunStatus.STOPPING;
+			case SHUTDOWN:
+				return RunStatus.OFF;
+			case FAILED_TO_LOGIN:
+				break;
+		}
+		throw new RunStatus.StatusUnknownException("Unsupported Status of JDA.Status:" + bot.getStatus().name());
 	}
 	
 }

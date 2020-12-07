@@ -1,6 +1,6 @@
 package cc.sukazyo.icee.system;
 
-import cc.sukazyo.icee.bot.CommonBotMessage;
+import cc.sukazyo.icee.module.bot.CommonBotMessage;
 import cc.sukazyo.icee.iCee;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.mamoe.mirai.message.FriendMessageEvent;

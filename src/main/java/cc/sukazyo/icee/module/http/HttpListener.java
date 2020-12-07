@@ -1,4 +1,4 @@
-package cc.sukazyo.icee.http;
+package cc.sukazyo.icee.module.http;
 
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.Conf;
