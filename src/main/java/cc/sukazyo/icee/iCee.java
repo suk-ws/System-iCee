@@ -1,8 +1,8 @@
 package cc.sukazyo.icee;
 
-import cc.sukazyo.icee.bot.discord.Discord;
-import cc.sukazyo.icee.bot.mirai.MiraiQQ;
-import cc.sukazyo.icee.http.HttpListener;
+import cc.sukazyo.icee.module.bot.discord.Discord;
+import cc.sukazyo.icee.module.bot.mirai.MiraiQQ;
+//import cc.sukazyo.icee.module.http.HttpListener;
 import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.Lang;
 import cc.sukazyo.icee.util.CScanner;
@@ -19,7 +19,7 @@ public class iCee {
 	public static final boolean DEBUG_MODE = true;
 	
 	public static CScanner console;
-	public static HttpListener http;
+//	public static HttpListener http;
 	
 	public static Discord discord;
 	public static MiraiQQ mirai;
@@ -46,7 +46,7 @@ public class iCee {
 		Conf.load();
 		Lang.init();
 		console = new CScanner();
-		http = new HttpListener();
+//		http = new HttpListener();
 		Log.logger.info("System Module Load Complete.");
 		
 		Log.logger.info("Loading Bot Module.");
