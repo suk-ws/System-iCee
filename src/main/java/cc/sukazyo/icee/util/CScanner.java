@@ -37,6 +37,8 @@ public class CScanner extends Thread {
 							Log.logger.info("Doscord Bot Now State : " + iCee.discord.getStatus());
 							break;
 						case "stop":
+						case "exit":
+						case "quit":
 							iCee.discord.stop();
 							break;
 						case "activity":

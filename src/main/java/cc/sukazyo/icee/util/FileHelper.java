@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class FileHelper {
 	
-	public static ResourcesPackage pack = new ResourcesPackage(iCee.class, "assets");
+	public static final ResourcesPackage pack = new ResourcesPackage(iCee.class, "assets");
 	
 	/**
 	 * 获取文件的不带后缀名的名称

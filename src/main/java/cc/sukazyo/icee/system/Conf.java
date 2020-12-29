@@ -1,5 +1,6 @@
 package cc.sukazyo.icee.system;
 
+import cc.sukazyo.icee.util.ConfigTypeHelper;
 import cc.sukazyo.icee.util.FileHelper;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
@@ -51,81 +52,41 @@ public class Conf {
 		
 		// 数据检查
 		def.getStringList("keys").forEach((key) -> {
-			if (!conf.hasPath(key)) {
-				Log.logger.fatal("Missing Config " + key + "!");
+			try {
+				switch (def.getString(key + ".type")) {
+					case "int": // 数值型数据
+						ConfigTypeHelper.verifyInt(def, conf, key);
+						break;
+					case "long": // 长数值型
+						ConfigTypeHelper.verifyLong(def, conf, key);
+						break;
+					case "boolean": // 布尔型
+						ConfigTypeHelper.verifyBoolean(def, conf, key);
+						break;
+					case "tag": // 标签型
+						ConfigTypeHelper.verifyTag(def, conf, key);
+						break;
+					case "string": // 字段型
+						ConfigTypeHelper.verifyString(def, conf, key);
+						break;
+					case "ip" :
+						ConfigTypeHelper.verifyIp(def, conf, key);
+						break;
+					case "ip-list":
+						ConfigTypeHelper.verifyIpList(def, conf, key);
+						break;
+					default:
+						throw new ConfigException.Parse(def.origin(), "Unsupported key type " + def.getString(key + ".type") + " define found on " + key);
+				}
+			} catch (ConfigException.WrongType e) {
+				Log.logger.fatal(e.getMessage());
+				System.exit(7);
+			} catch (ConfigException.Missing e) {
+				Log.logger.fatal("Missing Config " + key + "!", e);
 				System.exit(6);
-			}
-			switch (def.getString(key + ".type")) {
-				case "int":
-					try {
-						conf.getInt(key);
-						if (def.hasPath(key + ".required") && (conf.getInt(key) > def.getIntList(key + ".required").get(1) || conf.getInt(key) < def.getIntList(key + ".required").get(0))) {
-							Log.logger.fatal("Value of " + key + " is out of requirment");
-							System.exit(7);
-						}
-					} catch (ConfigException.WrongType e) {
-						Log.logger.fatal(e.getMessage());
-						System.exit(7);
-					}
-					break;
-				case "long":
-					try {
-						conf.getLong(key);
-						if (def.hasPath(key + ".required") && (conf.getLong(key) > def.getLongList(key + ".required").get(1) || conf.getLong(key) < def.getLongList(key + ".required").get(0))) {
-							Log.logger.fatal("Value of " + key + " is out of requirment");
-							System.exit(7);
-						}
-					} catch (ConfigException.WrongType e) {
-						Log.logger.fatal(e.getMessage());
-						System.exit(7);
-					}
-					break;
-				case "boolean":
-					try {
-						conf.getBoolean(key);
-					} catch (ConfigException.WrongType e) {
-						Log.logger.fatal(e.getMessage());
-						System.exit(7);
-					}
-					break;
-				case "tag":
-					try {
-						conf.getString(key);
-						boolean isOK = false;
-						for (String s : def.getStringList(key + ".required")) {
-							if (conf.getString(key).equals(s)) isOK = true;
-						}
-						if (!isOK) {
-							Log.logger.fatal("value of " + key + " are not supported!");
-							System.exit(7);
-						}
-					} catch (ConfigException.WrongType e) {
-						Log.logger.fatal(e.getMessage());
-						System.exit(7);
-					} catch (ConfigException.Missing ee) {
-						Log.logger.fatal("Missing Tag Requirement on Config define file! Might the Application had been broken!");
-						System.exit(8);
-					}
-					break;
-				case "string":
-					try {
-						conf.getString(key);
-					} catch (ConfigException.WrongType e) {
-						Log.logger.fatal(e.getMessage());
-						System.exit(7);
-					}
-					break;
-				case "strlist" :
-					try {
-						conf.getStringList(key);
-					} catch (ConfigException.WrongType e) {
-						Log.logger.fatal(e.getMessage());
-						System.exit(7);
-					}
-					break;
-				default:
-					Log.logger.warn("Unsupported key type " + def.getString(key + ".type") + " define found on " + key);
-					System.exit(8);
+			} catch (ConfigException.Parse e) {
+				Log.logger.fatal(e);
+				System.exit(8);
 			}
 		});
 		
