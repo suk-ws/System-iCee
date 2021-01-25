@@ -6,8 +6,7 @@ import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.Log;
 import kotlinx.coroutines.Job;
 import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.BotFactoryJvm;
-import net.mamoe.mirai.event.Events;
+import net.mamoe.mirai.BotFactory;
 import net.mamoe.mirai.utils.BotConfiguration;
 import net.mamoe.mirai.utils.LoggerAdapters;
 
@@ -24,8 +23,8 @@ public class MiraiQQ implements IBot {
 		@Override
 		public void run() {
 			bot.login();
-			Events.registerEvents(bot, new EventHandle());
-			bot.getFriend(863731218).sendMessage("HI,iCee!");
+			bot.getEventChannel().registerListenerHost(EventHandle.INSTANCE);
+			bot.getFriendOrFail(863731218).sendMessage("HI,iCee!");
 		}
 	}
 	
@@ -46,9 +45,10 @@ public class MiraiQQ implements IBot {
 		BotConfiguration conf = BotConfiguration.getDefault();
 		conf.setBotLoggerSupplier(bot1 -> LoggerAdapters.asMiraiLogger(Log.logger));
 		conf.setNetworkLoggerSupplier(bot1 -> LoggerAdapters.asMiraiLogger(Log.logger));
+		conf.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PAD);
 		
 		// 生成 bot 实例
-		return BotFactoryJvm.newBot(
+		return BotFactory.INSTANCE.newBot(
 				Conf.conf.getLong("module.bot.mirai.qqid"),
 				Conf.conf.getString("module.bot.mirai.password"),
 				conf

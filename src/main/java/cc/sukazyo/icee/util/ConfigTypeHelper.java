@@ -44,7 +44,7 @@ public class ConfigTypeHelper {
 	 * @throws ConfigException.WrongType 类型检查失败
 	 */
 	public static void verifyLong (Config defaults, Config user, String key) throws ConfigException.WrongType {
-		defaults.getLong(key);
+		user.getLong(key);
 		if (defaults.hasPath(key + ".required") && (user.getLong(key) > defaults.getLongList(key + ".required").get(1) || user.getLong(key) < defaults.getLongList(key + ".required").get(0))) {
 			throw new ConfigException.WrongType(user.origin(), "value of " + key + " (" + user.getString(key) + ") exceeds the required range ( " + defaults.getStringList(key+".required").toString() + ")");
 		}

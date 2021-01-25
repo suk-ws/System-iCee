@@ -3,14 +3,16 @@ package cc.sukazyo.icee.module.bot.mirai;
 import cc.sukazyo.icee.module.bot.CommonBotMessage;
 import cc.sukazyo.icee.system.Log;
 import net.mamoe.mirai.event.EventHandler;
-import net.mamoe.mirai.event.ListenerHost;
+import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.BotOfflineEvent;
 import net.mamoe.mirai.event.events.BotOnlineEvent;
 import net.mamoe.mirai.event.events.BotReloginEvent;
-import net.mamoe.mirai.message.FriendMessageEvent;
-import net.mamoe.mirai.message.GroupMessageEvent;
+import net.mamoe.mirai.event.events.FriendMessageEvent;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
 
-public class EventHandle implements ListenerHost {
+public class EventHandle extends SimpleListenerHost {
+	
+	public static final EventHandle INSTANCE = new EventHandle();
 	
 	@EventHandler
 	public void onGroupMessage(GroupMessageEvent event) {
