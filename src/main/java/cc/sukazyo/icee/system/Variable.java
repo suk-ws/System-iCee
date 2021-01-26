@@ -1,10 +1,10 @@
 package cc.sukazyo.icee.system;
 
-import cc.sukazyo.icee.module.bot.CommonBotMessage;
 import cc.sukazyo.icee.iCee;
+import cc.sukazyo.icee.module.bot.CommonBotMessage;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.mamoe.mirai.message.FriendMessageEvent;
-import net.mamoe.mirai.message.GroupMessageEvent;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.event.events.FriendMessageEvent;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

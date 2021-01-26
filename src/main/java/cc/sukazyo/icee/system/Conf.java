@@ -79,7 +79,7 @@ public class Conf {
 						throw new ConfigException.Parse(def.origin(), "Unsupported key type " + def.getString(key + ".type") + " define found on " + key);
 				}
 			} catch (ConfigException.WrongType e) {
-				Log.logger.fatal(e.getMessage());
+				Log.logger.fatal(e.getMessage(), e);
 				System.exit(7);
 			} catch (ConfigException.Missing e) {
 				Log.logger.fatal("Missing Config " + key + "!", e);

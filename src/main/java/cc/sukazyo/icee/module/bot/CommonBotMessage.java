@@ -5,10 +5,9 @@ import cc.sukazyo.icee.system.Variable;
 import cc.sukazyo.icee.util.CommandHelper;
 import cc.sukazyo.icee.util.FileHelper;
 import com.google.gson.Gson;
-import kotlin.Unit;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.mamoe.mirai.message.FriendMessageEvent;
-import net.mamoe.mirai.message.GroupMessageEvent;
+import net.mamoe.mirai.event.events.FriendMessageEvent;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,7 +91,7 @@ public class CommonBotMessage {
 		type = Type.MIRAI_GROUP;
 		miraiGroupEvent = event;
 		StringBuilder msgRev = new StringBuilder();
-		event.getMessage().forEachContent(node -> {
+		event.getMessage().forEach(node -> {
 			if (node instanceof net.mamoe.mirai.message.data.Image) {
 				Log.logger.info("IMAGE");
 			} else if (node instanceof net.mamoe.mirai.message.data.PlainText) {
@@ -106,7 +105,6 @@ public class CommonBotMessage {
 			} else {
 				Log.logger.info("UNDEFIENED");
 			}
-			return Unit.INSTANCE;
 		});
 		if(!event.getMessage().contentToString().equals("")) {
 			msgRev.append(event.getMessage().contentToString());
