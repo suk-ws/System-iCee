@@ -17,15 +17,18 @@ import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.util.Objects;
 
-public class Discord implements IBot {
+public class DiscordBot implements IBot {
 	
 	public JDA bot;
-	private final JDABuilder BUILDER;
+	private JDABuilder BUILDER;
 	
-	public Discord() {
+	public DiscordBot () { }
+	
+	public void initialize () {
 		
 		BUILDER = JDABuilder.createDefault(Conf.conf.getString("module.bot.discord.token"));
 		
+		// WIP Activity Customize
 		BUILDER.setActivity(Activity.of(Activity.ActivityType.WATCHING, "Sukazyo debug iCee"));
 		
 		BUILDER.addEventListeners(new TextMessageListener());
@@ -48,7 +51,7 @@ public class Discord implements IBot {
 				Log.logger.error("Login failed., please check your token or your network", e);
 			}
 		} else {
-			Log.logger.warn("Discord Bot is running or starting!");
+			Log.logger.warn("DiscordBot Bot is running or starting!");
 		}
 	}
 	
@@ -56,9 +59,9 @@ public class Discord implements IBot {
 	public void stop() {
 		if (getStatus().canStop()) {
 			bot.shutdownNow();
-			Log.logger.info("Discord Bot stoped.");
+			Log.logger.info("DiscordBot Bot stoped.");
 		} else {
-			Log.logger.warn("Discord Bot have already stoped!");
+			Log.logger.warn("DiscordBot Bot have already stoped!");
 		}
 		
 	}

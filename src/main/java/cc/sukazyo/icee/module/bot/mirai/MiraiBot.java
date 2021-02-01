@@ -12,7 +12,7 @@ import net.mamoe.mirai.utils.LoggerAdapters;
 
 import java.util.Objects;
 
-public class MiraiQQ implements IBot {
+public class MiraiBot implements IBot {
 	
 	private final Runner RUNNER = new Runner();
 	private Thread thread;
@@ -28,7 +28,9 @@ public class MiraiQQ implements IBot {
 		}
 	}
 	
-	public MiraiQQ() {
+	public MiraiBot() { }
+	
+	public void initialize () {
 		
 		// 启动 Mirai
 		if (Conf.conf.getBoolean("module.bot.mirai.apply")) {
@@ -46,6 +48,9 @@ public class MiraiQQ implements IBot {
 		conf.setBotLoggerSupplier(bot1 -> LoggerAdapters.asMiraiLogger(Log.logger));
 		conf.setNetworkLoggerSupplier(bot1 -> LoggerAdapters.asMiraiLogger(Log.logger));
 		conf.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PAD);
+//		conf.setDeviceInfo(new DeviceInfo(
+//          // TODO DeviceInfo Configuration
+//		));
 		
 		// 生成 bot 实例
 		return BotFactory.INSTANCE.newBot(

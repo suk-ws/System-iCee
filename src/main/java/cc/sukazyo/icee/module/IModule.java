@@ -4,6 +4,8 @@ import cc.sukazyo.icee.common.RunStatus;
 
 public interface IModule {
 	
+	void initialize();
+	
 	void start();
 	
 	void stop();

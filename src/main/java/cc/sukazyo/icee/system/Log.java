@@ -18,7 +18,7 @@ public class Log {
 	
 	public static final Logger logger = LogManager.getLogger(iCee.class.getName());
 	
-	public static void init () {
+	public static void initAsMainProgramMode () {
 		
 		if (iCee.DEBUG_MODE)
 			PROMPT = "[%d{yyyy-MM-dd HH:mm:ss}][%t][%C:%M:%L][%p]%m%n";
@@ -27,6 +27,11 @@ public class Log {
 		
 		setAppender(iCee.DEBUG_MODE?Level.DEBUG:Level.INFO, PROMPT);
 		
+	}
+	
+	public static void initAsCLIMode () {
+		PROMPT = "%m%n";
+		setAppender(iCee.DEBUG_MODE?Level.DEBUG:Level.INFO, PROMPT);
 	}
 	
 	private static void setAppender(Level level, String pattern) {
