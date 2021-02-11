@@ -8,12 +8,18 @@ public class CommandManager {
 	private static final HashMap<String, ICommand> commands = new HashMap<>();
 	private static final HashMap<String, String> parameters = new HashMap<>();
 	
-	public static void register (String name, ICommand executor) throws CommandException.CommandNameExistException {
-		if (commands.containsKey(name)) {
-			throw new CommandException.CommandNameExistException(); // TODO Parameter
-		} else {
-			commands.put(name, executor);
+	public static void register (ICommand executor) throws CommandException.CommandNameExistException {
+		for (String name : executor.getRegistryName()) {
+			if (commands.containsKey(name)) {
+				throw new CommandException.CommandNameExistException(); // TODO Parameter
+			} else {
+				commands.put(name, executor);
+			}
 		}
+	}
+	
+	public static HashMap<String, ICommand> getRegisteredCommandsMap () {
+		return commands;
 	}
 	
 	public static void execute(String[] args)

@@ -2,11 +2,18 @@ package cc.sukazyo.icee.system.command;
 
 import cc.sukazyo.icee.system.Log;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 
-public class CoreCommands {
+public abstract class CoreCommands implements ICommand {
 	
-	public static class CommandHelp implements ICommand {
+	public static class CommandHelp extends CoreCommands {
+		
+		@Override
+		public Collection<String> getRegistryName () {
+			return Arrays.asList((new String[]{"help"}).clone());
+		}
 		
 		@Override
 		public void execute(String[] args, HashMap<String, String> parameters) {
@@ -17,7 +24,7 @@ public class CoreCommands {
 	
 	public static void registerAll () {
 		try {
-			CommandManager.register("help", new CommandHelp());
+			CommandManager.register(new CommandHelp());
 		} catch (CommandException.CommandNameExistException e) {
 			Log.logger.fatal(e); // TODO Output
 		}

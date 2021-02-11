@@ -4,6 +4,8 @@ import cc.sukazyo.icee.common.RunStatus;
 import cc.sukazyo.icee.module.bot.IBot;
 import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.Log;
+import cc.sukazyo.icee.system.command.CommandException;
+import cc.sukazyo.icee.system.command.CommandManager;
 import kotlinx.coroutines.Job;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactory;
@@ -28,7 +30,13 @@ public class MiraiBot implements IBot {
 		}
 	}
 	
-	public MiraiBot() { }
+	public MiraiBot() {
+		try {
+			CommandManager.register(new MiraiCommands());
+		} catch (CommandException.CommandNameExistException e) {
+			e.printStackTrace(); // TODO Output
+		}
+	}
 	
 	public void initialize () {
 		

@@ -18,7 +18,7 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.3.0-dev";
-	public static final int BUILD_VER = 25;
+	public static final int BUILD_VER = 26;
 	public static final boolean DEBUG_MODE = true;
 	
 	public static CScanner console;
