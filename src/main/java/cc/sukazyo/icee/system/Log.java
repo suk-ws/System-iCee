@@ -18,7 +18,7 @@ public class Log {
 	
 	public static final Logger logger = LogManager.getLogger(iCee.class.getName());
 	
-	public static void initAsMainProgramMode () {
+	public static void initAsSystemMode () {
 		
 		if (iCee.DEBUG_MODE)
 			PROMPT = "[%d{yyyy-MM-dd HH:mm:ss}][%t][%C:%M:%L][%p]%m%n";

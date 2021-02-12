@@ -30,12 +30,8 @@ public class MiraiBot implements IBot {
 		}
 	}
 	
-	public MiraiBot() {
-		try {
-			CommandManager.register(new MiraiCommands());
-		} catch (CommandException.CommandNameExistException e) {
-			e.printStackTrace(); // TODO Output
-		}
+	public MiraiBot() throws CommandException.CommandNameConflictException {
+		CommandManager.register(new MiraiCommands());
 	}
 	
 	public void initialize () {

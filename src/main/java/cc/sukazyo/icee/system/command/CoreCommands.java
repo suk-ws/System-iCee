@@ -25,8 +25,9 @@ public abstract class CoreCommands implements ICommand {
 	public static void registerAll () {
 		try {
 			CommandManager.register(new CommandHelp());
-		} catch (CommandException.CommandNameExistException e) {
-			Log.logger.fatal(e); // TODO Output
+		} catch (CommandException.CommandNameConflictException e) {
+			Log.logger.fatal("Command conflict occurred while registering core commands!", e);
+			System.exit(9);
 		}
 	}
 	

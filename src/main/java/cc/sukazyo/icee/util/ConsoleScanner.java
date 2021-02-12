@@ -1,18 +1,18 @@
 package cc.sukazyo.icee.util;
 
-import cc.sukazyo.icee.iCee;
+import cc.sukazyo.icee.module.Modules;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.Conf;
 import net.dv8tion.jda.api.entities.Activity;
 
 import java.util.Scanner;
 
-public class CScanner extends Thread {
+public class ConsoleScanner extends Thread {
 	
 	private final Scanner scanner = new Scanner(System.in);
 	public String[] command;
 	
-	public CScanner () { this.setName("SysConsole"); }
+	public ConsoleScanner() { this.setName("SysConsole"); }
 	
 	@Override
 	public void run() {
@@ -31,39 +31,39 @@ public class CScanner extends Thread {
 				case "discord":
 					switch (command[1]) {
 						case "start":
-							iCee.discord.start();
+							Modules.discord.start();
 							break;
 						case "state":
-							Log.logger.info("Discord Bot Now State : " + iCee.discord.getStatus());
+							Log.logger.info("Discord Bot Now State : " + Modules.discord.getStatus());
 							break;
 						case "stop":
 						case "exit":
 						case "quit":
-							iCee.discord.stop();
+							Modules.discord.stop();
 							break;
 						case "activity":
 							switch (command[2]) {
 								case "playing":
-									iCee.discord.setBotActivity(Activity.ActivityType.DEFAULT, command[3]);
+									Modules.discord.setBotActivity(Activity.ActivityType.DEFAULT, command[3]);
 									Log.logger.info("Activity set success! The Value will be apply next start.");
 									break;
 								case "listening":
-									iCee.discord.setBotActivity(Activity.ActivityType.LISTENING, command[3]);
+									Modules.discord.setBotActivity(Activity.ActivityType.LISTENING, command[3]);
 									Log.logger.info("Activity set success! The Value will be apply next start.");
 									break;
 								case "watching":
-									iCee.discord.setBotActivity(Activity.ActivityType.WATCHING, command[3]);
+									Modules.discord.setBotActivity(Activity.ActivityType.WATCHING, command[3]);
 									Log.logger.info("Activity set success! The Value will be apply next start.");
 									break;
 								case "streaming":
-									iCee.discord.setBotActivity(Activity.ActivityType.STREAMING, command[3]);
+									Modules.discord.setBotActivity(Activity.ActivityType.STREAMING, command[3]);
 									break;
 								default:
 									Log.logger.warn("No Activity " + command[2] + ", please check your spell.");
 							}
 							break;
 						case "send":
-							iCee.discord.sendDebug(706505304489197568L);
+							Modules.discord.sendDebug(706505304489197568L);
 							break;
 						default:
 							Log.logger.warn("No option <" + command[1] + "> exist!");
@@ -73,13 +73,13 @@ public class CScanner extends Thread {
 				case "qq":
 					switch (command[1]) {
 						case "start":
-							iCee.mirai.start();
+							Modules.mirai.start();
 							break;
 						case "state":
-							Log.logger.info("QQ Bot Mirai Now State : " + iCee.mirai.getStatus());
+							Log.logger.info("QQ Bot Mirai Now State : " + Modules.mirai.getStatus());
 							break;
 						case "stop":
-							iCee.mirai.stop();
+							Modules.mirai.stop();
 							break;
 						default:
 							Log.logger.warn("No option <" + command[1] + "> exist!");
