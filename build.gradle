@@ -25,14 +25,16 @@ repositories {
 }
 
 dependencies {
-	implementation "net.dv8tion:JDA:4.1.1_127"
-	implementation 'com.google.code.gson:gson:2.8.6'
-	compile group: 'net.mamoe', name: 'mirai-core', version: '2.1.0'
-	implementation "com.typesafe:config:1.4.0"
-	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.0'
-	compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.14.0'
-	implementation 'com.github.Eyre-S:ResourceTools:0.2.2'
+	
+	implementation "net.dv8tion:JDA:${javaDiscordApiVersion}"
+	implementation "com.google.code.gson:gson:${gsonVersion}"
+	compile group: 'net.mamoe', name: 'mirai-core', version: miraiVersion
+	implementation "com.typesafe:config:${typesafeVersion}"
+	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4jVersion
+	compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4jVersion
+	implementation "com.github.Eyre-S:ResourceTools:${resToolsVersion}"
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+	
 }
 
 tasks.withType(JavaCompile) {
@@ -44,5 +46,6 @@ apply plugin: 'application'
 
 shadowJar {
 	mainClassName = 'cc.sukazyo.icee.iCee'
-	archiveFileName = 'System_iCee-' + VERSION + '-build' + BUILD + '.jar'
+	archiveBaseName.set("System_iCee")
+	archiveVersion.set("${VERSION}-build${BUILD}")
 }
