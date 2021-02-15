@@ -1,5 +1,7 @@
 # Error Code List
 
+<br/>
+
 ### System.exit(0);
 
 > 正常情况下的退出码，
@@ -8,6 +10,8 @@
 > - 当 CLI 进程的工作结束时 `cc.sukazyo.icee.iCee#main()`
 > - 当程序第一次生成配置文件时自动结束等待用户进行配置  `cc.sukazyo.icee.system.Conf#load()`
 
+<br/>
+
 ### ~~System.exit.(1);~~
 
 > ~~不要问，问就是开发者也不知道~~
@@ -15,6 +19,8 @@
 > ~~这个错误码没有在代码中被搜索到，但是鉴于后面的错误码已经被使用了，所以开发者觉得使用它可能会造成冲突~~
 > 
 > ~~所以如果你发现程序返回了这个错误码，那就是出现玄学了，请一定要报告a！~~
+
+<br/>
 
 ### System.exit(2);
 
@@ -26,6 +32,8 @@ Can't output config `iniFile` to the root dir!
 > 
 > 发生于<br/>`cc.sukazyo.icee.system.Conf#summonConf(String)`
 
+<br/>
+
 ### System.exit(3);
 
 Can't copy config `iniFile`
@@ -35,6 +43,8 @@ Can't copy config `iniFile`
 > 可能在配置文件自动升级时或者初次开启程序生成配置文件时
 >
 > 发生于<br/>`cc.sukazyo.icee.system.Conf#summonConf(String)`
+
+<br/>
 
 ### System.exit(4);
 
@@ -46,6 +56,8 @@ Default Config File Not Found, might the package had benn broken!
 >
 > 发生于<br/>`cc.sukazyo.icee.system.Conf#load()`
 
+<br/>
+
 ### System.exit(5);
 
 en_us config template not found or out of date, might the package had benn broken!
@@ -55,6 +67,8 @@ en_us config template not found or out of date, might the package had benn broke
 > 英文配置文件正常情况下是绝对会在包内存在的，同样，鉴于普通用户并不会对程序文件本身作出修改，因此这个问题很可能是在程序打包或者传输时的错误导致的
 >
 > 发生于<br/>`cc.sukazyo.icee.system.Conf#summonConf(String)`
+
+<br/>
 
 ### System.exit(6);
 
@@ -70,6 +84,8 @@ Missing Config `key`!
 >
 > 发生于<br/>`cc.sukazyo.icee.system.Conf#load()`
 
+<br/>
+
 ### System.exit(7);
 
 > 当程序在进行配置文件检查时，如果配置的给予类型和要求类型不同则会发生此错误
@@ -80,7 +96,7 @@ Missing Config `key`!
 >
 > 发生于<br/>`cc.sukazyo.icee.system.Conf#load()`
 
-
+<br/>
 
 ### System.exit(8);
 
@@ -95,6 +111,8 @@ Missing Config `key`!
 >
 > 发生于<br/>`cc.sukazyo.icee.system.Conf#load()`
 
+<br/>
+
 ### System.exit(9);
 
 Command conflict occurred while registering core commands!
@@ -106,6 +124,8 @@ Command conflict occurred while registering core commands!
 > ~~（至少是正常发行版范围内？）~~
 > 
 > 发生于<br/>`cc.sukazyo.icee.system.command.CoreCommands#registerAll()`
+
+<br/>
 
 ### System.exit(10);
 
