@@ -69,11 +69,11 @@ public class Conf {
 					case "string": // 字段型
 						ConfigTypeHelper.verifyString(def, conf, key);
 						break;
-					case "ip" :
-						ConfigTypeHelper.verifyIp(def, conf, key);
+					case "ipsection" :
+						ConfigTypeHelper.verifyIpSection(def, conf, key);
 						break;
-					case "ip-list":
-						ConfigTypeHelper.verifyIpList(def, conf, key);
+					case "ipsection-list":
+						ConfigTypeHelper.verifyIpSectionList(def, conf, key);
 						break;
 					default:
 						throw new ConfigException.Parse(def.origin(), "Unsupported key type " + def.getString(key + ".type") + " define found on " + key);

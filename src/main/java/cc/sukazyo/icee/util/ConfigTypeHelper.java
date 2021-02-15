@@ -79,39 +79,37 @@ public class ConfigTypeHelper {
 	}
 	
 	/**
-	 * 检查是否为`ip`类型
+	 * 检查是否为`ip区间`类型
 	 *
-	 * ip类型的要求详见
-	 * @see SimpleUtils#isIp(String)
+	 * ip区间类型的要求详见
+	 * @see SimpleUtils#isIpSection(String)
 	 *
 	 * @param defaults 要求配置文件 /unused/
 	 * @param user 用户配置文件
 	 * @param key 配置键
 	 * @throws ConfigException.WrongType 类型检查失败
 	 */
-	@SuppressWarnings("unused")
-	public static void verifyIp (Config defaults, Config user, String key) throws ConfigException.WrongType {
-		if (!SimpleUtils.isIp(user.getString(key))) {
-			throw new ConfigException.WrongType(user.origin(), "value of " + key + " (" + user.getString(key) + ") is not a vaild ip!");
+	public static void verifyIpSection (Config defaults, Config user, String key) throws ConfigException.WrongType {
+		if (!SimpleUtils.isIpSection(user.getString(key))) {
+			throw new ConfigException.WrongType(user.origin(), "value of " + key + " (" + user.getString(key) + ") is not a valid ip section!");
 		}
 	}
 	
 	/**
-	 * 检查是否为一个ip列表
+	 * 检查是否为一个ip区间列表
 	 *
-	 * ip类型的要求详见
-	 * @see SimpleUtils#isIp(String)
+	 * ip区间类型的要求详见
+	 * @see SimpleUtils#isIpSection(String)
 	 *
 	 * @param defaults 要求配置文件 /unused/
 	 * @param user 用户配置文件
 	 * @param key 配置键
 	 * @throws ConfigException.WrongType 类型检查失败
 	 */
-	@SuppressWarnings("unused")
-	public static void verifyIpList (Config defaults, Config user, String key) throws ConfigException.WrongType {
+	public static void verifyIpSectionList (Config defaults, Config user, String key) throws ConfigException.WrongType {
 		for (String i : user.getStringList(key)) {
-			if (!SimpleUtils.isIp(i)) {
-				throw new ConfigException.WrongType(user.origin(), "value of " + key + " (" + i + ") is not a vaild ip!");
+			if (!SimpleUtils.isIpSection(i)) {
+				throw new ConfigException.WrongType(user.origin(), "value of " + key + " (" + i + ") is not a valid ip section!");
 			}
 		}
 	}
