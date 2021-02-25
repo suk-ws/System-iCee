@@ -3,7 +3,7 @@ package cc.sukazyo.icee.system.command;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class CommandWithAlias implements ICommandWithAlias {
+public abstract class CommandWithChildAndAlias extends CommandWithChild implements ICommandWithAlias {
 	
 	public List<String> getAvailableAliases () {
 		List<String> names = new ArrayList<>();

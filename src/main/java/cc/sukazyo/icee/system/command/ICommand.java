@@ -1,7 +1,7 @@
 package cc.sukazyo.icee.system.command;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface ICommand {
 	
@@ -9,11 +9,7 @@ public interface ICommand {
 	
 	CommandType getType();
 	
-	void execute(String[] args, HashMap<String, String> parameters);
-	
-	String getGrammar ();
-	
-	String getIntroduction ();
+	void execute(String[] args, Map<String, String> parameters);
 	
 	enum CommandType {
 		
@@ -25,9 +21,15 @@ public interface ICommand {
 		
 		/**
 		 * 辅助级别的命令
-		 * 这种命令
+		 * 这种命令会直接在CLI进程中执行，不调用系统进程
 		 */
-		HELPER_COMMAND;
+		HELPER_COMMAND,
+		
+		/**
+		 * 多重类型的命令
+		 * 具体的执行逻辑将会以给定的剩余参数判断
+		 */
+		MULTIPLE_COMMAND;
 		
 		public char getPrefix () {
 			switch (this) {
@@ -35,6 +37,8 @@ public interface ICommand {
 					return '@';
 				case HELPER_COMMAND:
 					return '>';
+				case MULTIPLE_COMMAND:
+					return '&';
 				default:
 					return getPrefixOfUnknown();
 			}

@@ -1,38 +1,32 @@
 package cc.sukazyo.icee.module.bot.mirai;
 
 import cc.sukazyo.icee.system.Lang;
-import cc.sukazyo.icee.system.command.CommandWithAlias;
+import cc.sukazyo.icee.system.command.CommandWithChildAndAlias;
+import cc.sukazyo.icee.system.command.ICommandHelped;
 
-import java.util.HashMap;
-
-public class MiraiCommands extends CommandWithAlias {
+public class MiraiCommands extends CommandWithChildAndAlias implements ICommandHelped {
 	
 	private static final String NAME = "mirai";
 	private static final String[] ALIAS = new String[]{"qq"};
 	
 	@Override
-	protected String getName() { return NAME; }
+	public String getName() { return NAME; }
 	@Override
-	protected String[] getAliases() { return ALIAS; }
-	
-	@Override
-	public CommandType getType() {
-		return CommandType.HELPER_COMMAND;
-	}
-	
-	@Override
-	public void execute(String[] args, HashMap<String, String> parameters) {
-	
-	}
+	public String[] getAliases() { return ALIAS; }
 	
 	@Override
 	public String getGrammar () {
 		return null;
 	}
-	
+
 	@Override
 	public String getIntroduction() {
 		return Lang.get("module.mirai.command.introduction");
+	}
+
+	@Override
+	public String getHelp () {
+		return null;
 	}
 	
 }
