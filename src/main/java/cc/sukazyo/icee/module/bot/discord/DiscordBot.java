@@ -5,7 +5,7 @@ import cc.sukazyo.icee.common.RunStatus;
 import cc.sukazyo.icee.module.bot.IBot;
 import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.Log;
-import cc.sukazyo.icee.util.FileHelper;
+import cc.sukazyo.icee.system.Resources;
 import com.google.gson.Gson;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -78,8 +78,8 @@ public class DiscordBot implements IBot {
 							.setColor(0x7db9de)
 							.setTitle("iCee Message")
 							.setThumbnail("https://srv.sukazyo.cc/assets/icee-icon.png")
-							.setFooter("System iCee | since 2020\nCOPYFALSE © SUKAZYO WORKSHOP 2019 - 2020", "https://srv.sukazyo.cc/assets/icee-icon.png")
-							.addField("iCee Hi", FileHelper.getDataContent("/debug.txt"), false)
+							.setFooter("System iCee | since 2020\nCOPYWRONG © SUKAZYO WORKSHOP 2019 - 2020", "https://srv.sukazyo.cc/assets/icee-icon.png")
+							.addField("iCee Hi", Resources.getDataAsString("/debug.txt"), false)
 							.addField("iCee Debug", "awodapi ndoa dpanw p", true)
 							.addField("iCee Debug", "awo dpanw p", true)
 							.addField("iCee Debug", "aw ndoa dp p", true)

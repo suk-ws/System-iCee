@@ -25,7 +25,7 @@ public class Conf {
 		
 		// 加载默认配置文件
 		try {
-			def = ConfigFactory.parseString(FileHelper.pack.getResource("default/icee.conf").readAsString());
+			def = ConfigFactory.parseString(Resources.getMetaFileAsString("icee.conf"));
 		} catch (IOException e) {
 			Log.logger.fatal("Default Config File Not Found, might the package had benn broken!", e);
 			System.exit(4);
@@ -112,13 +112,13 @@ public class Conf {
 		// 获取配置文件模板
 		String template = null;
 		try {
-			template = FileHelper.pack.getResource("default/" + confTag + "_" + Locale.getDefault().toString().toLowerCase() + ".conf").readAsString();
+			template = Resources.getMetaFileAsString(confTag + "_" + Locale.getDefault().toString().toLowerCase() + ".conf");
 			if (ConfigFactory.parseString(template).getInt("format") < def.getInt("format"))
 				throw new Exception("Config Template Out of date");
 		} catch (Exception e) {
 			Log.logger.warn("Locale are not support on config " + confTag + ", using en_us to summon the default config file.");
 			try {
-				template = FileHelper.pack.getResource("default/" + confTag + "_en_us.conf").readAsString();
+				template = Resources.getMetaFileAsString(confTag + "_en_us.conf");
 				if (ConfigFactory.parseString(template).getInt("format") < def.getInt("format"))
 					throw new Exception("Config Template Out of date");
 			} catch (Exception exception) {

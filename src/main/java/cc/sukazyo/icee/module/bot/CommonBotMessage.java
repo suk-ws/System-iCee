@@ -1,9 +1,9 @@
 package cc.sukazyo.icee.module.bot;
 
 import cc.sukazyo.icee.system.Log;
+import cc.sukazyo.icee.system.Resources;
 import cc.sukazyo.icee.system.Variable;
 import cc.sukazyo.icee.util.CommandHelper;
-import cc.sukazyo.icee.util.FileHelper;
 import com.google.gson.Gson;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
@@ -161,7 +161,7 @@ public class CommonBotMessage {
 			returned = CommandReturn.command(CommandHelper.format(commander.group(1)), this);
 		} else {
 			try {
-				returned = FileHelper.getDataContent("/debug.txt");
+				returned = Resources.getDataAsString("/debug.txt");
 			} catch (IOException e) {
 				returned = "Error";
 			}
