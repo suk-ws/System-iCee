@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration status="warn">
-    <Properties>
-        <Property name="console">[%d{yyyy-MM-dd HH:mm:ss}][%t][%p]%m%n</Property>
-        <Property name="debug">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%t][%l][%p]%m%n</Property>
-        <Property name="error">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%t][%C:%M][%p]%m%n</Property>
-    </Properties>
-    <Appenders>
-<!--        <Console name="Console" target="SYSTEM_OUT">-->
-<!--            <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>-->
-<!--            <PatternLayout pattern="${console}" />-->
-<!--        </Console>-->
-        <RollingFile name="DebugFile" fileName="./log/debug.log" filePattern="./log/debug-%d{yyyy-MM-dd}-%i.log">
-            <ThresholdFilter level="all" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="${debug}"/>
-            <Policies>
-                <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="1 MB" />
-            </Policies>
-            <DefaultRolloverStrategy max="5" />
-        </RollingFile>
-        <RollingFile name="ErrorFile" fileName="./log/error.log" filePattern="./log/error-%d{yyyy-MM-dd}.log">
-            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="${error}"/>
-            <Policies>
-                <TimeBasedTriggeringPolicy interval="1"/>
-            </Policies>
-            <DefaultRolloverStrategy max="30" />
-        </RollingFile>
-    </Appenders>
-    <Loggers>
-        <Root level="all">
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="DebugFile"/>
-            <AppenderRef ref="ErrorFile"/>
-        </Root>
-    </Loggers>
+	<Properties>
+		<Property name="console">[%d{yyyy-MM-dd HH:mm:ss}][%t][%p]%m%n</Property>
+		<Property name="debug">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%t][%l][%p]%m%n</Property>
+		<Property name="error">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%t][%C:%M][%p]%m%n</Property>
+	</Properties>
+	<Appenders>
+<!--		<Console name="Console" target="SYSTEM_OUT">-->
+<!--			<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>-->
+<!--			<PatternLayout pattern="${console}" />-->
+<!--		</Console>-->
+		<RollingFile name="DebugFile" fileName="./log/debug.log" filePattern="./log/debug-%d{yyyy-MM-dd}-%i.log">
+			<ThresholdFilter level="all" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="${debug}"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="1 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="5" />
+		</RollingFile>
+		<RollingFile name="ErrorFile" fileName="./log/error.log" filePattern="./log/error-%d{yyyy-MM-dd}.log">
+			<ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="${error}"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"/>
+			</Policies>
+			<DefaultRolloverStrategy max="30" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Root level="all">
+<!--			<AppenderRef ref="Console"/>-->
+			<AppenderRef ref="DebugFile"/>
+			<AppenderRef ref="ErrorFile"/>
+		</Root>
+	</Loggers>
 </Configuration>

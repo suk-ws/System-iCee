@@ -16,7 +16,7 @@ public class Log {
 	public static final String CONSOLE_APPENDER_NAME = "Console";
 	public static String PROMPT;
 	
-	public static final Logger logger = LogManager.getLogger(iCee.class.getName());
+	public static final Logger logger = LogManager.getLogger(iCee.class);
 	
 	public static void initAsSystemMode () {
 		
