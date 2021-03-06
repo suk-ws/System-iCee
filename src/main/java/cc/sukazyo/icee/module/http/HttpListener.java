@@ -1,9 +1,11 @@
 package cc.sukazyo.icee.module.http;
 
 import cc.sukazyo.icee.common.RunStatus;
-import cc.sukazyo.icee.module.IModule;
+import cc.sukazyo.icee.iCee;
+import cc.sukazyo.icee.system.module.IModule;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.Conf;
+import cc.sukazyo.icee.util.Var;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -33,12 +35,10 @@ public class HttpListener implements IModule {
 	
 	}
 	
-	@Override
 	public void start () {
 		// TODO function
 	}
 	
-	@Override
 	public void stop () {
 		// TODO function
 	}
@@ -46,6 +46,21 @@ public class HttpListener implements IModule {
 	@Override
 	public RunStatus getStatus () {
 		return null;// TODO function
+	}
+	
+	@Override
+	public String getRegistryName () {
+		return "http";
+	}
+	
+	@Override
+	public String getVersion () {
+		return iCee.VERSION;
+	}
+	
+	@Override
+	public String getDisplayVersion () {
+		return Var.ICEE_VERSION_DISPLAY.value;
 	}
 	
 }

@@ -37,7 +37,7 @@ public class Log {
 	private static void setAppender(Level level, String pattern) {
 		final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
 		final org.apache.logging.log4j.core.config.Configuration config = ctx.getConfiguration();
-		final PatternLayout layout = PatternLayout.newBuilder().withCharset(StandardCharsets.UTF_8).withConfiguration(config).withPattern(pattern).build();
+		final PatternLayout layout = PatternLayout.newBuilder().withCharset(Resources.CHARSET).withConfiguration(config).withPattern(pattern).build();
 		final Appender appender = ConsoleAppender.newBuilder().setName(Log.CONSOLE_APPENDER_NAME).setLayout(layout).withImmediateFlush(true).build();
 		appender.start();
 		config.addAppender(appender);

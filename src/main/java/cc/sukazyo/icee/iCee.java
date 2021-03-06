@@ -2,8 +2,10 @@ package cc.sukazyo.icee;
 
 import cc.sukazyo.icee.module.Modules;
 import cc.sukazyo.icee.system.Conf;
-import cc.sukazyo.icee.system.Lang;
-import cc.sukazyo.icee.system.ModuleManager;
+import cc.sukazyo.icee.system.I18n;
+import cc.sukazyo.icee.system.module.AfferentModulesRegister;
+import cc.sukazyo.icee.system.module.IModule;
+import cc.sukazyo.icee.system.module.ModuleManager;
 import cc.sukazyo.icee.system.command.CommandException;
 import cc.sukazyo.icee.system.command.CommandManager;
 import cc.sukazyo.icee.system.Log;
@@ -16,15 +18,23 @@ import java.util.Calendar;
 public class iCee {
 	
 	public static final String PACKID = "icee";
-	public static final String VERSION = "0.3.1-dev";
-	public static final int BUILD_VER = 31;
+	public static final String VERSION = "0.3.2-dev";
+	public static final int BUILD_VER = 32;
 	public static final boolean DEBUG_MODE = true;
 	
 	public static ConsoleScanner console;
 	
+	public static void main (String[] args, IModule... afferentMod) {
+		
+		AfferentModulesRegister.put(afferentMod);
+		
+		main(args);
+		
+	}
+	
 	public static void main (String[] args) {
 		
-		if (args != null && args.length == 0) {
+		if (args == null || args.length == 0) {
 			// 启动主程序
 			initializeAsSystemMode();
 		} else {
@@ -35,7 +45,6 @@ public class iCee {
 			} catch (CommandException.ParameterDuplicatedException | CommandException.CommandNotFoundException | CommandException.ParameterValueUnavailableException e) {
 				Log.logger.fatal("The command cannot be executed due to the following reasons:\n" + e.getMessage());
 			}
-			
 		}
 		
 	}
@@ -57,7 +66,6 @@ public class iCee {
 		Log.logger.info("                                                 Running at " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()) + "                   ");
 		Log.logger.info("==================================================================================================");
 		commonUtilsLoad();
-		Modules.registerModules();
 		ModuleManager.initializeRegisteredModules();
 		Log.logger.info("Starting Console Scanner...");
 		iCee.console = new ConsoleScanner();
@@ -68,7 +76,6 @@ public class iCee {
 	private static void initializeAsCLIMode () {
 		Log.initAsCLIMode();
 		commonUtilsLoad();
-		Modules.registerModules();
 		Log.logger.info("====================================");
 //		Log.logger.info("==                                ==");
 		Log.logger.info("==        System iCee CLI         ==");
@@ -78,9 +85,11 @@ public class iCee {
 	
 	private static void commonUtilsLoad () {
 		Conf.load();
-		Lang.init();
+		I18n.init();
 		CoreCommands.registerAll();
-		Log.logger.info("Loaded System Commons:(Config, Language and CoreCommands)");
+		Modules.registerModules();
+		AfferentModulesRegister.register();
+		Log.logger.info("Loaded System Commons:(config, language, core-commands, and build-in&afferent modules)");
 	}
 	
 }

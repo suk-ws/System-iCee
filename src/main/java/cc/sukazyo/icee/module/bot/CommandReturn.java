@@ -1,6 +1,6 @@
 package cc.sukazyo.icee.module.bot;
 
-import cc.sukazyo.icee.system.Lang;
+import cc.sukazyo.icee.system.I18n;
 import cc.sukazyo.icee.system.Variable;
 
 public class CommandReturn {
@@ -37,17 +37,17 @@ public class CommandReturn {
 				
 				if (local.toString().equals("command.unknown.child")) {
 					// 处理子命令错误
-					returnMsg = Variable.compile(Lang.get("command.unknown.child"), comm, 1);
+					returnMsg = Variable.compile(I18n.get("command.unknown.child"), comm, 1);
 				} else {
 					// bot 类型 append
 					local.append(typeAppend(message.type));
-					returnMsg = Lang.get(local.toString());
+					returnMsg = I18n.get(local.toString());
 				}
 				break;
 				
 			// 找不到命令
 			default:
-				returnMsg = Variable.compile(Lang.get("command.unknown"), comm, 0);
+				returnMsg = Variable.compile(I18n.get("command.unknown"), comm, 0);
 		}
 		
 		return returnMsg;

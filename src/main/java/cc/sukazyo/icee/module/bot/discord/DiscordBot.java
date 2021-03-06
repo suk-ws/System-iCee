@@ -1,11 +1,13 @@
 package cc.sukazyo.icee.module.bot.discord;
 
+import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.module.bot.discord.event.TextMessageListener;
 import cc.sukazyo.icee.common.RunStatus;
 import cc.sukazyo.icee.module.bot.IBot;
 import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.Resources;
+import cc.sukazyo.icee.util.Var;
 import com.google.gson.Gson;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -121,6 +123,21 @@ public class DiscordBot implements IBot {
 				break;
 		}
 		throw new RunStatus.StatusUnknownException("Unsupported Status of JDA.Status:" + bot.getStatus().name());
+	}
+	
+	@Override
+	public String getRegistryName () {
+		return "discord";
+	}
+	
+	@Override
+	public String getVersion () {
+		return iCee.VERSION;
+	}
+	
+	@Override
+	public String getDisplayVersion () {
+		return Var.ICEE_VERSION_DISPLAY.value;
 	}
 	
 }

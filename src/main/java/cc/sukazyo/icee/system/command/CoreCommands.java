@@ -1,6 +1,6 @@
 package cc.sukazyo.icee.system.command;
 
-import cc.sukazyo.icee.system.Lang;
+import cc.sukazyo.icee.system.I18n;
 import cc.sukazyo.icee.system.Log;
 
 import java.util.*;
@@ -86,7 +86,7 @@ public abstract class CoreCommands implements ICommand, ICommandHelped {
 								helper.append("N/A");
 							else helper.append(((ICommandHelped)command).getIntroduction());
 						} else {
-							helper.append(" - ").append(Lang.get("command.help.unsupported"));
+							helper.append(" - ").append(I18n.get("command.help.unsupported"));
 						}
 						helper.append('\n');
 						// 输出命令的别名
@@ -117,7 +117,7 @@ public abstract class CoreCommands implements ICommand, ICommandHelped {
 		
 		@Override
 		public String getIntroduction () {
-			return Lang.get("command.help.introduction");
+			return I18n.get("command.help.introduction");
 		}
 		
 		@Override
@@ -155,7 +155,7 @@ public abstract class CoreCommands implements ICommand, ICommandHelped {
 		}
 		@Override
 		public String getIntroduction() {
-			return Lang.get("command.exit.introduction");
+			return I18n.get("command.exit.introduction");
 		}
 		
 		@Override

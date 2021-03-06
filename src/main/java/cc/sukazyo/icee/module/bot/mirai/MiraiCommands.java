@@ -1,6 +1,6 @@
 package cc.sukazyo.icee.module.bot.mirai;
 
-import cc.sukazyo.icee.system.Lang;
+import cc.sukazyo.icee.system.I18n;
 import cc.sukazyo.icee.system.command.CommandWithChildAndAlias;
 import cc.sukazyo.icee.system.command.ICommandHelped;
 
@@ -21,7 +21,7 @@ public class MiraiCommands extends CommandWithChildAndAlias implements ICommandH
 
 	@Override
 	public String getIntroduction() {
-		return Lang.get("module.mirai.command.introduction");
+		return I18n.get("module.mirai.command.introduction");
 	}
 
 	@Override

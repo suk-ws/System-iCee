@@ -1,11 +1,13 @@
 package cc.sukazyo.icee.module.bot.mirai;
 
 import cc.sukazyo.icee.common.RunStatus;
+import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.module.bot.IBot;
 import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.command.CommandException;
 import cc.sukazyo.icee.system.command.CommandManager;
+import cc.sukazyo.icee.util.Var;
 import kotlinx.coroutines.Job;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactory;
@@ -34,6 +36,7 @@ public class MiraiBot implements IBot {
 		CommandManager.register(new MiraiCommands());
 	}
 	
+	@Override
 	public void initialize () {
 		
 		// 启动 Mirai
@@ -65,7 +68,6 @@ public class MiraiBot implements IBot {
 		
 	}
 	
-	@Override
 	public void start () {
 		if (getStatus().canStart()) {
 			RUNNER.bot = createBot();
@@ -77,7 +79,6 @@ public class MiraiBot implements IBot {
 		}
 	}
 	
-	@Override
 	public void stop () {
 		if (getStatus().canStop()) {
 			RUNNER.bot.close(null);
@@ -98,6 +99,21 @@ public class MiraiBot implements IBot {
 		} else {
 			return RunStatus.OFF;
 		}
+	}
+	
+	@Override
+	public String getRegistryName () {
+		return "qq_mirai";
+	}
+	
+	@Override
+	public String getVersion () {
+		return iCee.VERSION;
+	}
+	
+	@Override
+	public String getDisplayVersion () {
+		return Var.ICEE_VERSION_DISPLAY.value;
 	}
 	
 }

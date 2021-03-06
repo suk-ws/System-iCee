@@ -1,6 +1,9 @@
 package cc.sukazyo.icee.util;
 
+import cc.sukazyo.icee.system.Resources;
+
 import java.io.*;
+import java.util.Scanner;
 
 public class FileHelper {
 	
@@ -9,14 +12,11 @@ public class FileHelper {
 	 *
 	 * @param i InputStream
 	 * @return 输入流中的字符串
-	 * @throws IOException 读取失败
 	 */
-	public static String getContentFromStream (InputStream i) throws IOException {
-		String str = null;
-		byte[] data = new byte[i.available()];
-		if (i.read(data) > -1) {
-			str = new String(data);
-		}
+	public static String getContentFromStream (InputStream i) {
+		Scanner s = new Scanner(i, Resources.CHARSET.name());
+		final String str = s.useDelimiter("\\A").next();
+		s.close();
 		return str;
 	}
 	
