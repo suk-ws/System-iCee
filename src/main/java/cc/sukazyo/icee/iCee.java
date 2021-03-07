@@ -3,6 +3,7 @@ package cc.sukazyo.icee;
 import cc.sukazyo.icee.module.Modules;
 import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.I18n;
+import cc.sukazyo.icee.system.InstanceManager;
 import cc.sukazyo.icee.system.module.AfferentModulesRegister;
 import cc.sukazyo.icee.system.module.IModule;
 import cc.sukazyo.icee.system.module.ModuleManager;
@@ -19,7 +20,7 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.3.2-dev";
-	public static final int BUILD_VER = 32;
+	public static final int BUILD_VER = 33;
 	public static final boolean DEBUG_MODE = true;
 	
 	public static ConsoleScanner console;
@@ -49,8 +50,27 @@ public class iCee {
 		
 	}
 	
+	public static void exit(int status) {
+		Log.logger.info("iCee System exit with status " + status);
+		InstanceManager.releaseLock();
+		System.exit(status);
+	}
+	
 	private static void initializeAsSystemMode () {
 		Log.initAsSystemMode();
+		if (!InstanceManager.lock()) {
+			Log.logger.fatal(
+					"There is already an instance running on the directory.\n" +
+				    "Due to the stability and functionality reasons, iCee doesn't support running multiple instance in one directory.\n" +
+				    "If you really want to run multiple instance on single machine,\n" +
+				    "at present, you can copy iCee binary file to other directory, and run it.\n" +
+					"\n" +
+					"Current Run Directory: " + System.getProperty("user.dir") + "\n" +
+					"This Processor PID: " + InstanceManager.currentPID() + "\n" +
+					"Running Instance PID: " + InstanceManager.instancePID()
+		    );
+		 	exit(11);
+		 }
 		// 主程序开始的标志输出
 		Log.logger.info("==================================================================================================");
 		Log.logger.info("                                                                                                  ");

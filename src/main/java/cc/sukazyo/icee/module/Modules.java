@@ -1,5 +1,6 @@
 package cc.sukazyo.icee.module;
 
+import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.module.bot.discord.DiscordBot;
 import cc.sukazyo.icee.module.bot.mirai.MiraiBot;
 import cc.sukazyo.icee.module.http.HttpListener;
@@ -25,7 +26,7 @@ public class Modules {
 			
 		} catch (CommandException.CommandNameConflictException e) {
 			Log.logger.fatal("Command Conflict when registering Built-in Module!", e);
-			System.exit(10);
+			iCee.exit(10);
 		}
 		
 		

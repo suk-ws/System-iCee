@@ -1,5 +1,6 @@
 package cc.sukazyo.icee.system;
 
+import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.util.ConfigTypeHelper;
 import cc.sukazyo.icee.util.FileHelper;
 import com.typesafe.config.Config;
@@ -28,7 +29,7 @@ public class Conf {
 			def = ConfigFactory.parseString(Resources.getMetaFileAsString("icee.conf"));
 		} catch (IOException e) {
 			Log.logger.fatal("Default Config File Not Found, might the package had benn broken!", e);
-			System.exit(4);
+			iCee.exit(4);
 		}
 		
 		File sysConf = new File("./icee.conf");
@@ -37,7 +38,7 @@ public class Conf {
 			Log.logger.warn("检测到没有配置文件，请等待系统生成默认配置文件后填写配置信息");
 			summonConf(FileHelper.getNamePured(sysConf));
 			Log.logger.info("Summon properties done.");
-			System.exit(0);
+			iCee.exit(0);
 		}
 		
 		conf = ConfigFactory.parseFile(sysConf);
@@ -80,13 +81,13 @@ public class Conf {
 				}
 			} catch (ConfigException.WrongType e) {
 				Log.logger.fatal(e.getMessage(), e);
-				System.exit(7);
+				iCee.exit(7);
 			} catch (ConfigException.Missing e) {
 				Log.logger.fatal("Missing Config " + key + "!", e);
-				System.exit(6);
+				iCee.exit(6);
 			} catch (ConfigException.Parse e) {
 				Log.logger.fatal(e);
-				System.exit(8);
+				iCee.exit(8);
 			}
 		});
 		
@@ -123,7 +124,7 @@ public class Conf {
 					throw new Exception("Config Template Out of date");
 			} catch (Exception exception) {
 				Log.logger.fatal("en_us config template not found or out of date, might the package had benn broken!", exception);
-				System.exit(5);
+				iCee.exit(5);
 			}
 		}
 		
@@ -154,10 +155,10 @@ public class Conf {
 			if (iniFile.delete()) {
 				Log.logger.info("Cleared error configure file.");
 			}
-			System.exit(2);
+			iCee.exit(2);
 		} catch (IOException e) {
 			Log.logger.fatal("Can't copy config " + iniFile, e);
-			System.exit(3);
+			iCee.exit(3);
 		}
 		
 	}

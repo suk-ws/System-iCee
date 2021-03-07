@@ -1,5 +1,6 @@
 package cc.sukazyo.icee.util;
 
+import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.module.Modules;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.Conf;
@@ -27,7 +28,7 @@ public class ConsoleScanner extends Thread {
 			switch (command[0]) {
 				case "stop":
 					Log.logger.info("Stopping System.");
-					System.exit(0);
+					iCee.exit(0);
 				case "discord":
 					switch (command[1]) {
 						case "start":

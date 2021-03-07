@@ -1,5 +1,6 @@
 package cc.sukazyo.icee.system.command;
 
+import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.system.I18n;
 import cc.sukazyo.icee.system.Log;
 
@@ -146,7 +147,7 @@ public abstract class CoreCommands implements ICommand, ICommandHelped {
 		
 		@Override
 		public void execute(String[] args, Map<String, String> parameters) {
-			System.exit(0);
+			iCee.exit(0);
 		}
 		
 		@Override
@@ -171,7 +172,7 @@ public abstract class CoreCommands implements ICommand, ICommandHelped {
 			CommandManager.register(new CommandExit());
 		} catch (CommandException.CommandNameConflictException e) {
 			Log.logger.fatal("Command conflict occurred while registering core commands!", e);
-			System.exit(9);
+			iCee.exit(9);
 		}
 	}
 	

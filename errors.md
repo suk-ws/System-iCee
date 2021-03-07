@@ -2,7 +2,7 @@
 
 <br/>
 
-### System.exit(0);
+### iCee.exit(0);
 
 > 正常情况下的退出码，
 > 发生于：
@@ -12,7 +12,7 @@
 
 <br/>
 
-### ~~System.exit.(1);~~
+### ~~iCee.exit.(1);~~
 
 > ~~不要问，问就是开发者也不知道~~
 > 
@@ -22,7 +22,7 @@
 
 <br/>
 
-### System.exit(2);
+### iCee.exit(2);
 
 Can't output config `iniFile` to the root dir!
 
@@ -34,7 +34,7 @@ Can't output config `iniFile` to the root dir!
 
 <br/>
 
-### System.exit(3);
+### iCee.exit(3);
 
 Can't copy config `iniFile`
 
@@ -46,7 +46,7 @@ Can't copy config `iniFile`
 
 <br/>
 
-### System.exit(4);
+### iCee.exit(4);
 
 Default Config File Not Found, might the package had benn broken!
 
@@ -58,7 +58,7 @@ Default Config File Not Found, might the package had benn broken!
 
 <br/>
 
-### System.exit(5);
+### iCee.exit(5);
 
 en_us config template not found or out of date, might the package had benn broken!
 
@@ -70,7 +70,7 @@ en_us config template not found or out of date, might the package had benn broke
 
 <br/>
 
-### System.exit(6);
+### iCee.exit(6);
 
 Missing Config `key`!
 
@@ -86,7 +86,7 @@ Missing Config `key`!
 
 <br/>
 
-### System.exit(7);
+### iCee.exit(7);
 
 > 当程序在进行配置文件检查时，如果配置的给予类型和要求类型不同则会发生此错误
 > 
@@ -98,7 +98,7 @@ Missing Config `key`!
 
 <br/>
 
-### System.exit(8);
+### iCee.exit(8);
 
 > 当程序在进行配置文件检查时，如果出现了解析错误，则会触发此报错
 > 
@@ -113,7 +113,7 @@ Missing Config `key`!
 
 <br/>
 
-### System.exit(9);
+### iCee.exit(9);
 
 Command conflict occurred while registering core commands!
 
@@ -127,7 +127,7 @@ Command conflict occurred while registering core commands!
 
 <br/>
 
-### System.exit(10);
+### iCee.exit(10);
 
 Command Conflict when registering Built-in Module!
 
@@ -137,3 +137,35 @@ Command Conflict when registering Built-in Module!
 > 只有核心命令会有机会占用它的命令名，但是怎么想，这种问题都是过不去测试的
 > 
 > 发生于<br/>`cc.sukazyo.icee.module.Modules#registerModules()`
+
+### iCee.exit(11);
+
+There is already an instance running on the directory.
+
+> 已经有一个 iCee 实例在当前目录下运行
+> 
+> 当前已经有一个 iCee 实例占用了当前目录下的 iCee 实例锁，触发了 iCee 的单实例保护机制。 
+> 
+> 可以从运行目录下的 `.instance` 文件找到此目录下运行的 PID
+> 
+> 发生于<br/>`cc.sukazyo.icee.iCee#initializeAsSystemMode()`
+
+### iCee.exit(12);
+
+LockFile generate failed: 
+
+> 当系统生成锁文件时出现问题时触发
+> 
+> 这个问题可能来源于 iCee 程序没有足够的权限在此位置生成文件，也可能是某个程序抢先生成了锁文件。
+> 
+> 发生于<br/>`cc.sukazyo.icee.system.InstanceManager#generateLockFile()`
+
+### iCee.exit(13);
+
+Generate instance information failed: 
+
+> 当当前实例在向运行目录写入实例信息时出现错误时触发
+> 
+> 此错误大概率是由于 `.instance` 文件的写入权限缺失导致的，也可能是由于系统不支持 java 文件锁机制而出现的异常
+> 
+> 发生于<br/>`cc.sukazyo.icee.system.InstanceManager#lock()`

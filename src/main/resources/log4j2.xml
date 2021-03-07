@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration status="warn">
 	<Properties>
-		<Property name="console">[%d{yyyy-MM-dd HH:mm:ss}][%t][%p]%m%n</Property>
-		<Property name="debug">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%t][%l][%p]%m%n</Property>
-		<Property name="error">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%t][%C:%M][%p]%m%n</Property>
+		<Property name="console">[%d{yyyy-MM-dd HH:mm:ss}][%X{pid}:%t][%p]%m%n</Property>
+		<Property name="debug">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%X{pid}:%t][%l][%p]%m%n</Property>
+		<Property name="error">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%X{pid}:%t][%C:%M][%p]%m%n</Property>
 	</Properties>
 	<Appenders>
 <!--		<Console name="Console" target="SYSTEM_OUT">-->
