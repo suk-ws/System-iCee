@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration status="warn">
 	<Properties>
-		<Property name="console">[%d{yyyy-MM-dd HH:mm:ss}][%X{pid}:%t][%p]%m%n</Property>
-		<Property name="debug">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%X{pid}:%t][%l][%p]%m%n</Property>
-		<Property name="error">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%X{pid}:%t][%C:%M][%p]%m%n</Property>
+		<Property name="console">[%d{yyyy-MM-dd HH:mm:ss}][%pid:%t][%p]%m%n</Property>
+		<Property name="debug">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%pid:%t][%l][%p]%m%n</Property>
+		<Property name="error">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%pid:%t][%C:%M][%p]%m%n</Property>
 	</Properties>
 	<Appenders>
 <!--		<Console name="Console" target="SYSTEM_OUT">-->
@@ -15,15 +15,15 @@
 			<PatternLayout pattern="${debug}"/>
 			<Policies>
 				<TimeBasedTriggeringPolicy />
-				<SizeBasedTriggeringPolicy size="1 MB" />
+				<SizeBasedTriggeringPolicy size="64 KB" />
 			</Policies>
-			<DefaultRolloverStrategy max="5" />
 		</RollingFile>
 		<RollingFile name="ErrorFile" fileName="./log/error.log" filePattern="./log/error-%d{yyyy-MM-dd}.log">
 			<ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
 			<PatternLayout pattern="${error}"/>
 			<Policies>
 				<TimeBasedTriggeringPolicy interval="1"/>
+				<SizeBasedTriggeringPolicy size="4 KB" />
 			</Policies>
 			<DefaultRolloverStrategy max="30" />
 		</RollingFile>

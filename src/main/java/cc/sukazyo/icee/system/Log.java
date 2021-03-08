@@ -4,13 +4,10 @@ import cc.sukazyo.icee.iCee;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.ConsoleAppender;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-
-import java.nio.charset.StandardCharsets;
 
 public class Log {
 	
@@ -22,10 +19,9 @@ public class Log {
 	public static void initAsSystemMode () {
 		
 		if (iCee.DEBUG_MODE)
-			PROMPT = "[%d{yyyy-MM-dd HH:mm:ss}][%X{pid}:%t][%C:%M:%L][%p]%m%n";
+			PROMPT = "[%d{yyyy-MM-dd HH:mm:ss}][%pid:%t][%C:%M:%L][%p]%m%n";
 		else
-			PROMPT = "[%d{yyyy-MM-dd HH:mm:ss}][%X{pid}:%t][%p]%m%n";
-		ThreadContext.put("pid", InstanceManager.currentPID());
+			PROMPT = "[%d{yyyy-MM-dd HH:mm:ss}][%pid:%t][%p]%m%n";
 		
 		setAppender(iCee.DEBUG_MODE?Level.DEBUG:Level.INFO, PROMPT);
 		

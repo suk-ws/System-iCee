@@ -2,7 +2,7 @@ package cc.sukazyo.icee.system.module;
 
 public class AfferentModulesRegister {
 	
-	private static IModule[] afferentModuleStack;
+	private static IModule[] afferentModuleStack = new IModule[]{};
 	
 	public static void put (IModule... modules) {
 		afferentModuleStack = modules;
