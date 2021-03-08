@@ -12,6 +12,11 @@ public abstract class CommandWithChild extends CommandContainer implements IComm
 	}
 	
 	@Override
+	public void putCommand (ICommand child) throws CommandException.CommandNameConflictException {
+		super.putCommand(child);
+	}
+	
+	@Override
 	public void execute(String[] args, Map<String, String> parameters) {
 		try {
 			run(args);

@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 public class I18n {
@@ -23,14 +22,6 @@ public class I18n {
 	private static final String DEFAULT_LANG = "en_us";
 	
 	public static void init () {
-//		try {
-//			current = new Properties();
-//			defaulted = new Properties();
-//			current.load(Resources.getAssets("/lang/icee_" + Conf.conf.getString("system.lang") +".lang"));
-//			defaulted.load(Resources.getAssets("/lang/icee.lang"));
-//		} catch (IOException e) {
-//			Log.logger.error("Caught an error while reading lang file, does the current lang not exist?", e);
-//		}
 		common = loadLang(DEFAULT_LANG);
 		local = loadLang(Conf.conf.getString("system.lang"));
 	}
@@ -45,7 +36,10 @@ public class I18n {
 	public static String get (String key, Var... vars) {
 		String text = get(key);
 		for (Var var : vars) {
-			text = text.replaceAll(SimpleUtils.escapeExprSpecialWord("${" + var.key + "}"), var.value);
+			text = text.replaceAll(
+					SimpleUtils.escapeExprSpecialWord("${" + var.key + "}"),
+					var.value.replaceAll("\\$", "\\\\\\$") // 对于替换值存在 ${xxx} 格式的内容的兼容处理
+			);
 		}
 		return text;
 	}

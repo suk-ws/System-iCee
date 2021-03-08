@@ -1,19 +1,18 @@
-reply.ping=Pong!
-reply.noreply=Exception Meaning...okay it sure is.
-reply.hi=hi!
 
-command.shutdown.start=**__Dangerous!!__**\nAre you sure to shutting down system?\nType `yes` to confirm.
-command.shutdown.confirm=System Shutdown.
-command.shutdown.cancel=Shutdown canceled.
-
-command.debug.user.discord=**Your Name** : __{{username}}__\n**Your Nick Name Here** : __{{nick}}__\n**Your Discord Id** : `{{userid}}`\n**Your avatar Id** : `{{avatarId}}`\n**Your avatar Url** : __{{avatarUrl}}__\n**Your Default avatar Id** : `{{avatarIdDefault}}`
-command.debug.channe.discordl=**Current Guild Name** : __{{guildname}}__\n**Current Guild Id** : `{{guildid}}`\n**Current Channel Name** : __{{channelname}}__\n**Current Channel Id** : `{{channelid}}`
-command.debug.guild.discord=**Current Guild Name** : __{{guildname}}__\n**Current Guild Id** : `{{guildid}}`\n**Current Guild Description** : __{{guilddescription}}__\n**Current Guild Owner** : {{guildowner}}
-command.debug.user.mirai=**Your Name** : __{{username}}__\n**Your Nick Name Here** : __{{nick}}__\n**Your Discord Id** : `{{userid}}`\n**Your avatar Id** : `{{avatarId}}`\n**Your avatar Url** : __{{avatarUrl}}__\n**Your Default avatar Id** : `{{avatarIdDefault}}`
-command.debug.channe.mirai=**Current Guild Name** : __{{guildname}}__\n**Current Guild Id** : `{{guildid}}`\n**Current Channel Name** : __{{channelname}}__\n**Current Channel Id** : `{{channelid}}`
-command.debug.guild.mirai=**Current Guild Name** : __{{guildname}}__\n**Current Guild Id** : `{{guildid}}`\n**Current Guild Description** : __{{guilddescription}}__\n**Current Guild Owner** : {{guildowner}}
-
-bot.discord.command.info=**__ Info of iCee System __**\n\n**App Id** : {{appid}}\n**System Version** : {{ver}} (build {{buildver}})\n\n*COPYRIGHT © SUKAZYO WORKSHOP 2019 - 2020*\n*Service iCee | since 2020*
-
-command.unknown=Unknown Command {{command}}, please check it more once time.
-command.unknown.child=In command {{command}}, Option {{command-option}} is not avaliable, please check it more once time.
+### Core Commands
+# exit
+core.command.exit.introduction=Stop the currently running iCee instance
+core.command.exit.help=${core.command.exit.help/en_us}
+# help
+core.command.help.introduction=Print the intro of registered commands or the help information of the specified command
+core.command.help.help=${core.command.help.help/en_us}
+core.command.help.unsupported=No Help Support
+core.command.help.command_help_page.page=Help of command ${command} : \n${command_help_page}
+core.command.help.command_help_page.nan=${command} : No help message provided
+core.command.help.command_help_page.unsupported=Command `${command}` does not provide help support
+core.command.help.command_help_page.unknown=Unknown command ${command}
+core.command.help.command_list.title=All Available Commands :
+core.command.help.command_list.single.alias_title=\u0020Alias:\u0020
+core.command.help.too_much_argument=Too much arguments for command help
+# module tools
+core.command.module.introduction=Module Manager Tools

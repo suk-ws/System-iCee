@@ -10,7 +10,7 @@ import cc.sukazyo.icee.system.module.ModuleManager;
 import cc.sukazyo.icee.system.command.CommandException;
 import cc.sukazyo.icee.system.command.CommandManager;
 import cc.sukazyo.icee.system.Log;
-import cc.sukazyo.icee.system.command.CoreCommands;
+import cc.sukazyo.icee.system.command.core.CoreCommands;
 import cc.sukazyo.icee.util.ConsoleScanner;
 
 import java.text.SimpleDateFormat;
@@ -20,7 +20,7 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.3.2-dev";
-	public static final int BUILD_VER = 33;
+	public static final int BUILD_VER = 34;
 	public static final boolean DEBUG_MODE = true;
 	
 	public static ConsoleScanner console;
