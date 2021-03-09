@@ -7,12 +7,12 @@ import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.command.CommandException;
 import cc.sukazyo.icee.system.command.CommandManager;
+import cc.sukazyo.icee.util.MiraiLogAdapter;
 import cc.sukazyo.icee.util.Var;
 import kotlinx.coroutines.Job;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactory;
 import net.mamoe.mirai.utils.BotConfiguration;
-import net.mamoe.mirai.utils.LoggerAdapters;
 
 import java.util.Objects;
 
@@ -28,7 +28,7 @@ public class MiraiBot implements IBot {
 		public void run() {
 			bot.login();
 			bot.getEventChannel().registerListenerHost(EventHandle.INSTANCE);
-			bot.getFriendOrFail(863731218).sendMessage("HI,iCee!");
+//			bot.getFriendOrFail(863731218).sendMessage("HI,iCee!");
 		}
 	}
 	
@@ -52,8 +52,8 @@ public class MiraiBot implements IBot {
 		
 		// 执行配置
 		BotConfiguration conf = BotConfiguration.getDefault();
-		conf.setBotLoggerSupplier(bot1 -> LoggerAdapters.asMiraiLogger(Log.logger));
-		conf.setNetworkLoggerSupplier(bot1 -> LoggerAdapters.asMiraiLogger(Log.logger));
+		conf.setBotLoggerSupplier(bot1 -> new MiraiLogAdapter(Log.logger));
+		conf.setNetworkLoggerSupplier(bot1 -> new MiraiLogAdapter(Log.logger));
 		conf.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PAD);
 //		conf.setDeviceInfo(new DeviceInfo(
 //          // TODO DeviceInfo Configuration

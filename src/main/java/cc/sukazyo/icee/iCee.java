@@ -20,7 +20,7 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.3.2-dev";
-	public static final int BUILD_VER = 34;
+	public static final int BUILD_VER = 35;
 	public static final boolean DEBUG_MODE = true;
 	
 	public static ConsoleScanner console;
@@ -35,18 +35,26 @@ public class iCee {
 	
 	public static void main (String[] args) {
 		
-		if (args == null || args.length == 0) {
-			// 启动主程序
-			initializeAsSystemMode();
-		} else {
-			// 运行 CLI
-			initializeAsCLIMode();
-			try {
-				CommandManager.execute(args);
-			} catch (CommandException.ParameterDuplicatedException | CommandException.CommandNotFoundException | CommandException.ParameterValueUnavailableException e) {
-				Log.logger.fatal("The command cannot be executed due to the following reasons:\n" + e.getMessage());
+		try {
+			
+			if (args == null || args.length == 0) {
+				// 启动主程序
+				initializeAsSystemMode();
+			} else {
+				// 运行 CLI
+				initializeAsCLIMode();
+				try {
+					CommandManager.execute(args);
+				} catch (CommandException.ParameterDuplicatedException | CommandException.CommandNotFoundException | CommandException.ParameterValueUnavailableException e) {
+					Log.logger.fatal("The command cannot be executed due to the following reasons:\n" + e.getMessage());
+				}
 			}
+			
+		} catch (Exception | Error e) {
+			Log.logger.fatal("!!! Unknown error caused iCee to exit !!!", e);
+			iCee.exit(14);
 		}
+		
 		
 	}
 	

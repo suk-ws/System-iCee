@@ -169,3 +169,11 @@ Generate instance information failed:
 > 此错误大概率是由于 `.instance` 文件的写入权限缺失导致的，也可能是由于系统不支持 java 文件锁机制而出现的异常
 > 
 > 发生于<br/>`cc.sukazyo.icee.system.InstanceManager#lock()`
+
+### iCee.exit(14);
+
+> 当出现无法被运行时程序捕获的未知错误时，iCee的入口方法将会捕获此错误并执行安全退出
+> 
+> 这个捕获是为了兼容 log 记录而写的。如果没有此捕获语句，未知错误将不会被记录于 Log 中，而是被 jvm 输出于控制台，这会导致在 log 文件中完全找不到错误日志
+> 
+> 发生于<br/>`cc.sukazyo.icee.iCee#main(String[])`
