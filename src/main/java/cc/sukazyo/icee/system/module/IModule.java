@@ -6,8 +6,6 @@ public interface IModule {
 	
 	void initialize();
 	
-	RunStatus getStatus();
-	
 	String getRegistryName();
 	
 	String getVersion();

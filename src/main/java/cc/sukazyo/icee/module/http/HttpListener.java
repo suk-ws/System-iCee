@@ -1,6 +1,5 @@
 package cc.sukazyo.icee.module.http;
 
-import cc.sukazyo.icee.common.RunStatus;
 import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.system.module.IModule;
 import cc.sukazyo.icee.system.Log;
@@ -33,19 +32,6 @@ public class HttpListener implements IModule {
 			Log.logger.fatal("Create Http Server Failed", e);
 		}
 	
-	}
-	
-	public void start () {
-		// TODO function
-	}
-	
-	public void stop () {
-		// TODO function
-	}
-	
-	@Override
-	public RunStatus getStatus () {
-		return null;// TODO function
 	}
 	
 	@Override

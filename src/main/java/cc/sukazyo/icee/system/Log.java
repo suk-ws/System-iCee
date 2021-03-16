@@ -17,6 +17,7 @@ public class Log {
 	public static String PROMPT;
 	public static String PROMPT_ADAPT;
 	
+	/** iCee Logger */
 	public static final Logger logger = LogManager.getLogger(iCee.class);
 	
 	public static void initAsSystemMode () {

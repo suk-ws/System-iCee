@@ -7,7 +7,7 @@ public class SimpleUtils {
 	/**
 	 * 将 regex 的特殊字符转译为实体字符
 	 *
-	 * @link 来源 origin https://blog.csdn.net/white__cat/article/details/53539314
+	 * @author https://blog.csdn.net/white__cat/article/details/53539314
 	 *
 	 * @param keyword 待转义串
 	 * @return 转义完成，可供拼接regex的串

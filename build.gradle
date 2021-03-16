@@ -41,6 +41,12 @@ tasks.withType(JavaCompile) {
 	options.encoding = "UTF-8"
 }
 
+tasks.withType(Javadoc) {
+	options.encoding = 'UTF-8'
+	options.docEncoding = 'UTF-8'
+	options.charSet = 'UTF-8'
+}
+
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'application'
 

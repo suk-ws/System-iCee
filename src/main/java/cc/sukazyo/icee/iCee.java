@@ -20,19 +20,31 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.3.2-dev";
-	public static final int BUILD_VER = 35;
+	public static final int BUILD_VER = 36;
 	public static final boolean DEBUG_MODE = true;
 	
 	public static ConsoleScanner console;
 	
-	public static void main (String[] args, IModule... afferentMod) {
+	/**
+	 * iCee 入口方法其二<br>
+	 * 注册了传入模块，之后交由第一个入口方法执行
+	 * @see cc.sukazyo.icee.iCee#main(String[])
+	 * @param args 程序参数
+	 * @param afferentMods 传入模块
+	 */
+	public static void main (String[] args, IModule... afferentMods) {
 		
-		AfferentModulesRegister.put(afferentMod);
+		AfferentModulesRegister.put(afferentMods);
 		
 		main(args);
 		
 	}
 	
+	/**
+	 * iCee 入口方法<br>
+	 * 判定
+	 * @param args 程序参数
+	 */
 	public static void main (String[] args) {
 		
 		try {
@@ -58,6 +70,10 @@ public class iCee {
 		
 	}
 	
+	/**
+	 * iCee 安全退出方法
+	 * @param status 退出状态码
+	 */
 	public static void exit(int status) {
 		Log.logger.info("iCee System exit with status " + status);
 		InstanceManager.releaseLock();

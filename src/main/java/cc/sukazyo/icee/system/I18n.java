@@ -26,12 +26,28 @@ public class I18n {
 		local = loadLang(Conf.conf.getString("system.lang"));
 	}
 	
+	/**
+	 * 将提供的文本节点转译为本地化文本<br>
+	 * 文本节点的对应文本调用优先级为 <u>用户自定义目录 → 模块jar → 主程序jar → en_us/xxx</u>，右侧将会被左侧覆盖
+	 * @param key 文本节点
+	 * @return 本地化文本
+	 */
 	public static String get (String key) {
 		return local.getProperty(key, common.getProperty(key, "${"+key+"}"));
 	}
 	
 	/**
-	 *
+	 * 将提供的文本节点转译为本地化文本，再将本地化文本中的参数替换为指定的参数<br>
+	 * <br>
+	 * 例如以下语言文件定义：<br>
+	 * <code>test.message_a=A Test with ${text}</code><br>
+	 * 调用：<br>
+	 * <code>I18n.get("test.message_a", new Var("text", "something"))</code><br>
+	 * 将可以获得 <u>A Test with something</u><br>
+	 * @see cc.sukazyo.icee.system.I18n#get(String) 本地化文本获取
+	 * @param key 文本节点
+	 * @param vars 文本参数
+	 * @return 经过覆盖的本地化文本
 	 */
 	public static String get (String key, Var... vars) {
 		String text = get(key);

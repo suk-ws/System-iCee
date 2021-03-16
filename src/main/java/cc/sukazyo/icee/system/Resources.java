@@ -47,8 +47,8 @@ public class Resources {
 	}
 	
 	/**
-	 * 获取一个资源文件<br/>
-	 * 资源文件将以 <u>用户自定义目录 -> 模块jar -> 主程序jar</u> 为优先顺序进行读取
+	 * 获取一个资源文件<br>
+	 * 资源文件将以 <u>用户自定义目录 → 模块jar → 主程序jar</u> 为优先顺序进行读取
 	 *
 	 * @param path 资源文件路径
 	 * @return 资源文件的读取流
@@ -72,7 +72,7 @@ public class Resources {
 	}
 	
 	/**
-	 * 获取以字符串方式读取的纯文本资源文件<br/>
+	 * 获取以字符串方式读取的纯文本资源文件<br>
 	 * 尝试用此方法读取非纯文本文件会造成乱码
 	 *
 	 * @see cc.sukazyo.icee.system.Resources#getAssets(String) getAssets(String path)
@@ -107,7 +107,7 @@ public class Resources {
 	}
 	
 	/**
-	 * 读取 iCee 运行时的数据文件<br/>
+	 * 读取 iCee 运行时的数据文件<br>
 	 * 数据文件即生成的运行信息和储存数据等内容
 	 *
 	 * @param path 数据文件在数据目录下的位置
@@ -127,7 +127,7 @@ public class Resources {
 	}
 	
 	/**
-	 * 以纯文本字符串形式读取 iCee 运行时的数据文件<br/>
+	 * 以纯文本字符串形式读取 iCee 运行时的数据文件<br>
 	 * 强制读取非纯文本文件会造成乱码
 	 * 
 	 * @see cc.sukazyo.icee.system.Resources#getData(String) getData(String) 
