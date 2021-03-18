@@ -4,6 +4,7 @@ import cc.sukazyo.icee.module.Modules;
 import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.I18n;
 import cc.sukazyo.icee.system.InstanceManager;
+import cc.sukazyo.icee.system.command.Console;
 import cc.sukazyo.icee.system.module.AfferentModulesRegister;
 import cc.sukazyo.icee.system.module.IModule;
 import cc.sukazyo.icee.system.module.ModuleManager;
@@ -11,7 +12,6 @@ import cc.sukazyo.icee.system.command.CommandException;
 import cc.sukazyo.icee.system.command.CommandManager;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.command.core.CoreCommands;
-import cc.sukazyo.icee.util.ConsoleScanner;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -20,10 +20,8 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.3.2-dev";
-	public static final int BUILD_VER = 36;
+	public static final int BUILD_VER = 37;
 	public static final boolean DEBUG_MODE = true;
-	
-	public static ConsoleScanner console;
 	
 	/**
 	 * iCee 入口方法其二<br>
@@ -112,8 +110,7 @@ public class iCee {
 		commonUtilsLoad();
 		ModuleManager.initializeRegisteredModules();
 		Log.logger.info("Starting Console Scanner...");
-		iCee.console = new ConsoleScanner();
-		console.start();
+		Console.start();
 		Log.logger.info("All Complete!");
 	}
 	

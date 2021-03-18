@@ -7,7 +7,6 @@ import java.util.Map;
 public class CommandContainer {
 	
 	private final HashMap<String, ICommand> commands = new HashMap<>();
-	private final HashMap<String, String> parameters = new HashMap<>();
 	
 	public void putCommand (ICommand command) throws CommandException.CommandNameConflictException {
 		for (String name : command.getRegistryName()) {
@@ -26,12 +25,13 @@ public class CommandContainer {
 	public void run (String[] args)
 	throws CommandException.ParameterDuplicatedException, CommandException.CommandNotFoundException, CommandException.ParameterValueUnavailableException {
 		String command = null;
-		ArrayList<String> argsNew = new ArrayList<>();
+		final ArrayList<String> argsNew = new ArrayList<>();
+		final HashMap<String, String> parameters = new HashMap<>();
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].startsWith("-")) {
 				if (!parameters.containsKey(args[i])) {
-					if (args.length < i+1) {
-						parameters.put(args[i], args[i + 1]);
+					if (args.length > i+1) {
+						parameters.put(args[i], args[i+1]);
 					} else {
 						throw new CommandException.ParameterValueUnavailableException(args[i], null);
 					}

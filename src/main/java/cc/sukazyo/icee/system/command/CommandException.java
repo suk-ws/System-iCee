@@ -64,7 +64,7 @@ public abstract class CommandException extends Exception {
 			super(
 					"Value of param " + paramName + " " +
 					(value == null ? "<null>" : '"' + value + '"') +
-					"is unavailable."
+					" is unavailable."
 			);
 		}
 		

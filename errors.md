@@ -6,7 +6,7 @@
 
 > 正常情况下的退出码，
 > 发生于：
-> - 当主程序执行 exit/quit/stop 命令时 `cc.sukazyo.icee.util.ConsoleScanner#run()`
+> - 当 exit 命令执行信号被传入时 `cc.sukazyo.icee.system.command.core.CommandExit#execute(String[], Map<String, String>)`
 > - 当 CLI 进程的工作结束时 `cc.sukazyo.icee.iCee#main()`
 > - 当程序第一次生成配置文件时自动结束等待用户进行配置  `cc.sukazyo.icee.system.Conf#load()`
 
