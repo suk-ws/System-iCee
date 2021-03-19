@@ -16,3 +16,11 @@ core.command.help.command_list.single.alias_title=\u0020别名:\u0020
 core.command.help.too_much_argument=为命令 help 定义的参数过多
 # module tools
 core.command.module.introduction=模块管理工具集
+
+### Modules
+# Java Discord API
+core.module.jda.command.introduction=Mirai QQ Bot 实例管理
+core.module.jda.command.help=${core.module.jda.command.help/zh_cn}
+# Mirai QQ
+core.module.mirai_qq.command.introduction=Discord Bot 实例管理
+core.module.mirai_qq.command.help=${core.module.mirai_qq.command.help/zh_cn}

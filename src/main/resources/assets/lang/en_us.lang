@@ -16,3 +16,11 @@ core.command.help.command_list.single.alias_title=\u0020Alias:\u0020
 core.command.help.too_much_argument=Too much arguments for command help
 # module tools
 core.command.module.introduction=Module Manager Tools
+
+### Modules
+# Java Discord API
+core.module.jda.command.introduction=Mirai QQ Bot instance management
+core.module.jda.command.help=${core.module.jda.command.help/en_us}
+# Mirai QQ
+core.module.mirai_qq.command.introduction=Discord Bot instance management
+core.module.mirai_qq.command.help=${core.module.mirai_qq.command.help/en_us}

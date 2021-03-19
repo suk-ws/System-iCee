@@ -7,6 +7,8 @@ import cc.sukazyo.icee.module.bot.IBot;
 import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.Resources;
+import cc.sukazyo.icee.system.command.CommandException;
+import cc.sukazyo.icee.system.command.CommandManager;
 import cc.sukazyo.icee.util.Var;
 import com.google.gson.Gson;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -24,7 +26,9 @@ public class DiscordBot implements IBot {
 	public JDA bot;
 	private JDABuilder BUILDER;
 	
-	public DiscordBot () { }
+	public DiscordBot () throws CommandException.CommandNameConflictException {
+		CommandManager.register(new DiscordCommands());
+	}
 	
 	public void initialize () {
 		
