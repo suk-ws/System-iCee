@@ -25,8 +25,7 @@ public class Log {
 		if (iCee.DEBUG_MODE) {
 			PROMPT = "[%d{yyyy-MM-dd HH:mm:ss}][%t][%C#%M::%L][%p]%m%n";
 			PROMPT_ADAPT = "[%d{yyyy-MM-dd HH:mm:ss}][%t][%X{class}#%X{method}::%X{line}][%p]%m%n";
-		}
-		else {
+		} else {
 			PROMPT_ADAPT = PROMPT = "[%d{yyyy-MM-dd HH:mm:ss}][%t][%p]%m%n";
 		}
 		

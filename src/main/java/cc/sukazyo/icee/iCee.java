@@ -1,16 +1,13 @@
 package cc.sukazyo.icee;
 
 import cc.sukazyo.icee.module.Modules;
-import cc.sukazyo.icee.system.Conf;
-import cc.sukazyo.icee.system.I18n;
-import cc.sukazyo.icee.system.InstanceManager;
+import cc.sukazyo.icee.system.*;
 import cc.sukazyo.icee.system.command.Console;
 import cc.sukazyo.icee.system.module.AfferentModulesRegister;
 import cc.sukazyo.icee.system.module.IModule;
 import cc.sukazyo.icee.system.module.ModuleManager;
 import cc.sukazyo.icee.system.command.CommandException;
 import cc.sukazyo.icee.system.command.CommandManager;
-import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.command.core.CoreCommands;
 
 import java.text.SimpleDateFormat;
@@ -20,7 +17,7 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.3.2-dev";
-	public static final int BUILD_VER = 39;
+	public static final int BUILD_VER = 40;
 	public static final boolean DEBUG_MODE = true;
 	
 	/**
@@ -125,12 +122,24 @@ public class iCee {
 	}
 	
 	private static void commonUtilsLoad () {
-		Conf.load();
-		I18n.init();
-		CoreCommands.registerAll();
-		Modules.registerModules();
-		AfferentModulesRegister.register();
-		Log.logger.info("Loaded System Commons:(config, language, core-commands, and build-in&afferent modules)");
+		String curr = "null";
+		try {
+			curr = "configure";
+			Conf.load();
+			curr = "internationalization/localization";
+			I18n.init();
+			curr = "core commands";
+			CoreCommands.registerAll();
+			curr = "build-in modules";
+			Modules.registerModules();
+			curr = "afferent modules";
+			AfferentModulesRegister.register();
+			curr = "done";
+			Log.logger.info("Loaded System Commons:(config, language, core-commands, and build-in&afferent modules)");
+		} catch (ParseException e) {
+			Log.logger.fatal("Something went wrong while loading " + curr , e);
+			iCee.exit(15);
+		}
 	}
 	
 }

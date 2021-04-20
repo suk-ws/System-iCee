@@ -15,12 +15,16 @@ import java.util.regex.Pattern;
 
 public class I18n {
 	
-	public static final Matcher langTagSimplify = Pattern.compile("^([\\s\\S]*?)[a-zA-Z0-9]+$").matcher("");
+	/** 简化不可识别的语言标记的正则识别器 */
+	public static final Matcher langTagSimplify = Pattern.compile("^([\\s\\S]*?)[\\s\\S][a-zA-Z0-9]+$").matcher("");
 	
 	/** 语言索引配置中已声明的语言 */
 	private static final Map<String, Localized> languages = new HashMap<>();
 	static { languages.put(Localized.ROOT.langTag, Localized.ROOT); }
+	/** 配置文件定义的当前语言 */
 	private static Localized curr;
+	/** 缓存当前的本地化调试开关状态 */
+	private static boolean debug = false;
 	
 	/** 语言文件在资源文件的存放位置 */
 	private static final String LANG_DIR = "lang";
@@ -29,8 +33,12 @@ public class I18n {
 	/** 语言逻辑树&优先级索引文件名 */
 	private static final String LANG_INDEX_FILENAME = "lang.conf";
 	
+	/**
+	 * 单个语言的数据和语言树节点封装
+	 */
 	public static class Localized {
 		
+		/** 语言树的根节点 */
 		public static final Localized ROOT = new Localized("root", null, 0);
 		
 		private final String langTag;
@@ -43,21 +51,13 @@ public class I18n {
 			this.langTag = langTag;
 			this.data = new HashMap<>();
 			this.priority = priority;
-			this.superior = superior;
-			if (superior != null) {
-				Iterator<Localized> it = superior.children.iterator();
-				int itNum = 0;
-				while (it.hasNext()) {
-					if (it.next().priority < priority) {
-						break;
-					}
-					itNum++;
-				}
-				superior.children.add(itNum, this);
-			}
+			addChildToSuperior(superior, priority);
 			this.children = new LinkedList<>(); // 按照优先级降序排序
 		}
 		
+		/**
+		 * 一个翻译节点的值和来源的封装
+		 */
 		public static class Value {
 			
 			private final String value;
@@ -78,10 +78,31 @@ public class I18n {
 			
 		}
 		
+		/**
+		 * 获取一个翻译节点的值封装<br/>
+		 * 它会调用下面的在语言树中遍历查询的方法
+		 *
+		 * @see Localized#get(String, Localized) 对应值在语言树中的寻找规则
+		 *
+		 * @param key 翻译节点
+		 * @return 从语言树中找到的最近的对应值的封装对象
+		 */
 		public Value get (String key) {
 			return get(key, null);
 		}
 		
+		/**
+		 * 用于进行递归遍历的获取翻译节点值的方法<br/>
+		 * 此方法会尝试首先在当前语言寻找是否有对应值；
+		 * 失败后会尝试以优先级从高到低为依据，依次向其子语言请求对应值；
+		 * 再次失败后会向其父语言请求对应值。
+		 * 如果全部失败，则认定当前语言树中不存在此翻译节点的对应值，即返回null
+		 *
+		 * @see Localized#load() 不同位置储存的同一个语言文件的优先级顺序
+		 *
+		 * @param key 翻译节点
+		 * @return 从语言树中找到的最近的对应值的封装对象
+		 */
 		public Value get (String key, Localized ignored) {
 			AtomicReference<Value> rv = new AtomicReference<>();
 			AtomicBoolean got = new AtomicBoolean(false);
@@ -89,7 +110,7 @@ public class I18n {
 				rv.set(data.get(key));
 				got.set(true);
 			} else children.forEach((s) -> {
-				if (s != ignored) {
+				if (!got.get() && s != ignored) {
 					Value vGot = s.get(key, this);
 					if (vGot != null) {
 						rv.set(vGot);
@@ -98,40 +119,52 @@ public class I18n {
 				}
 			});
 			if (!got.get()) {
-				if (superior != ignored)
+				if (superior != ignored && superior != null)
 					rv.set(superior.get(key, this));
 			}
 			return rv.get();
 		}
 		
 		/**
-		 * 返回当前语言中要求键的值。<br/>
-		 * 如果当前键没有对应值信息的话，将会返回<code>${key}</code>
-		 * @param key 键
-		 * @return 对应值或者<code>${key}</code>(当没有对应值时)
+		 * 返回当前语言中要求键的字符串字面值。<br/>
+		 * 如果当前键没有对应值信息的话，将会返回<code>#{key%null}</code>
+		 *
+		 * @see Localized#get(String) 值来源
+		 *
+		 * @param key 要求的翻译键
+		 * @return 对应字面值或者<code>${key}</code>(当没有对应值时)
 		 */
 		public String getText (String key) {
-			return getText(key, String.format("${%s}", key));
+			return getText(key, String.format("#{%s%%null}", key));
 		}
 		
 		/**
-		 * 返回当前语言中要求键的值。<br/>
-		 * 如果当前键没有对应值信息的话，将会返回缺省值
-		 * @param key 键
+		 * 返回当前语言中要求键的字符串字面值。<br/>
+		 * 如果当前键没有对应值信息的话，将会返回传入的缺省值
+		 *
+		 * @see Localized#get(String) 值来源
+		 *
+		 * @param key 要求的翻译键
 		 * @param defaultValue 缺省值
-		 * @return 对应值或者缺省值(当没有对应值时)
+		 * @return 对应字面值或者缺省值(当没有对应值时)
 		 */
 		public String getText (String key, String defaultValue) {
 			Value v = get(key);
-			return key!=null ? v.getValue() : defaultValue;
+			return ( v!=null ? (
+							debug ?
+							String.format("#{%s%%%s.%s}", v.getValue(), v.getLang(), v.getSource()) :
+							v.getValue()
+					) : defaultValue);
 		}
 		
 		/**
 		 * 从磁盘完整加载当前语言的翻译<br/>
-		 * 每一个翻译节点优先级为 <u>用户自定义目录 -> 模块jar -> 主程序jar</u>，右侧将会被左侧覆盖<br/>
-		 * 同样也可用于从磁盘刷新翻译
+		 * 每一个翻译节点覆盖优先级为 <u>用户自定义目录 -> 模块jar -> 主程序jar</u>，右侧将会被左侧覆盖<br/>
+		 * 同样也可用于从磁盘刷新翻译<br/>
+		 * <br/>
+		 * 同时也设置了每个翻译的来源信息<br/>
 		 *
-		 * <br/><br/><font color="red"><b>目前未测试</b></font>
+		 * <br/><br/><font color="red"><b>目前未进行完整测试</b></font>
 		 *
 		 */
 		public void load () {
@@ -157,24 +190,27 @@ public class I18n {
 			}
 		}
 		
+		/**
+		 * 设置当前语言的父语言<br/>
+		 * 同时会对新旧父语言的子语言进行增删处理和排序
+		 *
+		 * @param superior 新的父语言
+		 */
 		public void setSuperior (Localized superior) {
+			if (superior == this.superior) return;
 			if (this.superior != null)
 				this.superior.children.remove(this);
-			this.superior = superior;
-			if (superior != null) {
-				Iterator<Localized> it = superior.children.iterator();
-				int itNum = 0;
-				while (it.hasNext()) {
-					if (it.next().priority < priority) {
-						break;
-					}
-					itNum++;
-				}
-				superior.children.add(itNum, this);
-			}
+			addChildToSuperior(superior, priority);
 		}
 		
+		/**
+		 * 设置当前语言的优先级<br/>
+		 * 同时会对新旧父语言的子语言进行增删处理和排序
+		 *
+		 * @param priority 新的优先级值
+		 */
 		public void setPriority (int priority) {
+			if (priority == this.priority) return;
 			if (superior != null) {
 				superior.children.remove(this);
 				Iterator<Localized> it = superior.children.iterator();
@@ -196,11 +232,28 @@ public class I18n {
 			children.forEach(child -> child.listChild(output, finalPrefix));
 		}
 		
+		private void addChildToSuperior (Localized superior, int priority) {
+			this.superior = superior;
+			if (superior != null) {
+				Iterator<Localized> it = superior.children.iterator();
+				int itNum = 0;
+				while (it.hasNext()) {
+					if (it.next().priority < priority) {
+						break;
+					}
+					itNum++;
+				}
+				superior.children.add(itNum, this);
+			}
+		}
+		
 	}
 	
 	/**
-	 * 将提供的文本节点转译为本地化文本<br>
-	 * 文本节点的对应文本调用优先级为 <u>用户自定义目录 → 模块jar → 主程序jar → en_us/xxx</u>，右侧将会被左侧覆盖
+	 * 将提供的文本节点转译为以当前设置语言为基准的本地化文本
+	 *
+	 * @see Localized#getText(String) 本地化文本获取细则
+	 *
 	 * @param key 文本节点
 	 * @return 本地化文本
 	 */
@@ -216,7 +269,9 @@ public class I18n {
 	 * 调用：<br>
 	 * <code>I18n.get("test.message_a", new Var("text", "something"))</code><br>
 	 * 将可以获得 <u>A Test with something</u><br>
-	 * @see cc.sukazyo.icee.system.I18n#get(String) 本地化文本获取
+	 *
+	 * @see Localized#getText(String) 本地化文本获取细则
+	 *
 	 * @param key 文本节点
 	 * @param vars 文本参数
 	 * @return 经过覆盖的本地化文本
@@ -232,7 +287,13 @@ public class I18n {
 		return text;
 	}
 	
-	public static void init () {
+	/**
+	 * 初始化语言树和语言内容数据<br/>
+	 * 同时也可用于从硬盘刷新
+	 *
+	 * @throws ParseException 在解析文件时遇到错误
+	 */
+	public static void init () throws ParseException {
 		
 		// 加载本地化
 		indexLanguages();
@@ -242,23 +303,23 @@ public class I18n {
 		languages.forEach((k, v) -> v.load());
 		
 		// 设置当前本地化信息
-		String langDef = Conf.conf.getString("system.lang");
+		String langDef = Conf.conf.getString("system.lang.default");
 		while (true) {
 			if (languages.containsKey(langDef)) {
 				curr = languages.get(langDef);
 				break;
 			} else if (langTagSimplify.reset(langDef).matches()) {
 				langDef = langTagSimplify.group(1);
-				langDef = langDef.substring(0, langDef.length()-1);
 			} else {
 				curr = Localized.ROOT;
 				break;
 			}
 		}
+		debug = Conf.conf.getBoolean("system.lang.debug");
 		
 	}
 	
-	private static void indexLanguages () {
+	private static void indexLanguages () throws ParseException {
 		
 		// 从磁盘加载语言文件的索引配置
 		Properties index = new Properties();
@@ -291,19 +352,25 @@ public class I18n {
 		});
 		
 		// 构建依赖树
-		index.forEach((_k, v) -> {
-			String k = (String)_k;
+		for (Map.Entry<Object, Object> entry : index.entrySet()) {
+			String k = (String)entry.getKey();
+			String v = (String)entry.getValue();
 			Localized curr = languages.get(k);
 			if (curr == null)
-				throw new RuntimeException("current language not found on language map while summon tree");// TODO curr null
-			String[] meta = ((String)v).split("%");
+				throw new ParseException(String.format("Current language %s not found on language map while summon tree", k));
+			String[] meta = (v).split("%");
 			if (meta.length > 2)
-				throw new RuntimeException("too much language meta defined."); // todo meta.length > 2
+				throw new ParseException(String.format("Too much language meta defined on %s", k));
 			if (languages.containsKey(meta[0])) {
 				curr.setSuperior(languages.get(meta[0]));
-			} else throw new RuntimeException("superior defined not found"); // todo null else
-			curr.setPriority(meta.length>1 ? Integer.parseInt(meta[1]) : 0); // todo int parse exception
-		});
+			} else
+				throw new ParseException(String.format("The superior %s of %s is not a valid language", meta[0], k));
+			try {
+				curr.setPriority(meta.length > 1 ? Integer.parseInt(meta[1]) : 0);
+			} catch (NumberFormatException e) {
+				throw new ParseException(String.format("The priority of %s is defined as a non-numerical or too large value %s", meta[1], k));
+			}
+		}
 		
 	}
 	

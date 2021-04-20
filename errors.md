@@ -174,6 +174,16 @@ Generate instance information failed:
 
 > 当出现无法被运行时程序捕获的未知错误时，iCee的入口方法将会捕获此错误并执行安全退出
 > 
-> 这个捕获是为了兼容 log 记录而写的。如果没有此捕获语句，未知错误将不会被记录于 Log 中，而是被 jvm 输出于控制台，这会导致在 log 文件中完全找不到错误日志
+> 这个捕获是为了兼容 log 记录而写的。~~如果没有此捕获语句，未知错误将不会被记录于 Log 中，而是被 jvm 输出于控制台，这会导致在 log 文件中完全找不到错误日志~~（现在已经有`StdLogAdapter`了）
 > 
 > 发生于<br/>`cc.sukazyo.icee.iCee#main(String[])`
+
+### iCee.exit(15);
+
+Something went wrong while loading %s
+
+> 当系统初始化核心内容的时候出现解析错误时抛出的异常
+> 
+> 这一部分有很大可能会在较近的未来发生变化
+> 
+> 发生于<br/>`cc.sukazyo.icee.iCee#commonUtilsLoad()`
