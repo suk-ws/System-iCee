@@ -9,28 +9,15 @@ import cc.sukazyo.icee.system.command.CommandException;
 import cc.sukazyo.icee.system.command.CommandManager;
 import cc.sukazyo.icee.util.MiraiLogAdapter;
 import cc.sukazyo.icee.util.Var;
-import kotlinx.coroutines.Job;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactory;
 import net.mamoe.mirai.utils.BotConfiguration;
 
-import java.util.Objects;
+import java.io.File;
 
 public class MiraiBot implements IBot {
 	
-	private final Runner RUNNER = new Runner();
-	private Thread thread;
-	
-	private static class Runner implements Runnable {
-		final String THREAD_NAME = "Mirai QQ Docker";
-		Bot bot;
-		@Override
-		public void run() {
-			bot.login();
-			bot.getEventChannel().registerListenerHost(EventHandle.INSTANCE);
-//			bot.getFriendOrFail(863731218).sendMessage("HI,iCee!");
-		}
-	}
+	Bot bot;
 	
 	public MiraiBot() throws CommandException.CommandNameConflictException {
 		CommandManager.register(new MiraiCommands());
@@ -48,13 +35,15 @@ public class MiraiBot implements IBot {
 		
 	}
 	
-	private Bot createBot () {
+	private static Bot createBot () {
 		
 		// 执行配置
 		BotConfiguration conf = BotConfiguration.getDefault();
 		conf.setBotLoggerSupplier(bot1 -> new MiraiLogAdapter(Log.logger));
 		conf.setNetworkLoggerSupplier(bot1 -> new MiraiLogAdapter(Log.logger));
 		conf.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PAD);
+		conf.setCacheDir(new File("./data/cache/mirai"));
+		conf.enableContactCache();
 //		conf.setDeviceInfo(new DeviceInfo(
 //          // TODO DeviceInfo Configuration
 //		));
@@ -70,9 +59,9 @@ public class MiraiBot implements IBot {
 	
 	public void start () {
 		if (getStatus().canStart()) {
-			RUNNER.bot = createBot();
-			thread = new Thread(RUNNER, RUNNER.THREAD_NAME);
-			thread.start();
+			bot = createBot();
+			bot.login();
+			bot.getEventChannel().registerListenerHost(EventHandle.INSTANCE);
 			Log.logger.info("Mirai Bot Called Starting.");
 		} else {
 			Log.logger.warn("Mirai Bot is already running or starting!");
@@ -81,7 +70,8 @@ public class MiraiBot implements IBot {
 	
 	public void stop () {
 		if (getStatus().canStop()) {
-			RUNNER.bot.close(null);
+			bot.closeAndJoin(null);
+			bot = null;
 			Log.logger.info("Mirai Bot Stopped.");
 		} else {
 			Log.logger.warn("Mirai Bot is already stopped");
@@ -90,14 +80,12 @@ public class MiraiBot implements IBot {
 	
 	@Override
 	public RunStatus getStatus() {
-		if (thread == null) {
+		if (bot == null) {
 			return RunStatus.OFF;
-		} else if (thread.getState()!= Thread.State.TERMINATED) {
-			return RunStatus.STARTING;
-		} else if (Objects.requireNonNull(RUNNER.bot.getCoroutineContext().get(Job.Key)).isActive()) {
+		} else if (bot.isOnline()) {
 			return RunStatus.ON;
 		} else {
-			return RunStatus.OFF;
+			return RunStatus.WAITING;
 		}
 	}
 	
