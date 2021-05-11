@@ -1,6 +1,7 @@
 package cc.sukazyo.icee.system;
 
 import cc.sukazyo.icee.util.SimpleUtils;
+import cc.sukazyo.icee.util.TagAsException;
 import cc.sukazyo.icee.util.Var;
 
 import java.io.File;
@@ -8,8 +9,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,51 +79,59 @@ public class I18n {
 			
 		}
 		
-		/**
-		 * 获取一个翻译节点的值封装<br/>
-		 * 它会调用下面的在语言树中遍历查询的方法
-		 *
-		 * @see Localized#get(String, Localized) 对应值在语言树中的寻找规则
-		 *
-		 * @param key 翻译节点
-		 * @return 从语言树中找到的最近的对应值的封装对象
-		 */
-		public Value get (String key) {
-			return get(key, null);
+		public String getLangTag () {
+			return this.langTag;
 		}
 		
 		/**
-		 * 用于进行递归遍历的获取翻译节点值的方法<br/>
-		 * 此方法会尝试首先在当前语言寻找是否有对应值；
-		 * 失败后会尝试以优先级从高到低为依据，依次向其子语言请求对应值；
-		 * 再次失败后会向其父语言请求对应值。
-		 * 如果全部失败，则认定当前语言树中不存在此翻译节点的对应值，即返回null
+		 * 获取一个翻译节点的值封装<br/>
+		 * 它会调用下面的在语言树中遍历查询的方法
+		 * 如果整个语言树所有语言都没有值，则返回null
+		 *
+		 * @see Localized#forEach(Consumer) 根据树结构和优先级的遍历方法
+		 *
+		 * @param key 翻译节点
+		 * @return 从语言树中找到的最近的对应值的封装对象，若不存在则返回null
+		 */
+		public Value get (String key) {
+			AtomicReference<Value> rv = new AtomicReference<>();
+			try {
+				forEach(localized -> {
+					if (localized.data.containsKey(key)) {
+						rv.set(localized.data.get(key));
+						throw TagAsException.INSTANCE;
+					}
+				});
+			} catch (TagAsException ignored) {
+				return rv.get();
+			}
+			return null;
+		}
+		
+		/**
+		 * 用于进行递归遍历整个树执行某动作<br/>
+		 * 此方法会尝试首先在当前语言执行动作；
+		 * 失败后会尝试以优先级从高到低为依据，依次向其子语言请求动作执行；
+		 * 再次失败后会向其父语言请求动作执行。
 		 *
 		 * @see Localized#load() 不同位置储存的同一个语言文件的优先级顺序
 		 *
-		 * @param key 翻译节点
-		 * @return 从语言树中找到的最近的对应值的封装对象
+		 * @param action 遍历中执行的动作
 		 */
-		public Value get (String key, Localized ignored) {
-			AtomicReference<Value> rv = new AtomicReference<>();
-			AtomicBoolean got = new AtomicBoolean(false);
-			if (data.containsKey(key)) {
-				rv.set(data.get(key));
-				got.set(true);
-			} else children.forEach((s) -> {
-				if (!got.get() && s != ignored) {
-					Value vGot = s.get(key, this);
-					if (vGot != null) {
-						rv.set(vGot);
-						got.set(true);
-					}
+		public void forEach (Consumer<Localized> action) {
+			forEach(action, null);
+		}
+		
+		private void forEach (Consumer<Localized> action, Localized ignored) {
+			Objects.requireNonNull(action);
+			action.accept(this);
+			children.forEach((s) -> {
+				if (s != ignored) {
+					s.forEach(action, this);
 				}
 			});
-			if (!got.get()) {
-				if (superior != ignored && superior != null)
-					rv.set(superior.get(key, this));
-			}
-			return rv.get();
+			if (superior != ignored && superior != null)
+				superior.forEach(action, this);
 		}
 		
 		/**
@@ -288,6 +297,35 @@ public class I18n {
 	}
 	
 	/**
+	 * 以当前程序默认定义的语言为开始，
+	 * 根据树结构和优先级的遍历整个语言树
+	 *
+	 * @see Localized#forEach(Consumer)
+	 * @param action 动作
+	 */
+	public static void forEach (Consumer<Localized> action) {
+		forEachFrom(curr, action);
+	}
+	
+	/**
+	 * 根据树结构和优先级的遍历整个语言树
+	 *
+	 * @see Localized#forEach(Consumer)
+	 * @param action 动作
+	 */
+	public static void forEachFrom (Localized source, Consumer<Localized> action) {
+		source.forEach(action);
+	}
+	
+	/**
+	 * 获取距离当前计算机所设定的语言最近的语言树中的语言的标签
+	 * @return 距离当前计算机所设定的语言最近的语言树中的语言的标签
+	 */
+	public static String getSystemLanguage () {
+		return simplifyLanguageTag(Locale.getDefault().toString().toLowerCase());
+	}
+	
+	/**
 	 * 初始化语言树和语言内容数据<br/>
 	 * 同时也可用于从硬盘刷新
 	 *
@@ -303,18 +341,9 @@ public class I18n {
 		languages.forEach((k, v) -> v.load());
 		
 		// 设置当前本地化信息
-		String langDef = Conf.conf.getString("system.lang.default");
-		while (true) {
-			if (languages.containsKey(langDef)) {
-				curr = languages.get(langDef);
-				break;
-			} else if (langTagSimplify.reset(langDef).matches()) {
-				langDef = langTagSimplify.group(1);
-			} else {
-				curr = Localized.ROOT;
-				break;
-			}
-		}
+		curr = languages.get(
+				simplifyLanguageTag(Conf.conf.getString("system.lang.default"))
+		);
 		debug = Conf.conf.getBoolean("system.lang.debug");
 		
 	}
@@ -372,6 +401,18 @@ public class I18n {
 			}
 		}
 		
+	}
+	
+	private static String simplifyLanguageTag (String origin) {
+		while (true) {
+			if (languages.containsKey(origin)) {
+				return origin;
+			} else if (langTagSimplify.reset(origin).matches()) {
+				origin = langTagSimplify.group(1);
+			} else {
+				return Localized.ROOT.langTag;
+			}
+		}
 	}
 	
 }
