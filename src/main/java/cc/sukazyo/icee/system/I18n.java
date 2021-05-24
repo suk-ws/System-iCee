@@ -112,7 +112,9 @@ public class I18n {
 		 * 用于进行递归遍历整个树执行某动作<br/>
 		 * 此方法会尝试首先在当前语言执行动作；
 		 * 失败后会尝试以优先级从高到低为依据，依次向其子语言请求动作执行；
-		 * 再次失败后会向其父语言请求动作执行。
+		 * 再次失败后会向其父语言请求动作执行。<br/>
+		 * <br/>
+		 * 可以安全使用 <code>TagAsException</code>
 		 *
 		 * @see Localized#load() 不同位置储存的同一个语言文件的优先级顺序
 		 *
@@ -298,7 +300,9 @@ public class I18n {
 	
 	/**
 	 * 以当前程序默认定义的语言为开始，
-	 * 根据树结构和优先级的遍历整个语言树
+	 * 根据树结构和优先级的遍历整个语言树<br/>
+	 * <br/>
+	 * 可以安全使用 <code>TagAsException</code>
 	 *
 	 * @see Localized#forEach(Consumer)
 	 * @param action 动作
@@ -308,7 +312,9 @@ public class I18n {
 	}
 	
 	/**
-	 * 根据树结构和优先级的遍历整个语言树
+	 * 根据树结构和优先级的遍历整个语言树<br/>
+	 * <br/>
+	 * 可以安全使用 <code>TagAsException</code>
 	 *
 	 * @see Localized#forEach(Consumer)
 	 * @param action 动作
@@ -318,37 +324,44 @@ public class I18n {
 	}
 	
 	/**
-	 * 获取距离当前计算机所设定的语言最近的语言树中的语言的标签
-	 * @return 距离当前计算机所设定的语言最近的语言树中的语言的标签
+	 * 获取距离当前计算机所设定的语言最近的语言树中的语言
+	 *
+	 * @see Localized turnLocalized(String) 语言转换规则
+	 * @return 距离当前计算机所设定的语言最近的语言树中的语言
 	 */
-	public static String getSystemLanguage () {
-		return simplifyLanguageTag(Locale.getDefault().toString().toLowerCase());
+	public static Localized getSystemLanguage () {
+		return turnLocalized(Locale.getDefault().toString().toLowerCase());
 	}
 	
 	/**
-	 * 初始化语言树和语言内容数据<br/>
-	 * 同时也可用于从硬盘刷新
+	 * 初始化已索引的语言内容数据<br/>
+	 * 同时也可用于从硬盘刷新<br/>
+	 * 不包含语言树的初始化，请提前刷新语言索引
 	 *
-	 * @throws ParseException 在解析文件时遇到错误
+	 * @see #index() 语言索引刷新方法
 	 */
-	public static void init () throws ParseException {
+	public static void load () {
 		
-		// 加载本地化
-		indexLanguages();
+		// 构建语言树
 		final StringBuilder listLang = new StringBuilder("\nLocalization Tree::\n");
 		Localized.ROOT.listChild(listLang, "|-");
 		Log.logger.trace(listLang.substring(0, listLang.length()-1));
-		languages.forEach((k, v) -> v.load());
+		
+		languages.forEach((k, v) -> v.load()); // 加载语言的翻译
 		
 		// 设置当前本地化信息
-		curr = languages.get(
-				simplifyLanguageTag(Conf.conf.getString("system.lang.default"))
-		);
+		curr = turnLocalized(Conf.conf.getString("system.lang.default"));
 		debug = Conf.conf.getBoolean("system.lang.debug");
 		
 	}
 	
-	private static void indexLanguages () throws ParseException {
+	/**
+	 * 从语言关系定义文件中索引已定义的语言<br/>
+	 * 以 <u>用户自定义目录 -> 模块jar -> 主程序jar</u> 为优先级
+	 *
+	 * @throws ParseException 在读取文件或者解析文件时出现错误
+	 */
+	public static void index () throws ParseException {
 		
 		// 从磁盘加载语言文件的索引配置
 		Properties index = new Properties();
@@ -403,16 +416,35 @@ public class I18n {
 		
 	}
 	
-	private static String simplifyLanguageTag (String origin) {
+	/**
+	 * 获取语言树中距离传入的语言标签最近的的语言<br/>
+	 * 这个方法会将传入的语言标签每次截除最后的一段
+	 * 然后匹配树中是否有对应的语言
+	 *
+	 * @param originLanguageTag 需求的语言标签，要求小写下划线格式
+	 * @return 已加载语言树中距离语言标签最近的语言对象
+	 */
+	public static Localized turnLocalized (String originLanguageTag) {
 		while (true) {
-			if (languages.containsKey(origin)) {
-				return origin;
-			} else if (langTagSimplify.reset(origin).matches()) {
-				origin = langTagSimplify.group(1);
+			if (languages.containsKey(originLanguageTag)) {
+				return languages.get(originLanguageTag);
+			} else if (langTagSimplify.reset(originLanguageTag).matches()) {
+				originLanguageTag = langTagSimplify.group(1);
 			} else {
-				return Localized.ROOT.langTag;
+				return Localized.ROOT;
 			}
 		}
+	}
+	
+	/**
+	 * I18n 所使用的文件解析异常类
+	 */
+	public static class ParseException extends Exception {
+		
+		public ParseException (String message) {
+			super(message);
+		}
+		
 	}
 	
 }

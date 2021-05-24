@@ -180,10 +180,13 @@ Generate instance information failed:
 
 ### iCee.exit(15);
 
-Something went wrong while loading %s
+Error while loading localization data:
 
-> 当系统初始化核心内容的时候出现解析错误时抛出的异常
-> 
-> 这一部分有很大可能会在较近的未来发生变化
-> 
+- Current language %s not found on language map while summon tree
+- Too much language meta defined on %s
+- The superior %s of %s is not a valid language
+- The priority of %s is defined as a non-numerical or too large value %s
+
+> 当系统初始化国际化组件的时候出现解析错误时抛出的异常
+>
 > 发生于<br/>`cc.sukazyo.icee.iCee#commonUtilsLoad()`

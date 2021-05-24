@@ -17,7 +17,7 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.3.2-dev";
-	public static final int BUILD_VER = 42;
+	public static final int BUILD_VER = 43;
 	public static final boolean DEBUG_MODE = true;
 	
 	/**
@@ -122,22 +122,16 @@ public class iCee {
 	}
 	
 	private static void commonUtilsLoad () {
-		String curr = "null";
 		try {
-			curr = "configure";
+			I18n.index();
 			Conf.load();
-			curr = "internationalization/localization";
-			I18n.init();
-			curr = "core commands";
+			I18n.load();
 			CoreCommands.registerAll();
-			curr = "build-in modules";
 			Modules.registerModules();
-			curr = "afferent modules";
 			AfferentModulesRegister.register();
-			curr = "done";
 			Log.logger.info("Loaded System Commons:(config, language, core-commands, and build-in&afferent modules)");
-		} catch (ParseException e) {
-			Log.logger.fatal("Something went wrong while loading " + curr , e);
+		} catch (I18n.ParseException e) {
+			Log.logger.fatal("Error while loading localization data: " , e);
 			iCee.exit(15);
 		}
 	}
