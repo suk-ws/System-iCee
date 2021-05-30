@@ -1,6 +1,9 @@
 package cc.sukazyo.icee.util;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimpleUtils {
 	
@@ -64,6 +67,74 @@ public class SimpleUtils {
 			sb.append(chr);
 		}
 		return sb.toString();
+	}
+	
+	public static String generateListIndented (
+			Collection<?> data, String header, String footer, String eol,
+			String newlineDelimiter, String inlineDelimiter,
+			int indentSize, boolean isUseTab, int spacingSize,
+			boolean isFirstLineSpacing, boolean isLastNodeDelimited,
+			boolean isCountNode, int lineNodeLimit, int lineCharLimit,
+			boolean isCountNodeChar, int nodeCharLimit, boolean isIgnoreSymbol
+	) {
+		
+		final StringBuilder result = new StringBuilder();
+		final String indentLower = isUseTab?repeatChar('\t', indentSize):repeatChar(' ', indentSize*spacingSize);
+		final String indent = isUseTab?repeatChar('\t', indentSize+1):repeatChar(' ', (indentSize+1)*spacingSize);
+		final int inlineDelimiterLength = inlineDelimiter.length();
+		result.append(isFirstLineSpacing?indentLower:"").append(header);
+		AtomicInteger lineCounter = new AtomicInteger(Integer.MAX_VALUE);
+		data.forEach(node -> {
+			// 数据初始化
+			String str = node.toString();
+			int len = str.length();
+			int realLen = len;
+			if (isIgnoreSymbol) {
+				if ( (str.startsWith("\"")&&str.endsWith("\"")) || (str.startsWith("'")&&str.endsWith("'")) )
+					realLen -= 2;
+				else if ( str.startsWith("-") && str.matches("^(0x)?[0-9a-f]+$") )
+					realLen -= 1;
+			}
+			// 检测是否单个内容超过限制长度
+			if (isCountNodeChar && realLen > nodeCharLimit) {
+				result.append(newlineDelimiter).append(eol).append(indent).append(str);
+				lineCounter.set(Integer.MAX_VALUE);
+			}
+			// 内容生成
+			if (isCountNode) { // 以对象量为单位计算
+				if (lineCounter.get() >= lineNodeLimit) {
+					lineCounter.set(0);
+					result.append(newlineDelimiter).append(eol).append(indent);
+				} else {
+					result.append(inlineDelimiter);
+				}
+				result.append(str);
+				lineCounter.addAndGet(1);
+			} else { // 以字节量为单位计算
+				if (lineCounter.get() >= lineCharLimit) {
+					lineCounter.set(0);
+					result.append(newlineDelimiter).append(eol).append(indent);
+				} else {
+					result.append(inlineDelimiter);
+					lineCounter.addAndGet(inlineDelimiterLength);
+				}
+				result.append(str);
+				lineCounter.addAndGet(len);
+			}
+			result.append(eol).append(indent).append(node).append(newlineDelimiter);
+		});
+		
+		// 删除段落首分隔符
+		int headerCharLen = isFirstLineSpacing?indentLower.length()+header.length():header.length();
+		result.delete(headerCharLen, headerCharLen+newlineDelimiter.length());
+		// 添加段落尾分隔符
+		if(!isLastNodeDelimited) {
+			result.append(newlineDelimiter);
+		}
+		result.append(eol).append(footer);
+		
+		return result.toString();
+		
 	}
 	
 }
