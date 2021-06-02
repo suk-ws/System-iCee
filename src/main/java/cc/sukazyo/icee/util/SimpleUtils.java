@@ -1,7 +1,6 @@
 package cc.sukazyo.icee.util;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -69,8 +68,49 @@ public class SimpleUtils {
 		return sb.toString();
 	}
 	
+	/**
+	 * 从传入的数据来生成一个带有缩进和换行的列表（比如这样的）：<br/>
+	 * <code>something: [<br/>
+	 * &nbsp;&nbsp;&nbsp;&nbsp;"a", "b", "c",<br/>
+	 * &nbsp;&nbsp;&nbsp;&nbsp;"d", "e", "f"<br/>
+	 * ]</code><br/>
+	 * <br/>
+	 * 可以通过以下的参数配置缩进或者是输出格式<br/>
+	 * <br/>
+	 * <s>doc还不是很完善</s>
+	 *
+	 * @param data 列表数据本体，通过 .toString() 方法进行输出
+	 * @param header 表单头
+	 * @param footer 表单尾
+	 * @param eol 换行符（兼容性考虑）（你应该使用<code>\n</code>，特殊情况可以选择使用<code>\r\n</code>）
+	 * @param dataPrefix 单个数据的前缀，例如 string 的 <code>"</code>
+	 * @param dataSuffix 单个数据的后缀，例如 string 的 <code>"</code>
+	 * @param newlineDelimiter 换行时的数据间分隔符
+	 * @param inlineDelimiter 不换行情况下的数据间分隔符
+	 * @param indentSize 缩进的量，以表单头和表单尾的缩进为标准
+	 * @param isUseTab 是否使用 tab 缩进，如果为 false，则用下面的参数配置单个缩进有多少个空格
+	 * @param spacingSize 单个缩进中有多少空格
+	 * @param isFirstLineSpacing 首行是否需要带有缩进
+	 * @param isLastNodeDelimited 最后的一个数据后是否需要加分隔符，
+	 *     如果为 true 则会在最后一个数据后面加上<code>newlineDelimiter</code>
+	 * @param isCountNode 选择是通过数据量还是输出的字符量进行换行判定
+	 * @param lineNodeLimit 当<code>isCountNode</code>为<code>true</code>时生效，每行将会包含这个参数所定义的数量的数据
+	 * @param lineCharLimit 当<code>isCountNode</code>为<code>false</code>时生效，每行将会包含这个参数所定义的数量的字符串，
+	 *     字符数量计算不受<code>isIgnoreSymbol</code>影响，
+	 *     同时也会计算<code>inlineDelimiter</code>和<code>dataPrefix</code>和<code>dataSuffix</code>的字符，
+	 *     但是不会计算<code>newlineDelimiter</code>和<code>eol</code>的字符
+	 * @param isCountNodeChar 是否启用每个数据的字符量检测
+	 * @param nodeCharLimit 当<code>isCountNodeChar</code>为<code>true</code>时生效，
+	 *     当单个数据的字符量超过这个数值时，将永远会在单独的一行输出。
+	 *     同时，这个字符量不计算<code>dataPrefix</code>和<code>dataSuffix</code>中的字符
+	 * @param isIgnoreSymbol 当<code>isCountNodeChar</code>为<code>true</code>时生效，
+	 *     如果设置为<code>true</code>时，在<code>nodeCharLimit</code>计算字符量时，
+	 *     会忽略字符串格式的前后引号或者是数字的前缀负号（如果有的话）
+	 * @return 生成的列表字符串
+	 */
 	public static String generateListIndented (
 			Collection<?> data, String header, String footer, String eol,
+			String dataPrefix, String dataSuffix,
 			String newlineDelimiter, String inlineDelimiter,
 			int indentSize, boolean isUseTab, int spacingSize,
 			boolean isFirstLineSpacing, boolean isLastNodeDelimited,
@@ -95,43 +135,40 @@ public class SimpleUtils {
 				else if ( str.startsWith("-") && str.matches("^(0x)?[0-9a-f]+$") )
 					realLen -= 1;
 			}
-			// 检测是否单个内容超过限制长度
-			if (isCountNodeChar && realLen > nodeCharLimit) {
-				result.append(newlineDelimiter).append(eol).append(indent).append(str);
-				lineCounter.set(Integer.MAX_VALUE);
-			}
 			// 内容生成
-			if (isCountNode) { // 以对象量为单位计算
+			if (isCountNodeChar && realLen > nodeCharLimit) { // 检测是否单个内容超过限制长度
+				result.append(newlineDelimiter).append(eol).append(indent).append(dataPrefix).append(str).append(dataSuffix);
+				lineCounter.set(Integer.MAX_VALUE);
+			} else if (isCountNode) { // 以对象量为单位计算
 				if (lineCounter.get() >= lineNodeLimit) {
 					lineCounter.set(0);
 					result.append(newlineDelimiter).append(eol).append(indent);
 				} else {
 					result.append(inlineDelimiter);
 				}
-				result.append(str);
+				result.append(dataPrefix).append(str).append(dataSuffix);
 				lineCounter.addAndGet(1);
-			} else { // 以字节量为单位计算
+			} else { // 以字符量为单位计算
+				if (!(lineCounter.get() >= lineCharLimit)) lineCounter.addAndGet(len);
 				if (lineCounter.get() >= lineCharLimit) {
-					lineCounter.set(0);
 					result.append(newlineDelimiter).append(eol).append(indent);
+					lineCounter.set(0);
 				} else {
 					result.append(inlineDelimiter);
 					lineCounter.addAndGet(inlineDelimiterLength);
 				}
-				result.append(str);
-				lineCounter.addAndGet(len);
+				result.append(dataPrefix).append(str).append(dataSuffix);
 			}
-			result.append(eol).append(indent).append(node).append(newlineDelimiter);
 		});
 		
 		// 删除段落首分隔符
 		int headerCharLen = isFirstLineSpacing?indentLower.length()+header.length():header.length();
 		result.delete(headerCharLen, headerCharLen+newlineDelimiter.length());
 		// 添加段落尾分隔符
-		if(!isLastNodeDelimited) {
+		if(isLastNodeDelimited) {
 			result.append(newlineDelimiter);
 		}
-		result.append(eol).append(footer);
+		result.append(eol).append(indentLower).append(footer);
 		
 		return result.toString();
 		
