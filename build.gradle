@@ -11,7 +11,6 @@ buildscript {
 
 plugins {
 	id 'java'
-	id 'org.jetbrains.kotlin.jvm' version '1.4.32'
 }
 
 group 'cc.sukazyo'
@@ -21,7 +20,6 @@ repositories {
 	mavenCentral()
 	jcenter()
 	google()
-	maven { url 'https://dl.bintray.com/kotlin/kotlin-eap'}
 	maven { url 'https://jitpack.io' }
 }
 
@@ -29,7 +27,6 @@ dependencies {
 	
 	implementation "net.dv8tion:JDA:${javaDiscordApiVersion}"
 	implementation "com.google.code.gson:gson:${gsonVersion}"
-	compile group: 'net.mamoe', name: 'mirai-core', version: miraiVersion
 	implementation "com.typesafe:config:${typesafeVersion}"
 	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4jVersion
 	compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4jVersion

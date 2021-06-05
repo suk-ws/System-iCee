@@ -54,9 +54,7 @@ System iCee 是一个 Sukazyo Workshop 计划中的跨聊天平台(和系统平�
 
 ### 开源许可
 
-System iCee 暂时使用 GPLv3 协议，这意味着 iCee 的插件也会被传染上 GPL 许可证。
-
-因此，Sukazyo 正在考虑一些别的许可证，使得 iCee 对插件的开源要求不那么严格。
+System iCee 暂时根据 LGPL 开源。
 
 #### 贡献指南
 
@@ -67,13 +65,14 @@ Sukazyo 同样欢迎对还没做出来的功能或已经做出来的功能的功
 
 <br/>
 
-### iCee 背后的巨人们
+### iCee Background
 
 #### 依赖的开源项目们
 
-- [Mirai QQ](https://github.com/mamoe/mirai) 感谢 mamoe 团队做出的绝妙的支持 Java 的 Kotlin QQ API！
+- <del>[Mirai QQ](https://github.com/mamoe/mirai) 感谢 mamoe 团队做出的绝妙的支持 Java 的 Kotlin QQ API！</del>
+  目前，iCee 核心已经脱离了对 MiraiQQ 的依赖关系。对 MiraiQQ 的支持在未来或将会以单独的模块的形式实现
 - [Java Discord API](https://github.com/DV8FromTheWorld/JDA) Discord 的 API 类库
-- [typesafe/config](https://mvnrepository.com/artifact/com.typesafe/config) HOCON 格式配置文件的 Java 工具类库（但是suk没有找到它的仓库或者官方页面...）
+- [typesafe/config](https://lightbend.github.io/config/) HOCON 格式配置文件的 Java 工具类库
 - [log4j2](https://logging.apache.org/log4j/2.x/)
 - [Google Gson](https://github.com/google/gson)
 

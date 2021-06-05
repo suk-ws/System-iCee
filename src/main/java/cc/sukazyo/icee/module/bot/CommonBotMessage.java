@@ -6,8 +6,6 @@ import cc.sukazyo.icee.system.Variable;
 import cc.sukazyo.icee.util.CommandHelper;
 import com.google.gson.Gson;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.mamoe.mirai.event.events.FriendMessageEvent;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,8 +25,6 @@ public class CommonBotMessage {
 	Message msg;
 	
 	public MessageReceivedEvent jdaEvent;
-	public GroupMessageEvent miraiGroupEvent;
-	public FriendMessageEvent miraiFriendEvent;
 	
 	/**
 	 * Discord Bot Message 构造
@@ -82,59 +78,6 @@ public class CommonBotMessage {
 		);
 	}
 	
-	/**
-	 * Mirai QQ 群组 Message 构造
-	 *
-	 * @param event 处理的event
-	 */
-	public CommonBotMessage(GroupMessageEvent event) {
-		type = Type.MIRAI_GROUP;
-		miraiGroupEvent = event;
-		StringBuilder msgRev = new StringBuilder();
-		event.getMessage().forEach(node -> {
-			if (node instanceof net.mamoe.mirai.message.data.Image) {
-				Log.logger.info("IMAGE");
-			} else if (node instanceof net.mamoe.mirai.message.data.PlainText) {
-				Log.logger.info("PLAIN_TEXT");
-			} else if (node instanceof net.mamoe.mirai.message.data.At) {
-				Log.logger.info("AT");
-			} else if (node instanceof net.mamoe.mirai.message.data.Face) {
-				Log.logger.info("FACE");
-			} else if (node instanceof net.mamoe.mirai.message.data.Voice) {
-				Log.logger.info("VOICE");
-			} else {
-				Log.logger.info("UNDEFIENED");
-			}
-		});
-		if(!event.getMessage().contentToString().equals("")) {
-			msgRev.append(event.getMessage().contentToString());
-			appendMessage(new Message(event.getMessage().contentToString()));
-		}
-		Log.logger.debug(
-				"From <" +
-				event.getGroup().getName() +
-				">[" + event.getSenderName() +
-				"] Received : \n\t" +
-				msgRev.toString().replaceAll("\\n", "\n\t")
-		);
-	}
-	
-	/**
-	 * Mirai QQ 的 QQ “朋友” Message 构造
-	 *
-	 * @param event 处理的event
-	 */
-	public CommonBotMessage(FriendMessageEvent event) {
-		type = Type.MIRAI_FRIEND;
-		miraiFriendEvent = event;
-		msg = new Message(event.getMessage().contentToString(), event.getMessage().contentToString());
-		Log.logger.debug(
-				"From [" + event.getSenderName() +
-				"] Received : \n\t" +
-				event.getMessage().contentToString().replaceAll("\\n", "\n\t")
-		);
-	}
-	
 	public void doReply() {
 	
 //		if (type == Type.DISCORD && jdaEvent.getChannel().getIdLong() == 730371639723950158L) {
@@ -173,12 +116,6 @@ public class CommonBotMessage {
 			case DISCORD:
 				Log.logger.debug("Echo : " + returnMsg);
 				jdaEvent.getChannel().sendMessage(returnMsg.getRaw()).queue();
-				break;
-			case MIRAI_FRIEND:
-				miraiFriendEvent.getSender().sendMessage(returnMsg.getRaw());
-				break;
-			case MIRAI_GROUP:
-				miraiGroupEvent.getGroup().sendMessage(returnMsg.getRaw());
 				break;
 		}
 		

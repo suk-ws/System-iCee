@@ -3,8 +3,6 @@ package cc.sukazyo.icee.system;
 import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.module.bot.CommonBotMessage;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.event.events.FriendMessageEvent;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,12 +13,6 @@ public class Variable {
 		switch (message.type) {
 			case DISCORD:
 				msg = compile(msg, message.jdaEvent);
-				break;
-			case MIRAI_GROUP:
-				msg = compile(msg, message.miraiFriendEvent);
-				break;
-			case MIRAI_FRIEND:
-				msg = compile(msg, message.miraiGroupEvent);
 				break;
 		}
 		msg = compile(msg);
@@ -51,14 +43,6 @@ public class Variable {
 		msg = msg.replaceAll("\\{\\{guild-curr-icon-id}}", (dcGuild.getIconId()==null ? I18n.get("bot.null") : dcGuild.getIconId()));
 		msg = msg.replaceAll("\\{\\{guild-curr-icon-url}}", (dcGuild.getIconUrl()==null ? I18n.get("bot.null") : dcGuild.getIconUrl()));
 		msg = msg.replaceAll("\\{\\{guild-curr-name}}", dcGuild.getName());
-		return msg;
-	}
-	
-	public static String compile (String msg, GroupMessageEvent miraiGroupReceive) {
-		return msg;
-	}
-	
-	public static String compile (String msg, FriendMessageEvent miraiFriendReceive) {
 		return msg;
 	}
 	
