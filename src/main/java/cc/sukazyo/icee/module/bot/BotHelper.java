@@ -1,8 +1,9 @@
 package cc.sukazyo.icee.module.bot;
 
-import cc.sukazyo.icee.system.Conf;
+import cc.sukazyo.icee.system.config.Configure;
 import cc.sukazyo.icee.util.SimpleUtils;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +20,10 @@ public class BotHelper {
 		String raw = messsage.getMessageRaw();
 		String text = messsage.getMessageText();
 		
-		for (String focus : Conf.conf.getStringList("module.bot.call.raw")) {
+		for (String focus : Objects.requireNonNull(Configure.getStringList(
+				Configure.CORE_BOT_ID,
+				"module.bot.call.raw"
+		))) {
 			
 			Matcher mat = Pattern.compile("^\\s*" + SimpleUtils.escapeExprSpecialWord(focus) +"\\s*([\\s\\S]*)$").matcher(raw);
 			
@@ -29,7 +33,7 @@ public class BotHelper {
 			
 		}
 		
-		for (String focus : Conf.conf.getStringList("module.bot.call.text")) {
+		for (String focus : Configure.getStringList(Configure.CORE_BOT_ID, "module.bot.call.text")) {
 			
 			Matcher mat = Pattern.compile("^\\s*" + SimpleUtils.escapeExprSpecialWord(focus) +"\\s*([\\s\\S]*)$").matcher(text);
 			

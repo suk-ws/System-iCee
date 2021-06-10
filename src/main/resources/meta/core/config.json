@@ -1,0 +1,39 @@
+{
+	"version": 8,
+	"configurations": [
+		{
+			"node": "system.lang.default",
+			"type": "language",
+			"default": "<<SYSTEM_LANG>>"
+		},
+		{
+			"node": "system.lang.debug",
+			"type": "boolean",
+			"default": false
+		},
+		{
+			"node": "system.proxy.enable",
+			"type": "boolean",
+			"default": false
+		},
+		{
+			"node": "system.proxy.host",
+			"type": "string",
+			"default": "127.0.0.1"
+		},
+		{
+			"node": "system.proxy.port",
+			"type": "int",
+			"required": [0, 65535],
+			"default": 80
+		},
+		{
+			"node": "system.proxy.bypass",
+			"type": "string-list",
+			"default": [
+				"127.0.0.1",
+				"192.168.*"
+			]
+		}
+	]
+}

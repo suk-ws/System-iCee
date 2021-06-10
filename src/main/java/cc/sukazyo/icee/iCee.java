@@ -3,6 +3,8 @@ package cc.sukazyo.icee;
 import cc.sukazyo.icee.module.Modules;
 import cc.sukazyo.icee.system.*;
 import cc.sukazyo.icee.system.command.Console;
+import cc.sukazyo.icee.system.config.ConfigGeneralExceptions;
+import cc.sukazyo.icee.system.config.Configure;
 import cc.sukazyo.icee.system.module.AfferentModulesRegister;
 import cc.sukazyo.icee.system.module.IModule;
 import cc.sukazyo.icee.system.module.ModuleManager;
@@ -17,7 +19,7 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.3.2-dev";
-	public static final int BUILD_VER = 44;
+	public static final int BUILD_VER = 45;
 	public static final boolean DEBUG_MODE = true;
 	
 	/**
@@ -124,7 +126,7 @@ public class iCee {
 	private static void commonUtilsLoad () {
 		try {
 			I18n.index();
-			Conf.load();
+			Configure.init();
 			I18n.load();
 			CoreCommands.registerAll();
 			Modules.registerModules();
@@ -133,6 +135,13 @@ public class iCee {
 		} catch (I18n.ParseException e) {
 			Log.logger.fatal("Error while loading localization data: " , e);
 			iCee.exit(15);
+		} catch (ConfigGeneralExceptions ee) {
+			Log.logger.fatal("Some error occurred while loading system config!");
+			ee.forEach((e, info) -> Log.logger.fatal(
+					String.format("EXCEPTION[%s]::", Configure.getConfigPageSavePath(info)),
+					e
+			));
+			iCee.exit(16);
 		}
 	}
 	

@@ -1,5 +1,6 @@
 package cc.sukazyo.icee.system;
 
+import cc.sukazyo.icee.system.config.Configure;
 import cc.sukazyo.icee.util.SimpleUtils;
 import cc.sukazyo.icee.util.TagAsException;
 import cc.sukazyo.icee.util.Var;
@@ -350,8 +351,8 @@ public class I18n {
 		languages.forEach((k, v) -> v.load()); // 加载语言的翻译
 		
 		// 设置当前本地化信息
-		curr = turnLocalized(Conf.conf.getString("system.lang.default"));
-		debug = Conf.conf.getBoolean("system.lang.debug");
+		curr = Configure.getLanguage(Configure.CORE_ID, "system.lang.default");
+		debug = Configure.getBoolean(Configure.CORE_ID, "system.lang.debug");
 		
 	}
 	

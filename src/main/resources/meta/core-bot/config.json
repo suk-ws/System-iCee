@@ -1,0 +1,15 @@
+{
+	"version": 2,
+	"configurations": [
+		{
+			"node": "core.bot.discord.enable",
+			"type": "boolean",
+			"default": false
+		},
+		{
+			"node": "core.bot.discord.token",
+			"type": "string",
+			"default": "NzA2MzcwNTcwODUzNDE3MDYx.Xq-paw.KWdyLlWrjutaHqQnpyv7RqhJVy8"
+		}
+	]
+}

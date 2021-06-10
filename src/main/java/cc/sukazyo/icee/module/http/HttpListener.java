@@ -1,9 +1,9 @@
 package cc.sukazyo.icee.module.http;
 
 import cc.sukazyo.icee.iCee;
+import cc.sukazyo.icee.system.config.Configure;
 import cc.sukazyo.icee.system.module.IModule;
 import cc.sukazyo.icee.system.Log;
-import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.util.Var;
 import com.sun.net.httpserver.HttpServer;
 
@@ -20,9 +20,9 @@ public class HttpListener implements IModule {
 	public void initialize() {
 		
 		try {
-			server = HttpServer.create(new InetSocketAddress(Conf.conf.getInt("module.http.port")), 0);
+			server = HttpServer.create(new InetSocketAddress(Configure.getInt(Configure.CORE_ID, "module.http.port")), 0);
 //			server.createContext("/mtppp/", new HttpMtpppReq()); // 暂时无用
-			if (Conf.conf.getBoolean("module.http.apply")) {
+			if (Configure.getBoolean(Configure.CORE_ID, "module.http.apply")) {
 				server.start();
 				Log.logger.info("Start Http Server");
 			} else {

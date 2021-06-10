@@ -4,11 +4,11 @@ import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.module.bot.discord.event.TextMessageListener;
 import cc.sukazyo.icee.common.RunStatus;
 import cc.sukazyo.icee.module.bot.IBot;
-import cc.sukazyo.icee.system.Conf;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.Resources;
 import cc.sukazyo.icee.system.command.CommandException;
 import cc.sukazyo.icee.system.command.CommandManager;
+import cc.sukazyo.icee.system.config.Configure;
 import cc.sukazyo.icee.util.Var;
 import com.google.gson.Gson;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -32,14 +32,14 @@ public class DiscordBot implements IBot {
 	
 	public void initialize () {
 		
-		BUILDER = JDABuilder.createDefault(Conf.conf.getString("module.bot.discord.token"));
+		BUILDER = JDABuilder.createDefault(Configure.getString(Configure.CORE_BOT_ID, "core.bot.discord.token"));
 		
 		// WIP Activity Customize
 		BUILDER.setActivity(Activity.of(Activity.ActivityType.WATCHING, "Sukazyo debug iCee"));
 		
 		BUILDER.addEventListeners(new TextMessageListener());
 		
-		if (Conf.conf.getBoolean("module.bot.discord.apply")) {
+		if (Configure.getBoolean(Configure.CORE_BOT_ID, "core.bot.discord.enable")) {
 			start();
 		} else {
 			Log.logger.info("Discord Bot doesn't applied");
