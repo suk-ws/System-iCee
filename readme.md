@@ -72,7 +72,7 @@ Sukazyo 同样欢迎对还没做出来的功能或已经做出来的功能的功
 - <del>[Mirai QQ](https://github.com/mamoe/mirai) 感谢 mamoe 团队做出的绝妙的支持 Java 的 Kotlin QQ API！</del>
   目前，iCee 核心已经脱离了对 MiraiQQ 的依赖关系。对 MiraiQQ 的支持在未来或将会以单独的模块的形式实现
 - [Java Discord API](https://github.com/DV8FromTheWorld/JDA) Discord 的 API 类库
-- [typesafe/config](https://lightbend.github.io/config/) HOCON 格式配置文件的 Java 工具类库
+- [Typesafe Config](https://lightbend.github.io/config/) HOCON 格式配置文件的 Java 工具类库
 - [log4j2](https://logging.apache.org/log4j/2.x/)
 - [Google Gson](https://github.com/google/gson)
 
