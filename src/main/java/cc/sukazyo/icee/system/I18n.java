@@ -343,11 +343,6 @@ public class I18n {
 	 */
 	public static void load () {
 		
-		// 构建语言树
-		final StringBuilder listLang = new StringBuilder("\nLocalization Tree::\n");
-		Localized.ROOT.listChild(listLang, "|-");
-		Log.logger.trace(listLang.substring(0, listLang.length()-1));
-		
 		languages.forEach((k, v) -> v.load()); // 加载语言的翻译
 		
 		// 设置当前本地化信息
@@ -414,6 +409,11 @@ public class I18n {
 				throw new ParseException(String.format("The priority of %s is defined as a non-numerical or too large value %s", meta[1], k));
 			}
 		}
+		
+		// 输出语言树
+		final StringBuilder listLang = new StringBuilder("\nLocalization Tree::\n");
+		Localized.ROOT.listChild(listLang, "|-");
+		Log.logger.trace(listLang.substring(0, listLang.length()-1));
 		
 	}
 	

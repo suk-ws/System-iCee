@@ -2,19 +2,133 @@
 
 <br/>
 
+## 使用中
+
+<br/>
+
 ### iCee.exit(0);
 
 > 正常情况下的退出码，
 > 发生于：
 > - 当 exit 命令执行信号被传入时 `cc.sukazyo.icee.system.command.core.CommandExit#execute(String[], Map<String, String>)`
 > - 当 CLI 进程的工作结束时 `cc.sukazyo.icee.iCee#main()`
-> - 当程序第一次生成配置文件时自动结束等待用户进行配置  `cc.sukazyo.icee.system.Conf#load()`
+
+<br/>
+
+### iCee.exit(9);
+
+Command conflict occurred while registering core commands!
+
+> 当核心命令（也就是 `help` `system` `stop` ）一类的命令在注册时出现命令名已经被占用的情况时，则会出现此问题
+> 
+> 这也是玄学错误之一，因为核心命令理论上是最早注册的，根本没有机会供别的模块来占用命令名
+> 
+> ~~（至少是正常发行版范围内？）~~
+> 
+> 发生于<br/>`cc.sukazyo.icee.system.command.CoreCommands#registerAll()`
+
+<br/>
+
+### iCee.exit(10);
+
+Command Conflict when registering Built-in Module!
+
+> 当核心命令（也就是 `help` `system` `stop` ）一类的命令在注册时出现命令名已经被占用的情况时，则会出现此问题
+>
+> 同样是玄学错误之一，因为内建模块的注册一定会早于外置模块（好吧尽管现在没有外置模块支持），
+> 只有核心命令会有机会占用它的命令名，但是怎么想，这种问题都是过不去测试的
+> 
+> 发生于<br/>`cc.sukazyo.icee.module.Modules#registerModules()`
+
+<br/>
+
+### iCee.exit(11);
+
+There is already an instance running on the directory.
+
+> 已经有一个 iCee 实例在当前目录下运行
+> 
+> 当前已经有一个 iCee 实例占用了当前目录下的 iCee 实例锁，触发了 iCee 的单实例保护机制。 
+> 
+> 可以从运行目录下的 `.instance` 文件找到此目录下运行的 PID
+> 
+> 发生于<br/>`cc.sukazyo.icee.iCee#initializeAsSystemMode()`
+
+<br/>
+
+### iCee.exit(12);
+
+LockFile generate failed: 
+
+> 当系统生成锁文件时出现问题时触发
+> 
+> 这个问题可能来源于 iCee 程序没有足够的权限在此位置生成文件，也可能是某个程序抢先生成了锁文件。
+> 
+> 发生于<br/>`cc.sukazyo.icee.system.InstanceManager#generateLockFile()`
+
+<br/>
+
+### iCee.exit(13);
+
+Generate instance information failed: 
+
+> 当当前实例在向运行目录写入实例信息时出现错误时触发
+> 
+> 此错误大概率是由于 `.instance` 文件的写入权限缺失导致的，也可能是由于系统不支持 java 文件锁机制而出现的异常
+> 
+> 发生于<br/>`cc.sukazyo.icee.system.InstanceManager#lock()`
+
+<br/>
+
+### iCee.exit(14);
+
+> 当出现无法被运行时程序捕获的未知错误时，iCee的入口方法将会捕获此错误并执行安全退出
+> 
+> 这个捕获是为了兼容 log 记录而写的。~~如果没有此捕获语句，未知错误将不会被记录于 Log 中，而是被 jvm 输出于控制台，这会导致在 log 文件中完全找不到错误日志~~（现在已经有`StdLogAdapter`了）
+> 
+> 发生于<br/>`cc.sukazyo.icee.iCee#main(String[])`
+
+<br/>
+
+### iCee.exit(15);
+
+Error while loading localization data:
+
+- Current language %s not found on language map while summon tree
+- Too much language meta defined on %s
+- The superior %s of %s is not a valid language
+- The priority of %s is defined as a non-numerical or too large value %s
+
+> 当系统初始化国际化组件的时候出现解析错误时抛出的异常
+>
+> 发生于<br/>`cc.sukazyo.icee.iCee#commonUtilsLoad()`
+
+<br/>
+
+### iCee.exit(16);
+
+Some error occurred while loading system config!<br/>
+EXCEPTION[`error-config-path`]::
+
+> 当系统初始化/读取/生成配置文件时出现错误列表，
+> 这个错误后面会跟随一到多个`EXCEPTION[error-config-path]::`的报错
+> 
+> 其中 `error-config-path` 是这个报错所属的配置文件的保存位置
+> 
+> 发生于<br/>
+> `cc.sukazyo.icee.iCee#commonUtilsLoad()`
+
+<br/>
+
+<br/>
+
+## 已废弃
 
 <br/>
 
 ### ~~iCee.exit.(1);~~
 
-> ~~不要问，问就是开发者也不知道~~
+> ~~可能是一个很早之前在哪里用过但是被删除了，开发者也没有印象的错误码~~
 > 
 > ~~这个错误码没有在代码中被搜索到，但是鉴于后面的错误码已经被使用了，所以开发者觉得使用它可能会造成冲突~~
 > 
@@ -113,80 +227,3 @@ Missing Config `key`!
 
 <br/>
 
-### iCee.exit(9);
-
-Command conflict occurred while registering core commands!
-
-> 当核心命令（也就是 `help` `system` `stop` ）一类的命令在注册时出现命令名已经被占用的情况时，则会出现此问题
-> 
-> 这也是玄学错误之一，因为核心命令理论上是最早注册的，根本没有机会供别的模块来占用命令名
-> 
-> ~~（至少是正常发行版范围内？）~~
-> 
-> 发生于<br/>`cc.sukazyo.icee.system.command.CoreCommands#registerAll()`
-
-<br/>
-
-### iCee.exit(10);
-
-Command Conflict when registering Built-in Module!
-
-> 当核心命令（也就是 `help` `system` `stop` ）一类的命令在注册时出现命令名已经被占用的情况时，则会出现此问题
->
-> 同样是玄学错误之一，因为内建模块的注册一定会早于外置模块（好吧尽管现在没有外置模块支持），
-> 只有核心命令会有机会占用它的命令名，但是怎么想，这种问题都是过不去测试的
-> 
-> 发生于<br/>`cc.sukazyo.icee.module.Modules#registerModules()`
-
-### iCee.exit(11);
-
-There is already an instance running on the directory.
-
-> 已经有一个 iCee 实例在当前目录下运行
-> 
-> 当前已经有一个 iCee 实例占用了当前目录下的 iCee 实例锁，触发了 iCee 的单实例保护机制。 
-> 
-> 可以从运行目录下的 `.instance` 文件找到此目录下运行的 PID
-> 
-> 发生于<br/>`cc.sukazyo.icee.iCee#initializeAsSystemMode()`
-
-### iCee.exit(12);
-
-LockFile generate failed: 
-
-> 当系统生成锁文件时出现问题时触发
-> 
-> 这个问题可能来源于 iCee 程序没有足够的权限在此位置生成文件，也可能是某个程序抢先生成了锁文件。
-> 
-> 发生于<br/>`cc.sukazyo.icee.system.InstanceManager#generateLockFile()`
-
-### iCee.exit(13);
-
-Generate instance information failed: 
-
-> 当当前实例在向运行目录写入实例信息时出现错误时触发
-> 
-> 此错误大概率是由于 `.instance` 文件的写入权限缺失导致的，也可能是由于系统不支持 java 文件锁机制而出现的异常
-> 
-> 发生于<br/>`cc.sukazyo.icee.system.InstanceManager#lock()`
-
-### iCee.exit(14);
-
-> 当出现无法被运行时程序捕获的未知错误时，iCee的入口方法将会捕获此错误并执行安全退出
-> 
-> 这个捕获是为了兼容 log 记录而写的。~~如果没有此捕获语句，未知错误将不会被记录于 Log 中，而是被 jvm 输出于控制台，这会导致在 log 文件中完全找不到错误日志~~（现在已经有`StdLogAdapter`了）
-> 
-> 发生于<br/>`cc.sukazyo.icee.iCee#main(String[])`
-
-### iCee.exit(15);
-
-Error while loading localization data:
-
-- Current language %s not found on language map while summon tree
-- Too much language meta defined on %s
-- The superior %s of %s is not a valid language
-- The priority of %s is defined as a non-numerical or too large value %s
-
-> 当系统初始化国际化组件的时候出现解析错误时抛出的异常
->
-> 发生于<br/>`cc.sukazyo.icee.iCee#commonUtilsLoad()`

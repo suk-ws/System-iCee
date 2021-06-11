@@ -19,7 +19,7 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.3.2-dev";
-	public static final int BUILD_VER = 45;
+	public static final int BUILD_VER = 46;
 	public static final boolean DEBUG_MODE = true;
 	
 	/**
