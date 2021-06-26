@@ -13,17 +13,32 @@ public class ModuleManager {
 	
 	private static final LinkedMap<IModule, Class<?>> modules = new LinkedMap<>();
 	
-	public static void register (Class<?> a, IModule... moduleSet) {
+	/**
+	 * 将一些模块注册进入 iCee 的模块管理器中<br/>
+	 * <br/>
+	 * <b>正常情况下你不需要调用此方法</b><br/>
+	 * 如果你调用了此方法，注意目前的 iCee 的一些部分（例如{@link #getModulesDevelopmentTable()}）
+	 * 可能仅支持 {@link cc.sukazyo.icee.module.Modules} 和 {@link cc.sukazyo.icee.system.module.AfferentModulesRegister}
+	 * 等几个内置的模块注册器
+	 *
+	 * @param registrar 注册这个模块的注册器，模块管理器将会以此为模块进行分类
+	 * @param moduleSet 需要注册的模块列表
+	 */
+	public static void register (Class<?> registrar, IModule... moduleSet) {
 		for (IModule module : moduleSet) {
-			ModuleManager.modules.put(module, a);
+			ModuleManager.modules.put(module, registrar);
 		}
 	}
 	
+	/**
+	 * 给已注册的模块发布模块初始化事件<br/>
+	 * <br/>
+	 * <font color="red"><b>你不应该调用此方法!</b></font>
+	 */
 	public static void initializeRegisteredModules () {
 		modules.forEach((mod, reg) -> mod.initialize());
 		Log.logger.info("All registered modules have been initialized");
-		Log.logger.debug("Module List Output\n" + getModulesDevelopmentTable()
-		);
+		Log.logger.debug("Module List Output\n" + getModulesDevelopmentTable());
 	}
 	
 	/**

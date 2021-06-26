@@ -4,11 +4,21 @@ import cc.sukazyo.icee.iCee;
 
 public class Var {
 	
-	public static final Var ICEE_PACKID = new Var("icee_pack_id", iCee.PACKID);
-	public static final Var ICEE_VERSION = new Var("icee_ver", iCee.VERSION);
-	public static final Var ICEE_VERSION_DISPLAY = new Var("icee_ver_display", iCee.VERSION + '-' + iCee.BUILD_VER);
-	public static final Var ICEE_BUILD_VER = new Var("icee_build_ver", String.valueOf(iCee.BUILD_VER));
-	public static final Var ICEE_DEBUG_MODE = new Var("icee_debug_mode", String.valueOf(iCee.DEBUG_MODE));
+	public static final String ICEE_PACKID_KEY = "icee_pack_id";
+	@SuppressWarnings("unused")
+	public static final Var ICEE_PACKID = new Var(ICEE_PACKID_KEY, iCee.PACKID);
+	public static final String ICEE_VERSION_KEY = "icee_ver";
+	@SuppressWarnings("unused")
+	public static final Var ICEE_VERSION = new Var(ICEE_VERSION_KEY, iCee.VERSION);
+	public static final String ICEE_VERSION_DISPLAY_KEY = "icee_ver_display";
+	@SuppressWarnings("unused")
+	public static final Var ICEE_VERSION_DISPLAY = new Var(ICEE_VERSION_DISPLAY_KEY, iCee.VERSION + '-' + iCee.BUILD_VER);
+	public static final String ICEE_BUILD_VER_KEY = "icee_build_ver";
+	@SuppressWarnings("unused")
+	public static final Var ICEE_BUILD_VER = new Var(ICEE_BUILD_VER_KEY, String.valueOf(iCee.BUILD_VER));
+	public static final String ICEE_DEBUG_MODE_KEY = "icee_debug_mode";
+	@SuppressWarnings("unused")
+	public static final Var ICEE_DEBUG_MODE = new Var(ICEE_DEBUG_MODE_KEY, String.valueOf(iCee.DEBUG_MODE));
 	
 	public final String key;
 	public final String value;

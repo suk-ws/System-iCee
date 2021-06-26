@@ -7,6 +7,15 @@ import org.apache.logging.log4j.ThreadContext;
 
 import java.io.PrintStream;
 
+/**
+ * 从 Minecraft Code Pack (实际上就是 Minecraft 本身(ver1.12.2)) 中抄下来的接管
+ * <code>System.out</code>和<code>System.err</code>系列的输出的工具类，
+ * 同时使其可以保证输出的来源行号正常<br/>
+ * <br/>
+ * 适当继承修改也可以用于接管其它东西（比如 miraiQQ）的log输出<br/>
+ *
+ * @author Mojang AB
+ */
 public abstract class StdLogAdapter extends PrintStream {
 	
 	protected static final Marker MARK = MarkerManager.getMarker("ADAPT");

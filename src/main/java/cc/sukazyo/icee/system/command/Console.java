@@ -14,27 +14,30 @@ public class Console {
 		
 		private final Scanner scanner = new Scanner(System.in);
 		
-		protected Listener () {
+		private Listener () {
 			setName(THREAD_NAME);
 		}
 		
 		@Override
 		public void run () {
 			
-			setName(THREAD_NAME);
-			
 			String lastLine;
+			Log.logger.info("Start console input listen.");
 			//noinspection InfiniteLoopStatement
 			while (true) {
 				try {
 					
 					lastLine = scanner.nextLine();
-					Log.logger.info("Console execute command: " + lastLine);
+					Log.logger.info("Console execute command: {}", lastLine);
 					try {
 						final String[] args = CommandHelper.format(lastLine);
-						Log.logger.trace("Parse:" + Arrays.toString(args));
+						Log.logger.trace("Command parse:{}", Arrays.toString(args));
 						CommandManager.execute(args);
-					} catch (CommandException.ParameterDuplicatedException | CommandException.CommandNotFoundException | CommandException.ParameterValueUnavailableException e) {
+					} catch (
+							CommandException.ParameterDuplicatedException|
+							CommandException.CommandNotFoundException|
+							CommandException.ParameterValueUnavailableException e
+					) {
 						Log.logger.error("The command cannot be executed due to the following reasons:\n" + e.getMessage());
 					}
 					

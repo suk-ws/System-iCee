@@ -1,5 +1,6 @@
 package cc.sukazyo.icee.system.config;
 
+import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.system.I18n;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.Resources;
@@ -17,6 +18,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * 目前仍含有一些暂时不明所以的 to-do 标签
+ */
 public class Configure {
 	
 	public static final String CORE_ID = "core";
@@ -46,36 +50,42 @@ public class Configure {
 		return page.get(key);
 	}
 	
+	@SuppressWarnings("unused")
 	public static int getInt (String configPageId, String key) {
 		IConfigValue value = get(configPageId, key);
 		if (value instanceof ConfigTypeInt.Value) return ((ConfigTypeInt.Value)value).get();
 		throw new ConfigGetException.WrongType(configPageId, key, "int", value.getType().getTypeName());
 	}
 	
+	@SuppressWarnings("unused")
 	public static long getLong (String configPageId, String key) {
 		IConfigValue value = get(configPageId, key);
 		if (value instanceof ConfigTypeLong.Value) return ((ConfigTypeLong.Value)value).get();
 		throw new ConfigGetException.WrongType(configPageId, key, "long", value.getType().getTypeName());
 	}
 	
+	@SuppressWarnings("unused")
 	public static String getString (String configPageId, String key) {
 		IConfigValue value = get(configPageId, key);
 		if (value instanceof ConfigTypeString.Value) return ((ConfigTypeString.Value)value).get();
 		throw new ConfigGetException.WrongType(configPageId, key, "string", value.getType().getTypeName());
 	}
 	
+	@SuppressWarnings("unused")
 	public static String[] getStringList (String configPageId, String key) {
 		IConfigValue value = get(configPageId, key);
 		if (value instanceof ConfigTypeStringList.Value) return ((ConfigTypeStringList.Value)value).get().toArray(new String[0]);
 		throw new ConfigGetException.WrongType(configPageId, key, "string-list", value.getType().getTypeName());
 	}
 	
+	@SuppressWarnings("unused")
 	public static boolean getBoolean (String configPageId, String key) {
 		IConfigValue value = get(configPageId, key);
 		if (value instanceof ConfigTypeBoolean.Value) return ((ConfigTypeBoolean.Value)value).get();
 		throw new ConfigGetException.WrongType(configPageId, key, "boolean", value.getType().getTypeName());
 	}
 	
+	@SuppressWarnings("unused")
 	public static I18n.Localized getLanguage (String configPageId, String key) {
 		IConfigValue value = get(configPageId, key);
 		if (value instanceof ConfigTypeLanguage.Value) return ((ConfigTypeLanguage.Value)value).get();
@@ -83,12 +93,24 @@ public class Configure {
 	}
 	
 	/**
-	 * 注册一个自定义的配置文件类型
+	 * 注册一个自定义的配置节点类型
 	 *
 	 * @param resolver 此类型的解析器的实例对象
+	 * @throws cc.sukazyo.icee.system.config.ConfigManageException.TypeConflictException
+	 * 如果需要注册的配置节点类型已经被注册过则会报错此错误
 	 */
-	public static void registerConfigType (IConfigType resolver) {
-		configureTypes.put(resolver.getTypeName(), resolver); // todo duplicate
+	public static void registerConfigType (IConfigType resolver) throws ConfigManageException.TypeConflictException {
+		Log.logger.trace(
+				"config type {} (known as {}) got registered",
+				resolver.getClass().getName(), resolver.getTypeName()
+		);
+		if (configureTypes.containsKey(resolver.getTypeName())) {
+			throw new ConfigManageException.TypeConflictException(
+					resolver.getTypeName(),
+					configureTypes.get(resolver.getTypeName())
+			);
+		}
+		configureTypes.put(resolver.getTypeName(), resolver);
 	}
 	
 	public static String getConfigPageSavePath (String configPageId) {
@@ -104,9 +126,23 @@ public class Configure {
 	 *
 	 * @param configPageId 配置文件id
 	 * @param savePath 配置文件应该被保存的路径。
+	 * @throws cc.sukazyo.icee.system.config.ConfigManageException.ConfigIdConflictException
+	 * 需要注册的配置文件ID已经存在
+	 * @throws cc.sukazyo.icee.system.config.ConfigManageException.SavePathConflictException
+	 * 需要注册的配置文件保存位置已被占用
 	 */
-	public static void registerConfig (String configPageId, String savePath) {
-		registeredConfigMeta.put(configPageId, savePath); // todo duplicate
+	public static void registerConfig (String configPageId, String savePath)
+	throws ConfigManageException.ConfigIdConflictException, ConfigManageException.SavePathConflictException {
+		Log.logger.trace("config page {}({}) got registered", configPageId, savePath);
+		if (registeredConfigMeta.containsKey(configPageId)) {
+			throw new ConfigManageException.ConfigIdConflictException(
+					configPageId,
+					registeredConfigMeta.get(configPageId)
+			);
+		} else if (registeredConfigMeta.containsValue(savePath)) {
+			throw new ConfigManageException.SavePathConflictException(savePath);
+		}
+		registeredConfigMeta.put(configPageId, savePath);
 	}
 	
 	/**
@@ -120,14 +156,28 @@ public class Configure {
 	 */
 	public static void init () throws ConfigGeneralExceptions {
 		
+		// 首次加载的加载状态检测
+		if (!(configureTypes.isEmpty() && registeredConfigMeta.isEmpty() && loadedConfig.isEmpty())) {
+			Log.logger.warn("It seems that Configure#init is called repeatedly!");
+			Log.logger.warn("The management would continue to execute, which is likely to cause duplication of registration.");
+		} else if (defaultLanguage != null) {
+			Log.logger.info("The Configure#defaultLanguage has already been initialize before the Configure initialization?");
+		}
+		
+		Log.logger.info("Start initialize Configures.");
+		
 		// 注册基础内容
+		Log.logger.debug("Registering core configure.");
 		CommonConfigTypes.loadDefaultConfigTypes();
 		registerCoreConfigures();
 		
+		Log.logger.info("[[[TODO]]] Config Registry Events");
 		// todo Configure File Register Event
 		
 		// 首次加载
 		load();
+		
+		Log.logger.info("Done initialize Configures.");
 		
 	}
 	
@@ -138,6 +188,8 @@ public class Configure {
 	 */
 	public static void load () throws ConfigGeneralExceptions {
 		
+		Log.logger.info("Start loading configure...");
+		
 		/*
 		 * 配置文件异常表
 		 * 列表中包含循环读取时出现的每一个异常
@@ -147,6 +199,7 @@ public class Configure {
 		// 遍历每个注册的配置文件
 		registeredConfigMeta.forEach((id, path) -> {
 			
+			Log.logger.debug("loading config page {}({})", id, path);
 			boolean isUserConfigGenerated = false;
 			File userConfigFile = new File(USER_CONFIG_PATH, path + CONFIG_FILE_EXTENSION);
 			try {
@@ -201,6 +254,7 @@ public class Configure {
 					// 可能会做深度检测
 				}
 				if (isMetaContainsException) throw TagAsException.INSTANCE;
+				Log.logger.debug("succeed load config meta of {}", id);
 				
 				// 用户配置文件预处理
 				Config userConfig;
@@ -252,18 +306,19 @@ public class Configure {
 					}
 				}
 				
-				Log.logger.info(String.format("Succeed to load config %s(%s).", id, path));
+				Log.logger.info("Succeed to load config {}({}).", id, path);
 				
 			} catch (TagAsException tag) {
-				Log.logger.warn(String.format("Failed to load config %s(%s).", id, path));
+				Log.logger.warn("Failed to load config {}({}).", id, path);
 				if (isUserConfigGenerated && userConfigFile.delete()) Log.logger.info("deleted errored generated file");
 			} catch (Exception unknown) {
-				Log.logger.warn(String.format("Failed to load config %s(%s).", id, path));
+				Log.logger.warn("Failed to load config {}({}).", id, path);
 				if (isUserConfigGenerated && userConfigFile.delete()) Log.logger.info("deleted errored generated file");
 				throw unknown;
 			}
 		});
 		
+		Log.logger.info("Configures load done.");
 		if (!exceptions.isEmpty()) {
 			throw exceptions;
 		}
@@ -280,7 +335,7 @@ public class Configure {
 	private static void generateConfigPage (String configPageId, Config meta, File userConfigFile)
 	throws ConfigIOException {
 		
-		Log.logger.debug("Generating config page {}({})", configPageId, getConfigPageSavePath(configPageId));
+		Log.logger.info("Generating config page {}({})", configPageId, getConfigPageSavePath(configPageId));
 		
 		if (defaultLanguage == null) defaultLanguage = I18n.getSystemLanguage();
 		final AtomicReference<String> template = new AtomicReference<>();
@@ -318,7 +373,7 @@ public class Configure {
 	private static void updateConfigPage (String configPageId, Config meta, File userConfigFile, int oldVersion)
 	throws ConfigIOException {
 		
-		Log.logger.debug("Updating config page {}({})", configPageId, getConfigPageSavePath(configPageId));
+		Log.logger.info("Updating config page {}({})", configPageId, getConfigPageSavePath(configPageId));
 		
 		boolean loadLang = false;
 		if (defaultLanguage == null) {
@@ -380,7 +435,7 @@ public class Configure {
 		FileOutputStream os;
 		try {
 			if (userConfigFile.createNewFile())
-				Log.logger.debug("created new config file {}", userConfigFile);
+				Log.logger.trace("created new config file {}", userConfigFile);
 			os = new FileOutputStream(userConfigFile);
 			os.write(template.get().getBytes());
 		} catch (IOException e) {
@@ -389,7 +444,7 @@ public class Configure {
 			}
 			throw new ConfigIOException("Unable to write config template on " + userConfigFile);
 		}
-		Log.logger.debug("{}", userConfigFile);
+		Log.logger.trace("succeed");
 	}
 	
 	/**
@@ -417,8 +472,13 @@ public class Configure {
 	}
 	
 	private static void registerCoreConfigures () {
-		registerConfig(CORE_ID, CORE_ID);
-		registerConfig(CORE_BOT_ID, CORE_BOT_ID);
+		try {
+			registerConfig(CORE_ID, CORE_ID);
+			registerConfig(CORE_BOT_ID, CORE_BOT_ID);
+		} catch (ConfigManageException.ConfigIdConflictException | ConfigManageException.SavePathConflictException e) {
+			Log.logger.fatal("Conflict occurred while registering core configures!", e);
+			iCee.exit(18);
+		}
 	}
 	
 	private static void exceptionLanguageUnavailable () {

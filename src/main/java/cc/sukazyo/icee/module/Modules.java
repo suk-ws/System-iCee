@@ -2,14 +2,13 @@ package cc.sukazyo.icee.module;
 
 import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.module.bot.discord.DiscordBot;
-import cc.sukazyo.icee.module.http.HttpListener;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.module.ModuleManager;
 import cc.sukazyo.icee.system.command.CommandException;
 
 public class Modules {
 	
-	public static HttpListener http;
+//	public static HttpListener http;
 	public static DiscordBot discord;
 	
 	public static void registerModules () {

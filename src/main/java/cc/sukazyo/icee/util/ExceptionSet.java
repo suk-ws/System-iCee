@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+@SuppressWarnings("unused")
 public class ExceptionSet extends Throwable {
 	
 	List<Pair<Exception, String>> exceptions;

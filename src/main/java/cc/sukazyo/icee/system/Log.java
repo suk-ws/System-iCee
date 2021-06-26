@@ -29,14 +29,14 @@ public class Log {
 			PROMPT_ADAPT = PROMPT = "[%d{yyyy-MM-dd HH:mm:ss}][%t][%p]%m%n";
 		}
 		
-		setAppender(iCee.DEBUG_MODE?Level.ALL:Level.INFO, PROMPT, PROMPT_ADAPT);
+		setAppender(iCee.DEBUG_MODE?Level.ALL:Level.INFO);
 		commonInit();
 		
 	}
 	
 	public static void initAsCLIMode () {
 		PROMPT_ADAPT = PROMPT = "%m%n";
-		setAppender(iCee.DEBUG_MODE?Level.DEBUG:Level.INFO, PROMPT, PROMPT_ADAPT);
+		setAppender(iCee.DEBUG_MODE?Level.DEBUG:Level.INFO);
 		commonInit();
 	}
 	
@@ -48,7 +48,7 @@ public class Log {
 		
 	}
 	
-	private static void setAppender(Level level, String pattern, String patternAdapt) {
+	private static void setAppender (Level level) {
 		final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
 		final org.apache.logging.log4j.core.config.Configuration config = ctx.getConfiguration();
 		final PatternLayout layout = PatternLayout.newBuilder().withPatternSelector(

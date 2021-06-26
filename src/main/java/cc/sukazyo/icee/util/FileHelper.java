@@ -5,6 +5,7 @@ import cc.sukazyo.icee.system.Resources;
 import java.io.*;
 import java.util.Scanner;
 
+@SuppressWarnings("unused")
 public class FileHelper {
 	
 	/**

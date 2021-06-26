@@ -120,6 +120,28 @@ EXCEPTION[`error-config-path`]::
 
 <br/>
 
+### iCee.exit(17);
+
+Config types in Core meets conflict!
+
+> 当核心自带的配置节点类型注册时出现冲突的时候出现的异常。
+> 
+> 发生于<br/>
+> `cc.sukazyo.icee.system.config.common.CommonConfigTypes#loadDefaultConfigTypes()`
+
+<br/>
+
+### iCee.exit(18);
+
+Conflict occurred while registering core configures!
+
+> 当核心所使用的配置文件的id或者保存路径被占用时出现的异常
+> 
+> 发生于<br/>
+> `cc.sukazyo.icee.system.config.Configure#registerCoreConfigures()`
+
+<br/>
+
 <br/>
 
 ## 已废弃

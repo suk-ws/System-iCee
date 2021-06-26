@@ -3,6 +3,7 @@ package cc.sukazyo.icee.system;
 import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.util.FileHelper;
 import cc.sukazyo.restools.ResourcesPackage;
+import org.apache.logging.log4j.message.FormattedMessage;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -10,26 +11,34 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class Resources {
 	
 	/** 标准 Charset 引用 */
 	public static final Charset CHARSET = StandardCharsets.UTF_8;
 	
+	public static final String ASSETS_PATH = "assets";
+	public static final String META_PATH = "meta";
+	public static final String DATA_PATH = "meta";
+	
 	/** iCee 主程序所附带的资源文件 */
-	static final ResourcesPackage ASSETS_PACKAGE = new ResourcesPackage(iCee.class, "assets");
+	static final ResourcesPackage ASSETS_PACKAGE = new ResourcesPackage(iCee.class, ASSETS_PATH);
 	/** 外置模块的资源文件表 */
 	static final List<ResourcesPackage> MODULES_ASSETS = new ArrayList<>();
 	/** 用户目录下的资源文件目录名 */
-	static final String ASSETS_DIR = "./assets/";
+	static final String ASSETS_DIR = "./" + ASSETS_PATH + "/";
 	
 	/** iCee 主程序配置文件 */
-	private static final ResourcesPackage META = new ResourcesPackage(iCee.class, "meta");
+	private static final ResourcesPackage META = new ResourcesPackage(iCee.class, META_PATH);
+	/** 外置模块的配置文件表 */
+	static final List<ResourcesPackage> MODULES_META = new ArrayList<>();
 	
 	/** 用户数据存放目录名 */
-	private static final String DATA_DIR = "./data/";
+	private static final String DATA_DIR = "./" + DATA_PATH + "/";
 	
 	/**
-	 * 获取用户自定义的资源文件
+	 * 获取用户自定义的资源文件<br/>
+	 * 这个方法不会保证输出的资源文件为可用甚至是存在，仅仅是将路径处理为 File 对象
 	 *
 	 * @param path 资源文件路径
 	 * @return 用户定义的资源文件
@@ -58,16 +67,24 @@ public class Resources {
 		File customFile = getCustomAssets(path);
 		if (customFile.isFile()) {
 			try {
-				return new FileInputStream(customFile);
+				InputStream out =  new FileInputStream(customFile);
+				Log.logger.trace("Got assets [{}] on user assets pack.", path);
+				return out;
 			} catch (FileNotFoundException e) {
-				Log.logger.error("Error occurred while reading custom assets file!", e);
+				Log.logger.error(new FormattedMessage(
+						"Error occurred while reading custom assets file [{}]!",
+						path
+				), e);
 			}
 		}
 		for (ResourcesPackage modPack : MODULES_ASSETS) {
 			try {
-				return modPack.getResource(path).read();
+				InputStream out = modPack.getResource(path).read();
+				Log.logger.trace("Got assets [{}] on module {}.", path, modPack.toString());
+				return out;
 			} catch (IOException ignored) { }
 		}
+		Log.logger.trace("Got assets [{}] on core.", path);
 		return ASSETS_PACKAGE.getResource(path).read();
 	}
 	
@@ -76,6 +93,7 @@ public class Resources {
 	 * 尝试用此方法读取非纯文本文件会造成乱码
 	 *
 	 * @see cc.sukazyo.icee.system.Resources#getAssets(String) getAssets(String path)
+	 *
 	 * @param path 资源文件路径
 	 * @return 资源文件的字符串内容
 	 * @throws IOException 在读取时遇到错误（如文件不存在）
@@ -92,6 +110,14 @@ public class Resources {
 	 * @throws IOException 读取文件时出现的错误
 	 */
 	public static InputStream getMetaFile (String path) throws IOException {
+		for (ResourcesPackage modPack : MODULES_META) {
+			try {
+				InputStream out = modPack.getResource(path).read();
+				Log.logger.trace("Got meta file [{}] on module {}.", path, modPack.toString());
+				return out;
+			} catch (IOException ignored) { }
+		}
+		Log.logger.trace("Got meta file [{}] on core.", path);
 		return META.getResource(path).read();
 	}
 	
@@ -103,7 +129,7 @@ public class Resources {
 	 * @throws IOException 读取文件时出现的错误
 	 */
 	public static String getMetaFileAsString (String path) throws IOException {
-		return META.getResource(path).readAsString();
+		return FileHelper.getContentFromStream(getMetaFile(path));
 	}
 	
 	/**
@@ -130,7 +156,8 @@ public class Resources {
 	 * 以纯文本字符串形式读取 iCee 运行时的数据文件<br>
 	 * 强制读取非纯文本文件会造成乱码
 	 * 
-	 * @see cc.sukazyo.icee.system.Resources#getData(String) getData(String) 
+	 * @see cc.sukazyo.icee.system.Resources#getData(String) getData(String)
+	 *
 	 * @param path 数据文件在数据目录下的位置
 	 * @return 数据文件读取流
 	 * @throws FileNotFoundException 没有此文件

@@ -1,5 +1,7 @@
 package cc.sukazyo.icee.system.command;
 
+import cc.sukazyo.icee.system.Log;
+
 import java.util.Map;
 
 public class CommandManager extends CommandContainer {
@@ -7,6 +9,10 @@ public class CommandManager extends CommandContainer {
 	private static final CommandManager INSTANCE = new CommandManager();
 	
 	public static void register (ICommand command) throws CommandException.CommandNameConflictException {
+		Log.logger.trace(
+				"new command {} registered as name {}",
+				command.getClass().getName(), command.getRegistryName().toString()
+		);
 		INSTANCE.putCommand(command);
 	}
 	

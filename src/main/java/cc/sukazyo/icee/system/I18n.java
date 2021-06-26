@@ -180,16 +180,19 @@ public class I18n {
 		 *
 		 */
 		public void load () {
+			Log.logger.trace(">>Loading language {}...", langTag);
 			try {
 				Properties def = new Properties();
 				def.load(new InputStreamReader(Resources.ASSETS_PACKAGE.getResource(LANG_DIR + "/" + langTag + LANG_FILE_EXTENSION).read(), Resources.CHARSET));
 				def.forEach((k, v) -> this.data.put((String)k, new Value((String)v, langTag, "icee")));
+				Log.logger.trace("succeed loading file at core.");
 			} catch (IOException ignored) {}
 			Resources.MODULES_ASSETS.forEach(modPack -> {
 				try {
 					Properties def = new Properties();
 					def.load(new InputStreamReader(modPack.getResource(LANG_DIR + "/" + langTag + LANG_FILE_EXTENSION).read(), Resources.CHARSET));
 					def.forEach((k, v) -> this.data.put((String)k, new Value((String)v, langTag, "module:" + modPack)));
+					Log.logger.trace("succeed loading file at module [{}].", modPack.toString());
 				} catch (IOException ignored) { }
 			});
 			File customs = Resources.getCustomAssets(LANG_DIR + "/" + langTag + LANG_FILE_EXTENSION);
@@ -198,6 +201,7 @@ public class I18n {
 					Properties def = new Properties();
 					def.load(new InputStreamReader(new FileInputStream(customs), Resources.CHARSET));
 					def.forEach((k, v) -> this.data.put((String)k, new Value((String)v, langTag, "custom")));
+					Log.logger.trace("succeed loading file at user assets pack.");
 				} catch (IOException ignored) { }
 			}
 		}
@@ -337,17 +341,19 @@ public class I18n {
 	/**
 	 * 初始化已索引的语言内容数据<br/>
 	 * 同时也可用于从硬盘刷新<br/>
-	 * 不包含语言树的初始化，请提前刷新语言索引
+	 * <b>不包含语言树的初始化，请提前刷新语言索引</b>
 	 *
 	 * @see #index() 语言索引刷新方法
 	 */
 	public static void load () {
 		
 		languages.forEach((k, v) -> v.load()); // 加载语言的翻译
+		Log.logger.debug("All language load done.");
 		
 		// 设置当前本地化信息
 		curr = Configure.getLanguage(Configure.CORE_ID, "system.lang.default");
 		debug = Configure.getBoolean(Configure.CORE_ID, "system.lang.debug");
+		Log.logger.debug("I18n load done.");
 		
 	}
 	
@@ -362,15 +368,20 @@ public class I18n {
 		// 从磁盘加载语言文件的索引配置
 		Properties index = new Properties();
 		try {
+			Log.logger.debug("Trying to load lang.conf in the core...");
 			Properties def = new Properties();
 			def.load(new InputStreamReader(Resources.ASSETS_PACKAGE.getResource(LANG_DIR + "/" + LANG_INDEX_FILENAME).read(), Resources.CHARSET));
 			index.putAll(def);
-		} catch (IOException ignored) {}
+			Log.logger.debug("Done.");
+		} catch (IOException ignored) {
+			Log.logger.debug("Failed.");
+		}
 		Resources.MODULES_ASSETS.forEach(modPack -> {
 			try {
 				Properties def = new Properties();
 				def.load(new InputStreamReader(modPack.getResource(LANG_DIR + "/" + LANG_INDEX_FILENAME).read(), Resources.CHARSET));
 				index.putAll(def);
+				Log.logger.debug("Succeed loaded lang.conf at module [{}].", modPack.toString());
 			} catch (IOException ignored) { }
 		});
 		File customs = Resources.getCustomAssets(LANG_DIR + "/" + LANG_INDEX_FILENAME);
@@ -379,6 +390,7 @@ public class I18n {
 				Properties def = new Properties();
 				def.load(new InputStreamReader(new FileInputStream(customs), Resources.CHARSET));
 				index.putAll(def);
+				Log.logger.debug("Succeed loaded lang.conf at user assets pack.");
 			} catch (IOException ignored) { }
 		}
 		
@@ -390,6 +402,7 @@ public class I18n {
 		});
 		
 		// 构建依赖树
+		Log.logger.debug("Parsing language tree...");
 		for (Map.Entry<Object, Object> entry : index.entrySet()) {
 			String k = (String)entry.getKey();
 			String v = (String)entry.getValue();
@@ -409,11 +422,12 @@ public class I18n {
 				throw new ParseException(String.format("The priority of %s is defined as a non-numerical or too large value %s", meta[1], k));
 			}
 		}
+		Log.logger.info("Language Tree Index Done.");
 		
 		// 输出语言树
-		final StringBuilder listLang = new StringBuilder("\nLocalization Tree::\n");
+		final StringBuilder listLang = new StringBuilder("Localization Tree::\n");
 		Localized.ROOT.listChild(listLang, "|-");
-		Log.logger.trace(listLang.substring(0, listLang.length()-1));
+		Log.logger.debug(listLang.substring(0, listLang.length()-1));
 		
 	}
 	

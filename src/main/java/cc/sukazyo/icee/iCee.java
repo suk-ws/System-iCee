@@ -11,6 +11,7 @@ import cc.sukazyo.icee.system.module.ModuleManager;
 import cc.sukazyo.icee.system.command.CommandException;
 import cc.sukazyo.icee.system.command.CommandManager;
 import cc.sukazyo.icee.system.command.core.CoreCommands;
+import org.apache.logging.log4j.message.FormattedMessage;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -19,7 +20,7 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.3.2-dev";
-	public static final int BUILD_VER = 46;
+	public static final int BUILD_VER = 47;
 	public static final boolean DEBUG_MODE = true;
 	
 	/**
@@ -64,7 +65,6 @@ public class iCee {
 			iCee.exit(14);
 		}
 		
-		
 	}
 	
 	/**
@@ -72,8 +72,11 @@ public class iCee {
 	 * @param status 退出状态码
 	 */
 	public static void exit(int status) {
-		Log.logger.info("iCee System exit with status " + status);
+		if (status == Integer.MIN_VALUE) Log.logger.info("iCee System exit with debug tag!~");
+		else Log.logger.info("iCee System exit with status " + status);
 		InstanceManager.releaseLock();
+		if (status == Integer.MIN_VALUE)
+		System.exit(0);
 		System.exit(status);
 	}
 	
@@ -82,16 +85,19 @@ public class iCee {
 		if (!InstanceManager.lock()) {
 			Log.logger.fatal(
 					"There is already an instance running on the directory.\n" +
-				    "Due to the stability and functionality reasons, iCee doesn't support running multiple instance in one directory.\n" +
-				    "If you really want to run multiple instance on single machine,\n" +
-				    "at present, you can copy iCee binary file to other directory, and run it.\n" +
+					"Due to the stability and functionality reasons, iCee doesn't support running multiple instance in one directory.\n" +
+					"If you really want to run multiple instance on single machine,\n" +
+					"at present, you can copy iCee binary file to other directory, and run it.\n" +
 					"\n" +
-					"Current Run Directory: " + System.getProperty("user.dir") + "\n" +
-					"This Processor PID: " + InstanceManager.currentPID() + "\n" +
-					"Running Instance PID: " + InstanceManager.instancePID()
-		    );
-		 	exit(11);
-		 }
+					"Current Run Directory: {}\n" +
+					"This Processor PID: {}\n" +
+					"Running Instance PID: {}",
+					System.getProperty("user.dir"),
+					InstanceManager.currentPID(),
+					InstanceManager.instancePID()
+			);
+			exit(11);
+		}
 		// 主程序开始的标志输出
 		Log.logger.info("==================================================================================================");
 		Log.logger.info("                                                                                                  ");
@@ -108,7 +114,7 @@ public class iCee {
 		Log.logger.info("==================================================================================================");
 		commonUtilsLoad();
 		ModuleManager.initializeRegisteredModules();
-		Log.logger.info("Starting Console Scanner...");
+		Log.logger.info("Starting Console Input Listen...");
 		Console.start();
 		Log.logger.info("All Complete!");
 	}
@@ -131,16 +137,16 @@ public class iCee {
 			CoreCommands.registerAll();
 			Modules.registerModules();
 			AfferentModulesRegister.register();
-			Log.logger.info("Loaded System Commons:(config, language, core-commands, and build-in&afferent modules)");
+			Log.logger.info("Loaded System Commons.");
 		} catch (I18n.ParseException e) {
-			Log.logger.fatal("Error while loading localization data: " , e);
+			Log.logger.fatal("Error while loading localization data: ", e);
 			iCee.exit(15);
 		} catch (ConfigGeneralExceptions ee) {
 			Log.logger.fatal("Some error occurred while loading system config!");
-			ee.forEach((e, info) -> Log.logger.fatal(
-					String.format("EXCEPTION[%s]::", Configure.getConfigPageSavePath(info)),
-					e
-			));
+			ee.forEach((e, info) -> Log.logger.fatal(new FormattedMessage(
+					"EXCEPTION[{}]::",
+					Configure.getConfigPageSavePath(info)
+			), e));
 			iCee.exit(16);
 		}
 	}

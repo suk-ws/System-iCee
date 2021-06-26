@@ -1,5 +1,6 @@
 package cc.sukazyo.icee.util;
 
+@SuppressWarnings("unused")
 public class Pair <A, B> {
 	
 	public A a;

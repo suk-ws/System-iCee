@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@SuppressWarnings("unused")
 public class SimpleUtils {
 	
 	/**
@@ -60,6 +61,13 @@ public class SimpleUtils {
 		} return false;
 	}
 	
+	/**
+	 * 创建一个重复含有多个相同字符的字符串
+	 *
+	 * @param chr 源字符
+	 * @param n 字符数量
+	 * @return 创建的字符串
+	 */
 	public static String repeatChar (char chr, int n) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < n; i++) {

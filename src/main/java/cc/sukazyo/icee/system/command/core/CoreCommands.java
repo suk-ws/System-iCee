@@ -15,6 +15,7 @@ public abstract class CoreCommands {
 			Log.logger.fatal("Command conflict occurred while registering core commands!", e);
 			iCee.exit(9);
 		}
+		Log.logger.debug("Registered core commands.");
 	}
 	
 }

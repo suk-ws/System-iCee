@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommandContainer {
+public abstract class CommandContainer {
 	
 	private final HashMap<String, ICommand> commands = new HashMap<>();
 	

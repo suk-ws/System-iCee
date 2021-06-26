@@ -9,6 +9,7 @@ import java.nio.channels.FileLock;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class InstanceManager {
 	
 	private static final File lockFile = new File("./.lock");
@@ -34,6 +35,7 @@ public class InstanceManager {
 			RandomAccessFile iio = new RandomAccessFile(instance, "rw");
 			iio.write(currentPID().getBytes());
 			iio.close();
+			Log.logger.info("INSTANCE Locked.");
 			return true;
 		} catch (IOException e) {
 			Log.logger.fatal("Generate instance information failed: ", e);
@@ -52,9 +54,10 @@ public class InstanceManager {
 			return;
 		}
 		try {
-			if (!instance.delete()) Log.logger.warn("实例信息可能被由外部误操作！");
+			if (!instance.delete()) Log.logger.warn("Might Instance Lock information been changed by external program!!!");
 			lock.release();
 		} catch (IOException ignored) { }
+		Log.logger.info("INSTANCE unlocked.");
 	}
 	
 	/**
