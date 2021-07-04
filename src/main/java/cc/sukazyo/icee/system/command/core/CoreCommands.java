@@ -11,6 +11,8 @@ public abstract class CoreCommands {
 			CommandManager.register(new CommandHelp());
 			CommandManager.register(new CommandExit());
 			CommandManager.register(new CommandModulesHelper());
+			CommandManager.register(new CommandLogColorTest());
+			CommandManager.register(new CommandGc());
 		} catch (CommandException.CommandNameConflictException e) {
 			Log.logger.fatal("Command conflict occurred while registering core commands!", e);
 			iCee.exit(9);

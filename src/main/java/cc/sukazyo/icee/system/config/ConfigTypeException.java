@@ -1,5 +1,6 @@
 package cc.sukazyo.icee.system.config;
 
+@SuppressWarnings("unused")
 public abstract class ConfigTypeException extends Exception {
 	
 	public ConfigTypeException (String message) {
@@ -15,6 +16,15 @@ public abstract class ConfigTypeException extends Exception {
 					configValue,
 					minimum,
 					maximum
+			));
+		}
+		
+		public ValueOutOfRangeException (String configKey, String configValue, String range) {
+			super(String.format(
+					"Value of %s is %s, while the available range MUST be in the range of %s.",
+					configKey,
+					configValue,
+					range
 			));
 		}
 		

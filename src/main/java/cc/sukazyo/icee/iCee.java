@@ -20,7 +20,7 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.3.2-dev";
-	public static final int BUILD_VER = 47;
+	public static final int BUILD_VER = 48;
 	public static final boolean DEBUG_MODE = true;
 	
 	/**
@@ -133,6 +133,7 @@ public class iCee {
 		try {
 			I18n.index();
 			Configure.init();
+			Log.renderColor();
 			I18n.load();
 			CoreCommands.registerAll();
 			Modules.registerModules();

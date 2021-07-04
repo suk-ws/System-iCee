@@ -16,6 +16,8 @@ core.command.help.command_list.single.alias_title=\u0020别名:\u0020
 core.command.help.too_much_argument=为命令 help 定义的参数过多
 # module tools
 core.command.module.introduction=模块管理工具集
+# log-colors
+core.command.log-colors.introduction=输出log4j2支持的16种log颜色的样例
 
 ### Modules
 # Java Discord API

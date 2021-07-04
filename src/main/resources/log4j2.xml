@@ -6,6 +6,24 @@
 		<Property name="debug_adapt">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%pid:%t][%X{location}][%p]%m%n</Property>
 		<Property name="error_adapt">[%d{yyyy-MM-dd HH:mm:ss}(%r)][%pid:%t][%X{class}#%X{method}][%p]%m%n</Property>
 	</Properties>
+	<CustomLevels>
+		<CustomLevel name="WHITE" intLevel="350" />
+		<CustomLevel name="CYAN" intLevel="350" />
+		<CustomLevel name="MAGENTA" intLevel="350" />
+		<CustomLevel name="BLUE" intLevel="350" />
+		<CustomLevel name="YELLOW" intLevel="350" />
+		<CustomLevel name="GREEN" intLevel="350" />
+		<CustomLevel name="RED" intLevel="350" />
+		<CustomLevel name="BLACK" intLevel="350" />
+		<CustomLevel name="B_WHITE" intLevel="350" />
+		<CustomLevel name="B_CYAN" intLevel="350" />
+		<CustomLevel name="B_MAGENTA" intLevel="350" />
+		<CustomLevel name="B_BLUE" intLevel="350" />
+		<CustomLevel name="B_YELLOW" intLevel="350" />
+		<CustomLevel name="B_GREEN" intLevel="350" />
+		<CustomLevel name="B_RED" intLevel="350" />
+		<CustomLevel name="B_BLACK" intLevel="350" />
+	</CustomLevels>
 	<Appenders>
 		<RollingFile name="DebugFile" fileName="./log/debug.log" filePattern="./log/debug-%d{yyyy-MM-dd}-%i.log">
 			<ThresholdFilter level="all" onMatch="ACCEPT" onMismatch="DENY" />

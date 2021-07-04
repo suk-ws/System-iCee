@@ -1,5 +1,5 @@
 {
-	"version": 8,
+	"version": 9,
 	"configurations": [
 		{
 			"node": "system.lang.default",
@@ -33,6 +33,65 @@
 			"default": [
 				"127.0.0.1",
 				"192.168.*"
+			]
+		},
+		{
+			"node": "system.log.color.theme",
+			"type": "string",
+			"default": "light",
+			"required": [
+				"^light$",
+				"^dark$",
+				"^custom$",
+				"^off$"
+			]
+		},
+		{
+			"node": "system.log.color.TRACE",
+			"type": "string",
+			"default": "white",
+			"required": [
+				"^(bright )?(black|red|green|yellow|blue|magenta|cyan|white)$"
+			]
+		},
+		{
+			"node": "system.log.color.DEBUG",
+			"type": "string",
+			"default": "cyan",
+			"required": [
+				"^(bright )?(black|red|green|yellow|blue|magenta|cyan|white)$"
+			]
+		},
+		{
+			"node": "system.log.color.INFO",
+			"type": "string",
+			"default": "bright green",
+			"required": [
+				"^(bright )?(black|red|green|yellow|blue|magenta|cyan|white)$"
+			]
+		},
+		{
+			"node": "system.log.color.WARN",
+			"type": "string",
+			"default": "bright magenta",
+			"required": [
+				"^(bright )?(black|red|green|yellow|blue|magenta|cyan|white)$"
+			]
+		},
+		{
+			"node": "system.log.color.ERROR",
+			"type": "string",
+			"default": "red",
+			"required": [
+				"^(bright )?(black|red|green|yellow|blue|magenta|cyan|white)$"
+			]
+		},
+		{
+			"node": "system.log.color.FATAL",
+			"type": "string",
+			"default": "bright red",
+			"required": [
+				"^(bright )?(black|red|green|yellow|blue|magenta|cyan|white)$"
 			]
 		}
 	]

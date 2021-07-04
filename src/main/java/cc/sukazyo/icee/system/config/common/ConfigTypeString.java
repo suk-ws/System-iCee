@@ -2,10 +2,10 @@ package cc.sukazyo.icee.system.config.common;
 
 import cc.sukazyo.icee.system.config.ConfigTypeException;
 import cc.sukazyo.icee.system.config.IConfigType;
-import cc.sukazyo.icee.util.SimpleUtils;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ConfigTypeString extends ConfigTypeWithCommonUpdate {
@@ -35,6 +35,18 @@ public class ConfigTypeString extends ConfigTypeWithCommonUpdate {
 			throw new ConfigTypeException.WrongValueTypeException(key);
 		} catch (ConfigException.WrongType e) {
 			throw new ConfigTypeException.WrongValueTypeException(key, "string", dataSource.getValue(key).valueType().name());
+		}
+		if (meta.hasPath(CommonConfigTypes.REQUIRED_TAG)) {
+			AtomicBoolean isOK = new AtomicBoolean(false);
+			meta.getStringList(CommonConfigTypes.REQUIRED_TAG).forEach(regex -> {
+				if (value.matches(regex)) isOK.set(true);
+			});
+			if (!isOK.get()) {
+				throw new ConfigTypeException.ValueOutOfRangeException(
+						key, value,
+						meta.getStringList(CommonConfigTypes.REQUIRED_TAG).toString()
+				);
+			}
 		}
 		return new Value(this, value);
 	}

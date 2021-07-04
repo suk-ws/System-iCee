@@ -196,6 +196,23 @@ public class Configure {
 		 * Pair 的 A 元素为 configPageId，B 元素为异常对象
 		 */
 		ConfigGeneralExceptions exceptions = new ConfigGeneralExceptions();
+		// 创建文件夹
+		try {
+			File dir = new File(USER_CONFIG_PATH);
+			if (!(dir.isDirectory() || dir.mkdir())) {
+				exceptions.add(
+						new ConfigIOException("Failed to create config dir."),
+						"$ROOT"
+				);
+				return;
+			}
+		} catch (SecurityException e) {
+			exceptions.add(
+					new ConfigIOException("Failed to create config dir due to a security exception", e),
+					"$ROOT"
+			);
+			return;
+		}
 		// 遍历每个注册的配置文件
 		registeredConfigMeta.forEach((id, path) -> {
 			
@@ -442,7 +459,7 @@ public class Configure {
 			if (userConfigFile.delete()) {
 				Log.logger.info(String.format("Cleared the error configure file %s.", userConfigFile));
 			}
-			throw new ConfigIOException("Unable to write config template on " + userConfigFile);
+			throw new ConfigIOException("Unable to write config template on " + userConfigFile, e);
 		}
 		Log.logger.trace("succeed");
 	}

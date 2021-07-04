@@ -1,7 +1,6 @@
 package cc.sukazyo.icee.system.config.common;
 
 import cc.sukazyo.icee.system.I18n;
-import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.config.ConfigTypeException;
 import cc.sukazyo.icee.system.config.IConfigType;
 import com.typesafe.config.Config;
@@ -23,7 +22,6 @@ public class ConfigTypeLanguage extends ConfigTypeWithCommonUpdate {
 	@Override
 	public void summon (Config meta, AtomicReference<String> template) {
 		String def = meta.getString(DEFAULT_TAG);
-		Log.logger.trace(def);
 		template.set(template.get().replace(
 				String.format("<<%s>>", meta.getString(NODE_TAG)),
 				SYSTEM_LANGUAGE_TAG.equals(def)?I18n.getSystemLanguage().getLangTag():def
@@ -60,6 +58,7 @@ public class ConfigTypeLanguage extends ConfigTypeWithCommonUpdate {
 			return resolver;
 		}
 		
+		@SuppressWarnings("unused")
 		public String getOriginalTag () {
 			return data;
 		}
