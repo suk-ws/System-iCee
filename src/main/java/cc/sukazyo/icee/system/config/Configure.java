@@ -6,8 +6,11 @@ import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.Resources;
 import cc.sukazyo.icee.system.config.IConfigType.IConfigValue;
 import cc.sukazyo.icee.system.config.common.*;
-import cc.sukazyo.icee.util.FileHelper;
+import cc.sukazyo.icee.util.FileUtils;
 import cc.sukazyo.icee.util.TagAsException;
+import cc.sukazyo.icee.util.file.FileTreeException;
+import cc.sukazyo.icee.util.file.NodeFile;
+import cc.sukazyo.icee.util.file.NodeRootDirectory;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
@@ -35,9 +38,11 @@ public class Configure {
 	public static final String CONFIG_META_FILENAME = "config.json";
 	public static final String CONFIG_FILE_EXTENSION = ".conf";
 	
+	private static final NodeRootDirectory configFileTree = new NodeRootDirectory(USER_CONFIG_PATH);
+	
 	private static final Map<String, IConfigType> configureTypes = new HashMap<>();
 	
-	private static final Map<String, String> registeredConfigMeta = new HashMap<>();
+	private static final Map<String, NodeFile> registeredConfigMeta = new HashMap<>();
 	private static final Map<String, Map<String, IConfigValue>> loadedConfig = new HashMap<>();
 	
 	private static I18n.Localized defaultLanguage;
@@ -114,7 +119,7 @@ public class Configure {
 	}
 	
 	public static String getConfigPageSavePath (String configPageId) {
-		return registeredConfigMeta.get(configPageId);
+		return registeredConfigMeta.get(configPageId).getFullName();
 	}
 	
 	/**
@@ -132,17 +137,19 @@ public class Configure {
 	 * 需要注册的配置文件保存位置已被占用
 	 */
 	public static void registerConfig (String configPageId, String savePath)
-	throws ConfigManageException.ConfigIdConflictException, ConfigManageException.SavePathConflictException {
+	throws ConfigManageException.ConfigIdConflictException, ConfigManageException.SavePathConflictException, FileTreeException.FileNameUnavailableException {
 		Log.logger.trace("config page {}({}) got registered", configPageId, savePath);
 		if (registeredConfigMeta.containsKey(configPageId)) {
 			throw new ConfigManageException.ConfigIdConflictException(
 					configPageId,
-					registeredConfigMeta.get(configPageId)
+					registeredConfigMeta.get(configPageId).getFullName()
 			);
-		} else if (registeredConfigMeta.containsValue(savePath)) {
+		}
+		try {
+			registeredConfigMeta.put(configPageId, configFileTree.createNewFile(savePath + CONFIG_FILE_EXTENSION));
+		} catch (FileTreeException.ConflictException e) {
 			throw new ConfigManageException.SavePathConflictException(savePath);
 		}
-		registeredConfigMeta.put(configPageId, savePath);
 	}
 	
 	/**
@@ -172,7 +179,7 @@ public class Configure {
 		registerCoreConfigures();
 		
 		Log.logger.info("[[[TODO]]] Config Registry Events");
-		// todo Configure File Register Event
+		// todo Configure NodeFile Register Event
 		
 		// 首次加载
 		load();
@@ -196,29 +203,11 @@ public class Configure {
 		 * Pair 的 A 元素为 configPageId，B 元素为异常对象
 		 */
 		ConfigGeneralExceptions exceptions = new ConfigGeneralExceptions();
-		// 创建文件夹
-		try {
-			File dir = new File(USER_CONFIG_PATH);
-			if (!(dir.isDirectory() || dir.mkdir())) {
-				exceptions.add(
-						new ConfigIOException("Failed to create config dir."),
-						"$ROOT"
-				);
-				return;
-			}
-		} catch (SecurityException e) {
-			exceptions.add(
-					new ConfigIOException("Failed to create config dir due to a security exception", e),
-					"$ROOT"
-			);
-			return;
-		}
 		// 遍历每个注册的配置文件
-		registeredConfigMeta.forEach((id, path) -> {
+		registeredConfigMeta.forEach((id, nodeFile) -> {
 			
-			Log.logger.debug("loading config page {}({})", id, path);
+			Log.logger.debug("loading config page {}({})", id, nodeFile.getFullName());
 			boolean isUserConfigGenerated = false;
-			File userConfigFile = new File(USER_CONFIG_PATH, path + CONFIG_FILE_EXTENSION);
 			try {
 				
 				// 获取配置文件的格式配置
@@ -277,18 +266,23 @@ public class Configure {
 				Config userConfig;
 				try {
 					// 获取用户定义的配置文件，或者生成
-					if (!userConfigFile.isFile()) {
-						generateConfigPage(id, meta, userConfigFile);
+					if (!nodeFile.isExist()) {
+						generateConfigPage(id, meta, nodeFile);
 						isUserConfigGenerated = true;
 					}
 					
 					userConfig = ConfigFactory.parseString(
-							FileHelper.getContentFromStream(new FileInputStream(userConfigFile))
+							FileUtils.getContentFromStream(new FileInputStream(nodeFile.getFile()))
 					);
 					// 检查版本
 					if (
 							meta.getInt(CONFIG_META_VERSION_TAG) != userConfig.getInt(CONFIG_META_VERSION_TAG)
-					) updateConfigPage(id, meta, userConfigFile, userConfig.getInt(CONFIG_META_VERSION_TAG));
+					) {
+						updateConfigPage(id, meta, nodeFile, userConfig.getInt(CONFIG_META_VERSION_TAG));
+						userConfig = ConfigFactory.parseString(
+								FileUtils.getContentFromStream(new FileInputStream(nodeFile.getFile()))
+						);
+					}
 				} catch (ConfigIOException|IOException|ConfigException.Parse e) {
 					exceptions.add(e, id);
 					throw TagAsException.INSTANCE;
@@ -297,13 +291,14 @@ public class Configure {
 				// 用户配置文件检查
 				Map<String, IConfigValue> values = new HashMap<>();
 				AtomicBoolean isUserConfigContainsExceptions = new AtomicBoolean(false);
+				Config finalUserConfig = userConfig;
 				meta.getConfigList(CONFIG_META_DATA_TAG).forEach(metaNode -> {
 					try {
 						values.put(metaNode.getString(
 								IConfigType.NODE_TAG),
 								configureTypes.get(
 										metaNode.getString(IConfigType.TYPE_TAG)
-								).parse(metaNode, userConfig)
+								).parse(metaNode, finalUserConfig)
 						);
 					} catch (ConfigTypeException e) {
 						exceptions.add(e, id);
@@ -323,14 +318,14 @@ public class Configure {
 					}
 				}
 				
-				Log.logger.info("Succeed to load config {}({}).", id, path);
+				Log.logger.info("Succeed to load config {}({}).", id, nodeFile.getFullName());
 				
 			} catch (TagAsException tag) {
-				Log.logger.warn("Failed to load config {}({}).", id, path);
-				if (isUserConfigGenerated && userConfigFile.delete()) Log.logger.info("deleted errored generated file");
+				Log.logger.warn("Failed to load config {}({}).", id, nodeFile.getFullName());
+				if (isUserConfigGenerated && nodeFile.getFile().delete()) Log.logger.info("deleted errored generated file");
 			} catch (Exception unknown) {
-				Log.logger.warn("Failed to load config {}({}).", id, path);
-				if (isUserConfigGenerated && userConfigFile.delete()) Log.logger.info("deleted errored generated file");
+				Log.logger.warn("Failed to load config {}({}).", id, nodeFile.getFullName());
+				if (isUserConfigGenerated && nodeFile.getFile().delete()) Log.logger.info("deleted errored generated file");
 				throw unknown;
 			}
 		});
@@ -349,10 +344,10 @@ public class Configure {
 	 * @param meta 配置文件元数据
 	 * @param userConfigFile 用户配置文件储存位置
 	 */
-	private static void generateConfigPage (String configPageId, Config meta, File userConfigFile)
+	private static void generateConfigPage (String configPageId, Config meta, NodeFile userConfigFile)
 	throws ConfigIOException {
 		
-		Log.logger.info("Generating config page {}({})", configPageId, getConfigPageSavePath(configPageId));
+		Log.logger.info("Generating config page {}({})", configPageId, userConfigFile.getFullName());
 		
 		if (defaultLanguage == null) defaultLanguage = I18n.getSystemLanguage();
 		final AtomicReference<String> template = new AtomicReference<>();
@@ -368,7 +363,7 @@ public class Configure {
 			);
 			
 			// 写配置文件
-			outputConfigFile(userConfigFile, template);
+			outputConfigFile(userConfigFile, template, true);
 			
 			return;
 			
@@ -387,10 +382,10 @@ public class Configure {
 	 * @param userConfigFile 用户配置文件的储存位置
 	 * @param oldVersion 用户配置文件当前版本号
 	 */
-	private static void updateConfigPage (String configPageId, Config meta, File userConfigFile, int oldVersion)
+	private static void updateConfigPage (String configPageId, Config meta, NodeFile userConfigFile, int oldVersion)
 	throws ConfigIOException {
 		
-		Log.logger.info("Updating config page {}({})", configPageId, getConfigPageSavePath(configPageId));
+		Log.logger.info("Updating config page {}({})", configPageId, userConfigFile.getFullName());
 		
 		boolean loadLang = false;
 		if (defaultLanguage == null) {
@@ -408,7 +403,7 @@ public class Configure {
 			Config oldData = ConfigFactory.empty();
 			try {
 				oldData = ConfigFactory.parseString(
-						FileHelper.getContentFromStream(new FileInputStream(userConfigFile))
+						FileUtils.getContentFromStream(new FileInputStream(userConfigFile.getFile()))
 				);
 			} catch (FileNotFoundException ignored2) { }
 			
@@ -421,7 +416,7 @@ public class Configure {
 			);
 			
 			// 写入新文件
-			outputConfigFile(userConfigFile, template);
+			outputConfigFile(userConfigFile, template, false);
 			
 			Config config = ConfigFactory.parseString(template.get());
 			// 如果是更新了 CORE 配置文件，则再刷新一遍以更新到正确的语言
@@ -447,19 +442,17 @@ public class Configure {
 	 * @param userConfigFile 配置文件储存位置
 	 * @param template 配置文件模板内容
 	 */
-	private static void outputConfigFile (File userConfigFile, AtomicReference<String> template)
+	private static void outputConfigFile (NodeFile userConfigFile, AtomicReference<String> template, boolean isNewFile)
 	throws ConfigIOException {
-		FileOutputStream os;
 		try {
-			if (userConfigFile.createNewFile())
-				Log.logger.trace("created new config file {}", userConfigFile);
-			os = new FileOutputStream(userConfigFile);
+			if (isNewFile) userConfigFile.createFile();
+			FileOutputStream os = new FileOutputStream(userConfigFile.getFile());
 			os.write(template.get().getBytes());
 		} catch (IOException e) {
-			if (userConfigFile.delete()) {
-				Log.logger.info(String.format("Cleared the error configure file %s.", userConfigFile));
+			if (isNewFile && userConfigFile.getFile().delete()) {
+				Log.logger.info(String.format("Cleared the error configure file %s.", userConfigFile.getFullName()));
 			}
-			throw new ConfigIOException("Unable to write config template on " + userConfigFile, e);
+			throw new ConfigIOException("Unable to write config template on " + userConfigFile.getFullName(), e);
 		}
 		Log.logger.trace("succeed");
 	}
@@ -474,7 +467,7 @@ public class Configure {
 	private static void searchForConfigPageTemplate (String configPageId, Config meta, AtomicReference<String> template) {
 		I18n.forEachFrom(defaultLanguage, lang -> {
 			try {
-				template.set(FileHelper.getContentFromStream(Resources.getMetaFile(
+				template.set(FileUtils.getContentFromStream(Resources.getMetaFile(
 						String.format("/%s/%s%s", configPageId, lang.getLangTag(), CONFIG_FILE_EXTENSION)
 				)));
 				if (
@@ -492,7 +485,7 @@ public class Configure {
 		try {
 			registerConfig(CORE_ID, CORE_ID);
 			registerConfig(CORE_BOT_ID, CORE_BOT_ID);
-		} catch (ConfigManageException.ConfigIdConflictException | ConfigManageException.SavePathConflictException e) {
+		} catch (ConfigManageException.ConfigIdConflictException | ConfigManageException.SavePathConflictException | FileTreeException.FileNameUnavailableException e) {
 			Log.logger.fatal("Conflict occurred while registering core configures!", e);
 			iCee.exit(18);
 		}

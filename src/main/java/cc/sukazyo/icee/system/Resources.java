@@ -1,7 +1,7 @@
 package cc.sukazyo.icee.system;
 
 import cc.sukazyo.icee.iCee;
-import cc.sukazyo.icee.util.FileHelper;
+import cc.sukazyo.icee.util.FileUtils;
 import cc.sukazyo.restools.ResourcesPackage;
 import org.apache.logging.log4j.message.FormattedMessage;
 
@@ -84,8 +84,9 @@ public class Resources {
 				return out;
 			} catch (IOException ignored) { }
 		}
+		InputStream out = ASSETS_PACKAGE.getResource(path).read();
 		Log.logger.trace("Got assets [{}] on core.", path);
-		return ASSETS_PACKAGE.getResource(path).read();
+		return out;
 	}
 	
 	/**
@@ -99,7 +100,7 @@ public class Resources {
 	 * @throws IOException 在读取时遇到错误（如文件不存在）
 	 */
 	public static String getAssetsAsString (String path) throws IOException {
-		return FileHelper.getContentFromStream(getAssets(path));
+		return FileUtils.getContentFromStream(getAssets(path));
 	}
 	
 	/**
@@ -117,8 +118,9 @@ public class Resources {
 				return out;
 			} catch (IOException ignored) { }
 		}
+		InputStream out = META.getResource(path).read();
 		Log.logger.trace("Got meta file [{}] on core.", path);
-		return META.getResource(path).read();
+		return out;
 	}
 	
 	/**
@@ -129,7 +131,7 @@ public class Resources {
 	 * @throws IOException 读取文件时出现的错误
 	 */
 	public static String getMetaFileAsString (String path) throws IOException {
-		return FileHelper.getContentFromStream(getMetaFile(path));
+		return FileUtils.getContentFromStream(getMetaFile(path));
 	}
 	
 	/**
@@ -163,7 +165,7 @@ public class Resources {
 	 * @throws FileNotFoundException 没有此文件
 	 */
 	public static String getDataAsString (String path) throws IOException {
-		return FileHelper.getContentFromStream(getData(path));
+		return FileUtils.getContentFromStream(getData(path));
 	}
 	
 }

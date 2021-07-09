@@ -1,7 +1,7 @@
 package cc.sukazyo.icee.system;
 
 import cc.sukazyo.icee.iCee;
-import cc.sukazyo.icee.util.FileHelper;
+import cc.sukazyo.icee.util.FileUtils;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -77,7 +77,7 @@ public class InstanceManager {
 	 */
 	public static String instancePID () {
 		try {
-			return FileHelper.getContentFromStream(new FileInputStream(instance));
+			return FileUtils.getContentFromStream(new FileInputStream(instance));
 		} catch (FileNotFoundException e) {
 			return null;
 		}
