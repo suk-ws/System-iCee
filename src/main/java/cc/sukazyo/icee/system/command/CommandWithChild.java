@@ -20,10 +20,10 @@ public abstract class CommandWithChild extends CommandContainer implements IComm
 	public void execute(String[] args, Map<String, String> parameters) {
 		try {
 			run(args);
-		} catch (CommandException.ParameterDuplicatedException | CommandException.ParameterValueUnavailableException e) {
-			Log.logger.error(e.getMessage());
 		} catch (CommandException.CommandNotFoundException e) {
 			Log.logger.error("Child command <" + e.getCommandName() + "> not found on " + getRegistryName().toString());
+		} catch (CommandException e) {
+			Log.logger.error("Command execute failed: ", e);
 		}
 	}
 	

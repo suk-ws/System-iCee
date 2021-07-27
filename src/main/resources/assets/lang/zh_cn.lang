@@ -1,11 +1,8 @@
-
 ### Core Commands
 # exit
 core.command.exit.introduction=关闭当前正在运行的 iCee 实例
-core.command.exit.help=${core.command.exit.help/zh_cn}
 # help
 core.command.help.introduction=打印注册命令的介绍，或打印指定命令的帮助信息
-core.command.help.help=${core.command.help.help/zh_cn}
 core.command.help.unsupported=无帮助支持
 core.command.help.command_help_page.page=命令 ${command} 的帮助信息 : \n${command_help_page}
 core.command.help.command_help_page.nan=${command} : 无帮助信息
@@ -18,11 +15,11 @@ core.command.help.too_much_argument=为命令 help 定义的参数过多
 core.command.module.introduction=模块管理工具集
 # log-colors
 core.command.log-colors.introduction=输出log4j2支持的16种log颜色的样例
+# i18n
+core.command.i18n.introduction=查询(暂时还没做&.&)或者重载(做了)本地化数据
+# gc
+core.command.gc.introduction=立即运行 System.gc() 内存清理
 
 ### Modules
 # Java Discord API
 core.module.jda.command.introduction=Mirai QQ Bot 实例管理
-core.module.jda.command.help=${core.module.jda.command.help/zh_cn}
-# Mirai QQ
-core.module.mirai_qq.command.introduction=Discord Bot 实例管理
-core.module.mirai_qq.command.help=${core.module.mirai_qq.command.help/zh_cn}

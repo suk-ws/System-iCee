@@ -70,4 +70,17 @@ public abstract class CommandException extends Exception {
 		
 	}
 	
+	public static class ArgumentUnavailableException extends CommandException {
+		
+		public static final String EXCESSIVE_ARGUMENT = "excessive argument";
+		
+		public ArgumentUnavailableException (String arguments, String reason) {
+			super(String.format(
+					"Arguments [%s] is unavailable due to: %s",
+					arguments, reason
+			));
+		}
+		
+	}
+	
 }

@@ -20,7 +20,7 @@ public class iCee {
 	
 	public static final String PACKID = "icee";
 	public static final String VERSION = "0.3.2-dev";
-	public static final int BUILD_VER = 49;
+	public static final int BUILD_VER = 50;
 	public static final boolean DEBUG_MODE = true;
 	
 	/**
@@ -55,7 +55,7 @@ public class iCee {
 				initializeAsCLIMode();
 				try {
 					CommandManager.execute(args);
-				} catch (CommandException.ParameterDuplicatedException | CommandException.CommandNotFoundException | CommandException.ParameterValueUnavailableException e) {
+				} catch (CommandException e) {
 					Log.logger.fatal("The command cannot be executed due to the following reasons:\n" + e.getMessage());
 				}
 			}

@@ -23,7 +23,7 @@ public abstract class CommandContainer {
 	}
 	
 	public void run (String[] args)
-	throws CommandException.ParameterDuplicatedException, CommandException.CommandNotFoundException, CommandException.ParameterValueUnavailableException {
+	throws CommandException {
 		String command = null;
 		final ArrayList<String> argsNew = new ArrayList<>();
 		final HashMap<String, String> parameters = new HashMap<>();

@@ -21,7 +21,7 @@ public class CommandManager extends CommandContainer {
 	}
 	
 	public static void execute(String[] args)
-	throws CommandException.ParameterDuplicatedException, CommandException.CommandNotFoundException, CommandException.ParameterValueUnavailableException {
+	throws CommandException {
 		INSTANCE.run(args);
 	}
 	

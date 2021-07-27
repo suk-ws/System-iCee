@@ -9,7 +9,7 @@ public interface ICommand {
 	
 	CommandType getType();
 	
-	void execute(String[] args, Map<String, String> parameters);
+	void execute(String[] args, Map<String, String> parameters) throws CommandException;
 	
 	enum CommandType {
 		

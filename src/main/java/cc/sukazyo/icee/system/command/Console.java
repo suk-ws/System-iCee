@@ -23,8 +23,7 @@ public class Console {
 			
 			String lastLine;
 			Log.logger.info("Start console input listen.");
-			//noinspection InfiniteLoopStatement
-			while (true) {
+			while (!interrupted()) {
 				try {
 					
 					lastLine = scanner.nextLine();
@@ -33,11 +32,7 @@ public class Console {
 						final String[] args = CommandHelper.format(lastLine);
 						Log.logger.trace("Command parse:{}", Arrays.toString(args));
 						CommandManager.execute(args);
-					} catch (
-							CommandException.ParameterDuplicatedException|
-							CommandException.CommandNotFoundException|
-							CommandException.ParameterValueUnavailableException e
-					) {
+					} catch (CommandException e) {
 						Log.logger.error("The command cannot be executed due to the following reasons:\n" + e.getMessage());
 					}
 					

@@ -1,11 +1,8 @@
-
 ### Core Commands
 # exit
 core.command.exit.introduction=Stop the currently running iCee instance
-core.command.exit.help=${core.command.exit.help/en_us}
 # help
 core.command.help.introduction=Print the intro of registered commands or the help information of the specified command
-core.command.help.help=${core.command.help.help/en_us}
 core.command.help.unsupported=No Help Support
 core.command.help.command_help_page.page=Help of command ${command} : \n${command_help_page}
 core.command.help.command_help_page.nan=${command} : No help message provided
@@ -20,7 +17,3 @@ core.command.module.introduction=Module Manager Tools
 ### Modules
 # Java Discord API
 core.module.jda.command.introduction=Mirai QQ Bot instance management
-core.module.jda.command.help=${core.module.jda.command.help/en_us}
-# Mirai QQ
-core.module.mirai_qq.command.introduction=Discord Bot instance management
-core.module.mirai_qq.command.help=${core.module.mirai_qq.command.help/en_us}

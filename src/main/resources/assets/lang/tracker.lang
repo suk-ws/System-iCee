@@ -1,0 +1,37 @@
+##########################################################################
+##             This is the i18n localized node tracker file             ##
+##                                                                      ##
+##    It is used to track all of the localized node used in this pro-   ##
+##  ject.                                                               ##
+##    This file is good to use as a template of .lang .                 ##
+##########################################################################
+
+### Core Commands
+# exit
+core.command.exit.introduction=${core.command.exit.introduction/tracker}
+core.command.exit.help=${core.command.exit.help/tracker}
+# help
+core.command.help.introduction=${core.command.help.introduction/tracker}
+core.command.help.help=${core.command.help.help/tracker}
+core.command.help.unsupported=${core.command.help.unsupported/tracker}
+core.command.help.command_help_page.page=${core.command.help.command_help_page.page/tracker/=command, command_help_page}
+core.command.help.command_help_page.nan=${core.command.help.command_help_page.nan/tracker/=command}
+core.command.help.command_help_page.unsupported=${core.command.help.command_help_page.unsupported/tracker/=command}
+core.command.help.command_help_page.unknown=${core.command.help.command_help_page.unknown/tracker/=command}
+core.command.help.command_list.title=${core.command.help.command_list.title/tracker}
+core.command.help.command_list.single.alias_title=${core.command.help.command_list.single.alias_title/tracker}
+core.command.help.too_much_argument=${core.command.help.too_much_argument/tracker}
+# module tools
+core.command.module.introduction=${core.command.module.introduction/tracker}
+# log-colors
+core.command.log-colors.introduction=${core.command.log-colors.introduction/tracker}
+# i18n
+core.command.i18n.introduction=${core.command.i18n.introduction/tracker}
+core.command.i18n.help=${core.command.i18n.help/tracker}
+# gc
+core.command.gc.introduction=#{core.command.gc.introduction/tracker}
+
+### Modules
+# Java Discord API
+core.module.jda.command.introduction=${core.module.jda.command.introduction/tracker}
+core.module.jda.command.help=${core.module.jda.command.help/tracker}

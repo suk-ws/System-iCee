@@ -19,15 +19,6 @@ public class I18n {
 	
 	/** 简化不可识别的语言标记的正则识别器 */
 	public static final Matcher langTagSimplify = Pattern.compile("^([\\s\\S]*?)[\\s\\S][a-zA-Z0-9]+$").matcher("");
-	
-	/** 语言索引配置中已声明的语言 */
-	private static final Map<String, Localized> languages = new HashMap<>();
-	static { languages.put(Localized.ROOT.langTag, Localized.ROOT); }
-	/** 配置文件定义的当前语言 */
-	private static Localized curr;
-	/** 缓存当前的本地化调试开关状态 */
-	private static boolean debug = false;
-	
 	/** 语言文件在资源文件的存放位置 */
 	private static final String LANG_DIR = "lang";
 	/** 语言文件后缀名 */
@@ -35,13 +26,22 @@ public class I18n {
 	/** 语言逻辑树&优先级索引文件名 */
 	private static final String LANG_INDEX_FILENAME = "lang.conf";
 	
+	/** 语言索引配置中已声明的语言 */
+	private static Localized root = Localized.getNewRoot();
+	private static Map<String, Localized> languages = new HashMap<>();
+	static { languages.put(Localized.ROOT_LANG_TAG, root); }
+	/** 配置文件定义的当前语言 */
+	private static Localized curr;
+	/** 缓存当前的本地化调试开关状态 */
+	private static boolean debug = false;
+	
 	/**
 	 * 单个语言的数据和语言树节点封装
 	 */
 	public static class Localized {
 		
-		/** 语言树的根节点 */
-		public static final Localized ROOT = new Localized("root", null, 0);
+		/** 语言树的根节点名 */
+		public static final String ROOT_LANG_TAG = "root";
 		
 		private final String langTag;
 		private final Map<String, Value> data;
@@ -55,6 +55,14 @@ public class I18n {
 			this.priority = priority;
 			addChildToSuperior(superior, priority);
 			this.children = new LinkedList<>(); // 按照优先级降序排序
+		}
+		
+		/**
+		 * 获取一个新的语言树根节点
+		 * @return 全新的语言树根节点
+		 */
+		public static Localized getNewRoot () {
+			return new Localized(ROOT_LANG_TAG, null, 0);
 		}
 		
 		/**
@@ -175,8 +183,6 @@ public class I18n {
 		 * 同样也可用于从磁盘刷新翻译<br/>
 		 * <br/>
 		 * 同时也设置了每个翻译的来源信息<br/>
-		 *
-		 * <br/><br/><font color="red"><b>目前未进行完整测试</b></font>
 		 *
 		 */
 		public void load () {
@@ -303,6 +309,10 @@ public class I18n {
 		return text;
 	}
 	
+	public static Localized getLocalized (String langTag) {
+		return languages.get(langTag);
+	}
+	
 	/**
 	 * 以当前程序默认定义的语言为开始，
 	 * 根据树结构和优先级的遍历整个语言树<br/>
@@ -365,6 +375,10 @@ public class I18n {
 	 */
 	public static void index () throws ParseException {
 		
+		Map<String, Localized> newLanguages = new HashMap<>();
+		Localized newRoot = Localized.getNewRoot();
+		newLanguages.put(Localized.ROOT_LANG_TAG, newRoot);
+		
 		// 从磁盘加载语言文件的索引配置
 		Properties index = new Properties();
 		try {
@@ -397,8 +411,8 @@ public class I18n {
 		// 生成索引中所包含的语言
 		index.keySet().forEach(_k -> {
 			String k = (String)_k;
-			if (!languages.containsKey(k))
-				languages.put(k, new Localized(k, Localized.ROOT, 0));
+			if (!newLanguages.containsKey(k))
+				newLanguages.put(k, new Localized(k, newRoot, 0));
 		});
 		
 		// 构建依赖树
@@ -406,27 +420,35 @@ public class I18n {
 		for (Map.Entry<Object, Object> entry : index.entrySet()) {
 			String k = (String)entry.getKey();
 			String v = (String)entry.getValue();
-			Localized curr = languages.get(k);
+			Localized curr = newLanguages.get(k);
 			if (curr == null)
 				throw new ParseException(String.format("Current language %s not found on language map while summon tree", k));
 			String[] meta = (v).split("%");
 			if (meta.length > 2)
 				throw new ParseException(String.format("Too much language meta defined on %s", k));
-			if (languages.containsKey(meta[0])) {
-				curr.setSuperior(languages.get(meta[0]));
-			} else
-				throw new ParseException(String.format("The superior %s of %s is not a valid language", meta[0], k));
+			if (newLanguages.containsKey(meta[0])) {
+				curr.setSuperior(newLanguages.get(meta[0]));
+			} else throw new ParseException(String.format("The superior %s of %s is not a valid language", meta[0], k));
 			try {
 				curr.setPriority(meta.length > 1 ? Integer.parseInt(meta[1]) : 0);
 			} catch (NumberFormatException e) {
 				throw new ParseException(String.format("The priority of %s is defined as a non-numerical or too large value %s", meta[1], k));
 			}
 		}
+		
+		// 写入与后处理
+		root.forEach((data) -> {
+			if (newLanguages.containsKey(data.getLangTag())) {
+				newLanguages.get(data.getLangTag()).data.putAll(data.data);
+			}
+		});
+		languages = newLanguages;
+		root = newRoot;
 		Log.logger.info("Language Tree Index Done.");
 		
 		// 输出语言树
 		final StringBuilder listLang = new StringBuilder("Localization Tree::\n");
-		Localized.ROOT.listChild(listLang, "|-");
+		root.listChild(listLang, "|-");
 		Log.logger.debug(listLang.substring(0, listLang.length()-1));
 		
 	}
@@ -446,7 +468,7 @@ public class I18n {
 			} else if (langTagSimplify.reset(originLanguageTag).matches()) {
 				originLanguageTag = langTagSimplify.group(1);
 			} else {
-				return Localized.ROOT;
+				return root;
 			}
 		}
 	}
