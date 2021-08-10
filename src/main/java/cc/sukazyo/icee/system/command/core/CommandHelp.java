@@ -47,27 +47,27 @@ public class CommandHelp implements ICommand, ICommandHelped {
 								((ICommandHelped)target).getHelp() != null &&
 								!"".equals(((ICommandHelped)target).getHelp())
 						) {
-							helper.append(I18n.get(
+							helper.append(I18n.getText(
 									"core.command.help.command_help_page.page",
 									new Var("command", args[0]),
 									new Var("command_help_page", ((ICommandHelped)target).getHelp())
 							)).append('\n');
 						} else {
-							Log.logger.info(I18n.get(
+							Log.logger.info(I18n.getText(
 									"core.command.help.command_help_page.nan",
 									new Var("command", args[0])
 							));
 							return;
 						}
 					} else {
-						Log.logger.info(I18n.get(
+						Log.logger.info(I18n.getText(
 								"core.command.help.command_help_page.unsupported",
 								new Var("command", args[0])
 						));
 						return;
 					}
 				} else {
-					Log.logger.warn(I18n.get(
+					Log.logger.warn(I18n.getText(
 							"core.command.help.command_help_page.unknown",
 							new Var("command", args[0])
 					));
@@ -77,7 +77,7 @@ public class CommandHelp implements ICommand, ICommandHelped {
 			} else
 				if (args.length == 0) { // 命令列表
 					
-					helper.append(I18n.get("core.command.help.command_list.title")).append('\n');
+					helper.append(I18n.getText("core.command.help.command_list.title")).append('\n');
 					
 					CommandManager.getRegisteredCommandsMap().forEach((name, command) -> {
 						// 检查是否为带有别名的命令
@@ -115,13 +115,13 @@ public class CommandHelp implements ICommand, ICommandHelped {
 								else
 									helper.append(((ICommandHelped)command).getIntroduction());
 							} else {
-								helper.append(" - ").append(I18n.get("core.command.help.unsupported"));
+								helper.append(" - ").append(I18n.getText("core.command.help.unsupported"));
 							}
 							helper.append('\n');
 							// 输出命令的别名
 							if (isAliasCommand) {
 								helper.append('\t').append(CommandType.getPrefixOfAlias())
-										.append(I18n.get("core.command.help.command_list.single.alias_title"));
+										.append(I18n.getText("core.command.help.command_list.single.alias_title"));
 								((ICommandWithAlias)command).getAvailableAliases()
 										.forEach(regNames -> helper.append(regNames).append(", "));
 								helper.delete(helper.length() - 2, helper.length()).append(".\n");
@@ -133,7 +133,7 @@ public class CommandHelp implements ICommand, ICommandHelped {
 					try {
 						throw new CommandException.CommandNotFoundException(args[0]);
 					} catch (CommandException.CommandNotFoundException e) {
-						Log.logger.warn(I18n.get("core.command.help.too_much_argument"));
+						Log.logger.warn(I18n.getText("core.command.help.too_much_argument"));
 					}
 					return;
 				}
@@ -149,12 +149,12 @@ public class CommandHelp implements ICommand, ICommandHelped {
 	
 	@Override
 	public String getIntroduction () {
-		return I18n.get("core.command.help.introduction");
+		return I18n.getText("core.command.help.introduction");
 	}
 	
 	@Override
 	public String getHelp () {
-		return I18n.get("core.command.help.help");
+		return I18n.getText("core.command.help.help");
 	}
 	
 }

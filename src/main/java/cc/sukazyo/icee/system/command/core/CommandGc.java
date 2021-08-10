@@ -37,7 +37,7 @@ public class CommandGc implements ICommand, ICommandHelped {
 	@Nullable
 	@Override
 	public String getIntroduction () {
-		return I18n.get("core.command.gc.introduction");
+		return I18n.getText("core.command.gc.introduction");
 	}
 	
 	@Nullable

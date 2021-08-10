@@ -38,7 +38,7 @@ public class CommandModulesHelper extends CommandWithChild implements ICommandHe
 	@Nullable
 	@Override
 	public String getIntroduction () {
-		return I18n.get("core.command.module.introduction");
+		return I18n.getText("core.command.module.introduction");
 	}
 	
 	@Nullable

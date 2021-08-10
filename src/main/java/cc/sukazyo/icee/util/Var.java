@@ -1,8 +1,9 @@
 package cc.sukazyo.icee.util;
 
 import cc.sukazyo.icee.iCee;
+import org.jetbrains.annotations.NotNull;
 
-public class Var {
+public class Var implements Comparable<Var> {
 	
 	public static final String ICEE_PACKID_KEY = "icee_pack_id";
 	@SuppressWarnings("unused")
@@ -26,6 +27,11 @@ public class Var {
 	public Var (String key, String value) {
 		this.key = key;
 		this.value = value;
+	}
+	
+	@Override
+	public int compareTo (@NotNull Var var) {
+		return this.key.compareTo(var.key);
 	}
 	
 }

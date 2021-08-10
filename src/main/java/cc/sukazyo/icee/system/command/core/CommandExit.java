@@ -39,12 +39,12 @@ public class CommandExit extends CommandWithAlias implements ICommandHelped {
 	
 	@Override
 	public String getIntroduction () {
-		return I18n.get("core.command.exit.introduction");
+		return I18n.getText("core.command.exit.introduction");
 	}
 	
 	@Override
 	public String getHelp () {
-		return I18n.get("core.command.exit.help");
+		return I18n.getText("core.command.exit.help");
 	}
 	
 }

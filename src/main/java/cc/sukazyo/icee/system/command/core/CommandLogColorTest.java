@@ -51,7 +51,7 @@ public class CommandLogColorTest implements ICommand, ICommandHelped {
 	@Nullable
 	@Override
 	public String getIntroduction () {
-		return I18n.get("core.command.log-colors.introduction");
+		return I18n.getText("core.command.log-colors.introduction");
 	}
 	
 	@Nullable

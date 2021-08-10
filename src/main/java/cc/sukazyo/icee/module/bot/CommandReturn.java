@@ -37,17 +37,17 @@ public class CommandReturn {
 				
 				if (local.toString().equals("command.unknown.child")) {
 					// 处理子命令错误
-					returnMsg = Variable.compile(I18n.get("command.unknown.child"), comm, 1);
+					returnMsg = Variable.compile(I18n.getText("command.unknown.child"), comm, 1);
 				} else {
 					// bot 类型 append
 					local.append(typeAppend(message.type));
-					returnMsg = I18n.get(local.toString());
+					returnMsg = I18n.getText(local.toString());
 				}
 				break;
 				
 			// 找不到命令
 			default:
-				returnMsg = Variable.compile(I18n.get("command.unknown"), comm, 0);
+				returnMsg = Variable.compile(I18n.getText("command.unknown"), comm, 0);
 		}
 		
 		return returnMsg;

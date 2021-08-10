@@ -31,17 +31,17 @@ public class Variable {
 	
 	public static String compile (String msg, net.dv8tion.jda.api.entities.User dcUser) {
 		msg = msg.replaceAll("\\{\\{user-curr-id}}", dcUser.getId());
-		msg = msg.replaceAll("\\{\\{user-curr-avatar-id}}", (dcUser.getAvatarId()==null ? I18n.get("bot.null") : dcUser.getAvatarId()));
+		msg = msg.replaceAll("\\{\\{user-curr-avatar-id}}", (dcUser.getAvatarId()==null ? I18n.getText("bot.null") : dcUser.getAvatarId()));
 		msg = msg.replaceAll("\\{\\{user-curr-avatar-url}}", (dcUser.getAvatarUrl()==null ?
-		                                                      I18n.get("bot.null") : dcUser.getAvatarUrl()));
+		                                                      I18n.getText("bot.null") : dcUser.getAvatarUrl()));
 		msg = msg.replaceAll("\\{\\{user-curr-name}}", dcUser.getName());
 		return msg;
 	}
 	
 	public static String compile (String msg, net.dv8tion.jda.api.entities.Guild dcGuild) {
 		msg = msg.replaceAll("\\{\\{guild-curr-id}}", dcGuild.getId());
-		msg = msg.replaceAll("\\{\\{guild-curr-icon-id}}", (dcGuild.getIconId()==null ? I18n.get("bot.null") : dcGuild.getIconId()));
-		msg = msg.replaceAll("\\{\\{guild-curr-icon-url}}", (dcGuild.getIconUrl()==null ? I18n.get("bot.null") : dcGuild.getIconUrl()));
+		msg = msg.replaceAll("\\{\\{guild-curr-icon-id}}", (dcGuild.getIconId()==null ? I18n.getText("bot.null") : dcGuild.getIconId()));
+		msg = msg.replaceAll("\\{\\{guild-curr-icon-url}}", (dcGuild.getIconUrl()==null ? I18n.getText("bot.null") : dcGuild.getIconUrl()));
 		msg = msg.replaceAll("\\{\\{guild-curr-name}}", dcGuild.getName());
 		return msg;
 	}

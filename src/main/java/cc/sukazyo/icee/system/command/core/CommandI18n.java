@@ -167,13 +167,13 @@ public class CommandI18n extends CommandWithChildAndAlias implements ICommandHel
 	@Nullable
 	@Override
 	public String getIntroduction () {
-		return I18n.get("core.command.i18n.introduction");
+		return I18n.getText("core.command.i18n.introduction");
 	}
 	
 	@Nullable
 	@Override
 	public String getHelp () {
-		return I18n.get("core.command.i18n.help");
+		return I18n.getText("core.command.i18n.help");
 	}
 	
 }

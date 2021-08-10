@@ -1,10 +1,11 @@
 package cc.sukazyo.icee.system;
 
 import cc.sukazyo.icee.system.config.Configure;
-import cc.sukazyo.icee.util.SimpleUtils;
 import cc.sukazyo.icee.util.TagAsException;
 import cc.sukazyo.icee.util.Var;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,15 +37,204 @@ public class I18n {
 	private static boolean debug = false;
 	
 	/**
+	 * 本地化定位数据类
+	 * 包含（必选）翻译节点键，（可选）翻译参数，（可选）语言标签以及是否进行树遍历，（可选）默认值
+	 */
+	public static class Key {
+		
+		@Nonnull
+		public final String key;
+		@Nonnull
+		public final Set<Var> vars;
+		@Nullable
+		public final String langTag;
+		@Nullable
+		public final String defaults;
+		public final boolean isTraversal;
+		
+		/**
+		 * 创建一个 I18n 本地化数据请求的数据封装对象
+		 *
+		 * @see Value#parse() 本地化参数的转换
+		 *
+		 * @param key 本地化数据节点（数据名
+		 * @param defaults 默认值，当选定范围内没有数据时以此作为数据返回，默认为 null（parse将返回 {@code Value#toString()} 的结果）
+		 * @param langTag 要求的语言，默认为 null（即使用icee系统语言）
+		 * @param isTraversal 是否从要求语言开始遍历整个语言树，为false则只从 langTag 定义的单个语言中获取本地化值
+		 * @param vars 本地化参数，在获取到本地化值时，parse将能够将本地化值中的参数位转换为参数值
+		 */
+		public Key (@Nonnull String key, @Nullable String defaults, @Nullable String langTag, boolean isTraversal, @Nonnull Var... vars) {
+			this.key = key;
+			this.defaults = defaults;
+			this.langTag = langTag;
+			this.isTraversal = isTraversal;
+			this.vars = new TreeSet<>(Arrays.asList(vars));
+		}
+		
+		/**
+		 * 创建一个 I18n 本地化数据请求的数据封装对象<br/>
+		 * <br/>
+		 * 此方法为完整构建方法的默认值简略写法。
+		 *
+		 * @see #Key(String, String, String, boolean, Var...) 完整构建方法
+		 *
+		 * @param key 本地化数据节点（数据名
+		 * @param vars 本地化参数，在获取到本地化值时，parse将能够将本地化值中的参数位转换为参数值
+		 */
+		public Key (@Nonnull String key, @Nonnull Var... vars) {
+			this(key, null, null, true, vars);
+		}
+		
+		/**
+		 * 创建一个 I18n 本地化数据请求的数据封装对象<br/>
+		 * <br/>
+		 * 此方法为完整构建方法的另一个默认值简略写法。
+		 *
+		 * @see #Key(String, String, String, boolean, Var...) 完整构建方法
+		 *
+		 * @param key 本地化数据节点（数据名
+		 * @param vars 本地化参数，在获取到本地化值时，parse将能够将本地化值中的参数位转换为参数值
+		 */
+		public Key (@Nonnull String key, @Nonnull String defaults, Var... vars) {
+			this(key, defaults, null, true, vars);
+		}
+		
+	}
+	
+	/**
+	 * 返回数据封装
+	 * 包含请求对象和查询到本地化节点
+	 */
+	public static class Value {
+		
+		public static final String RESP_NULL_LANG = Localized.RESERVED_TAGS[0];
+		public static final String RESP_DEFAULT_LANG = Localized.RESERVED_TAGS[1];
+		public static final String RESP_DEFAULT_SOURCE = "code";
+		
+		@Nonnull
+		public final Key request;
+		@Nullable
+		public final Localized.Node response;
+		
+		public Value (@Nonnull Key req, @Nullable Localized.Node resp) {
+			request = req;
+			response = resp;
+		}
+		
+		/**
+		 * @return 应答到的语言，包含了 response node 为 null 时的 fallback 规则
+		 */
+		public String getResponseLang () {
+			return response==null?(request.defaults==null?RESP_NULL_LANG:RESP_DEFAULT_LANG):response.lang;
+		}
+		
+		/**
+		 * @return 应答到的来源，包含了 response node 为 null 时的 fallback 规则
+		 */
+		public String getResponseSource () {
+			return response==null?RESP_DEFAULT_SOURCE:response.source;
+		}
+		
+		/**
+		 * 根据I18n翻译请求和语言树返回的翻译节点生成本地化字符串<br/>
+		 * <br/>
+		 * 如果能够得到本地化值，则还会进行本地化值的参数替换操作：<br/>
+		 * 例如以下语言文件定义：<br>
+		 * <code>test.message_a=A Test with ${text}</code><br>
+		 * 调用：<br>
+		 * <code>I18n.get("test.message_a", new Var("text", "something"))</code><br>
+		 * 将可以获得 <u>A Test with something</u><br>
+		 * <br/>
+		 * 如果没有能找到的翻译节点也没有默认值的情况下，
+		 * 则会返回 {@link #toString()} 的返回值<br/>
+		 * <br/>
+		 * 如果 <code><u>config:core:system.lang.debug</u>==true</code>
+		 * 则会将返回值format为 <u>{{@link #toString()}value}</u> 的格式
+		 *
+		 * @return 请求结果，或是fallback默认值，或者系统默认值 {@link #toString()}
+		 */
+		public String parse () {
+			StringBuilder result = new StringBuilder();
+			if (response != null) {
+				result.append(response.getValue());
+				String varTemp;
+				int varIndex;
+				for (Var var : request.vars) {
+					varTemp = String.format("${%s}", var.key);
+					while (true) {
+						varIndex = result.indexOf(varTemp);
+						if (varIndex==-1) break;
+						result.replace(
+								varIndex,
+								varIndex + varTemp.length(),
+								var.value.replaceAll("\\$", "\\\\\\$") // 对于替换值存在 ${xxx} 格式的内容的兼容处理
+						);
+					}
+				}
+			} else if (request.defaults != null) {
+				result.append(request.defaults);
+			} else {
+				result.append(this);
+			}
+			if (debug && !(response==null && request.defaults == null))
+				result.insert(0, this).insert(0, '{').append('}');
+			return result.toString();
+		}
+		
+		/**
+		 * 将请求和其返回值进行格式化<br/>
+		 * <br/>
+		 * 格式化模板为 <u><code> #{key=数据值/!vd_eg=vd_eg.source/=param1="参数1的值", param2="参数2的值"} </code></u><br/><ul>
+		 *     <li><code><u>=数据值</u></code> 只会在存在语言树返回值时出现</li>
+		 *     <li>langTag 前的 <u><code>!</code></u> 符号只会在限定不遍历整个树的情况下存在</li>
+		 *     <li>参数基于传入的request(Key)，如果没有参数，则 <u><code>/=xxx</code></u> 整个块不会出现</li>
+		 * </ul>
+		 *
+		 * @see Localized#load() 来源字段的规则
+		 *
+		 * @return 格式化的返回数据概览
+		 */
+		@Override
+		public String toString () {
+			//前缀
+			StringBuilder defaults = new StringBuilder("#{");
+			// 数据
+			defaults.append(request.key);
+			if (response!=null) defaults.append('=').append(response.getValue());
+			defaults.append('/');
+			if (!request.isTraversal) defaults.append('!');
+			// 语言和来源
+			defaults.append(request.langTag);
+			defaults.append('=').append(getResponseLang()).append('.').append(getResponseSource());
+			// 参数
+			defaults.append("/=");
+			request.vars.forEach(var -> defaults.append(var.key).append("=\"").append(var.value).append("\", "));
+			defaults.setLength(defaults.length()-2);
+			// 尾缀
+			defaults.append('}');
+			return defaults.toString();
+		}
+		
+	}
+	
+	/**
 	 * 单个语言的数据和语言树节点封装
 	 */
 	public static class Localized {
 		
+		/** 语言标签规范 regex */
+		public static final String TAG_STANDARD_REGEX = "^[a-zA-Z0-9_-]+$";
+		/** 语言标签的保留字，用于特殊含义 */
+		public static final String[] RESERVED_TAGS = {"null", "default"};
+		public static final String[] WEAK_RESERVED_TAGS = {"root"};
+		/** 语言标签保留字的集合，用于进行快速查询 */
+		public static final Set<String> RESERVED_TAG_SET = new HashSet<>(Arrays.asList(RESERVED_TAGS));
+		public static final Set<String> WEAK_RESERVED_TAG_SET = new HashSet<>(Arrays.asList(WEAK_RESERVED_TAGS));
 		/** 语言树的根节点名 */
-		public static final String ROOT_LANG_TAG = "root";
+		public static final String ROOT_LANG_TAG = WEAK_RESERVED_TAGS[0];
 		
 		private final String langTag;
-		private final Map<String, Value> data;
+		private final Map<String, Node> data;
 		private Localized superior;
 		private final LinkedList<Localized> children;
 		private int priority;
@@ -68,13 +258,13 @@ public class I18n {
 		/**
 		 * 一个翻译节点的值和来源的封装
 		 */
-		public static class Value {
+		public static class Node {
 			
 			private final String value;
 			private final String lang;
 			private final String source;
 			
-			Value (String value, String lang, String source) {
+			Node (String value, String lang, String source) {
 				this.value = value;
 				this.lang = lang;
 				this.source = source;
@@ -102,8 +292,8 @@ public class I18n {
 		 * @param key 翻译节点
 		 * @return 从语言树中找到的最近的对应值的封装对象，若不存在则返回null
 		 */
-		public Value get (String key) {
-			AtomicReference<Value> rv = new AtomicReference<>();
+		public Node get (String key) {
+			AtomicReference<Node> rv = new AtomicReference<>();
 			try {
 				forEach(localized -> {
 					if (localized.data.containsKey(key)) {
@@ -115,6 +305,17 @@ public class I18n {
 				return rv.get();
 			}
 			return null;
+		}
+		
+		/**
+		 * 获取一个翻译节点的值封装<br/>
+		 * 它只会获取当前语言所属的值，不会进行全树遍历
+		 *
+		 * @param key 翻译节点
+		 * @return 从语言树中找到的最近的对应值的封装对象，若不存在则返回null
+		 */
+		public Node getOnly (String key) {
+			return data.get(key);
 		}
 		
 		/**
@@ -147,15 +348,16 @@ public class I18n {
 		
 		/**
 		 * 返回当前语言中要求键的字符串字面值。<br/>
-		 * 如果当前键没有对应值信息的话，将会返回<code>#{key%null}</code>
+		 * 如果当前键没有对应值信息的话，将会返回<code>#{key/null}</code>
 		 *
 		 * @see Localized#get(String) 值来源
 		 *
 		 * @param key 要求的翻译键
 		 * @return 对应字面值或者<code>${key}</code>(当没有对应值时)
 		 */
+		@Deprecated
 		public String getText (String key) {
-			return getText(key, String.format("#{%s%%null}", key));
+			return getText(key, String.format("#{%s/null}", key));
 		}
 		
 		/**
@@ -168,11 +370,12 @@ public class I18n {
 		 * @param defaultValue 缺省值
 		 * @return 对应字面值或者缺省值(当没有对应值时)
 		 */
+		@Deprecated
 		public String getText (String key, String defaultValue) {
-			Value v = get(key);
+			Node v = get(key);
 			return ( v!=null ? (
 							debug ?
-							String.format("#{%s%%%s.%s}", v.getValue(), v.getLang(), v.getSource()) :
+							String.format("#{%s/%s.%s}", v.getValue(), v.getLang(), v.getSource()) :
 							v.getValue()
 					) : defaultValue);
 		}
@@ -182,6 +385,12 @@ public class I18n {
 		 * 每一个翻译节点覆盖优先级为 <u>用户自定义目录 -> 模块jar -> 主程序jar</u>，右侧将会被左侧覆盖<br/>
 		 * 同样也可用于从磁盘刷新翻译<br/>
 		 * <br/>
+		 * 同时，此处也接管了来源字段的填写：<ul>
+		 *     <li><u><code>core</code></u> icee核心所属的资源文件</li>
+		 *     <li><u><code>module:xxx</code></u> 来源于模块jar xxx 的资源文件</li>
+		 *     <li><u><code>custom</code></u> 来源于用户目录下 ./assets 文件夹下的资源文件</li>
+		 * </ul>
+		 * <br/>
 		 * 同时也设置了每个翻译的来源信息<br/>
 		 *
 		 */
@@ -190,14 +399,14 @@ public class I18n {
 			try {
 				Properties def = new Properties();
 				def.load(new InputStreamReader(Resources.ASSETS_PACKAGE.getResource(LANG_DIR + "/" + langTag + LANG_FILE_EXTENSION).read(), Resources.CHARSET));
-				def.forEach((k, v) -> this.data.put((String)k, new Value((String)v, langTag, "icee")));
+				def.forEach((k, v) -> this.data.put((String)k, new Node((String)v, langTag, "icee")));
 				Log.logger.trace("succeed loading file at core.");
 			} catch (IOException ignored) {}
 			Resources.MODULES_ASSETS.forEach(modPack -> {
 				try {
 					Properties def = new Properties();
 					def.load(new InputStreamReader(modPack.getResource(LANG_DIR + "/" + langTag + LANG_FILE_EXTENSION).read(), Resources.CHARSET));
-					def.forEach((k, v) -> this.data.put((String)k, new Value((String)v, langTag, "module:" + modPack)));
+					def.forEach((k, v) -> this.data.put((String)k, new Node((String)v, langTag, "module:" + modPack)));
 					Log.logger.trace("succeed loading file at module [{}].", modPack.toString());
 				} catch (IOException ignored) { }
 			});
@@ -206,7 +415,7 @@ public class I18n {
 				try {
 					Properties def = new Properties();
 					def.load(new InputStreamReader(new FileInputStream(customs), Resources.CHARSET));
-					def.forEach((k, v) -> this.data.put((String)k, new Value((String)v, langTag, "custom")));
+					def.forEach((k, v) -> this.data.put((String)k, new Node((String)v, langTag, "custom")));
 					Log.logger.trace("succeed loading file at user assets pack.");
 				} catch (IOException ignored) { }
 			}
@@ -272,41 +481,70 @@ public class I18n {
 	}
 	
 	/**
-	 * 将提供的文本节点转译为以当前设置语言为基准的本地化文本
+	 * 获取一个本地化值的数据本身（即get的超级简略写法，省略了两层对象包装，的再一层简略写法，又省略了一个参数~）<br/>
+	 * <u>可能大多数情况下用这个就足够了，hae...</u>
 	 *
-	 * @see Localized#getText(String) 本地化文本获取细则
+	 * @see Key#Key(String, String, String, boolean, Var...) 参数用途
+	 * @see Value#parse() 数据的处理方式
 	 *
-	 * @param key 文本节点
-	 * @return 本地化文本
+	 * @return 值
 	 */
-	public static String get (String key) {
-		return curr.getText(key);
+	public static String getText (String key, Var... vars) {
+		return get(key, vars).parse();
 	}
 	
 	/**
-	 * 将提供的文本节点转译为本地化文本，再将本地化文本中的参数替换为指定的参数<br>
-	 * <br>
-	 * 例如以下语言文件定义：<br>
-	 * <code>test.message_a=A Test with ${text}</code><br>
-	 * 调用：<br>
-	 * <code>I18n.get("test.message_a", new Var("text", "something"))</code><br>
-	 * 将可以获得 <u>A Test with something</u><br>
+	 * 获取一个本地化值的数据本身（即get的超级简略写法，省略了两层对象包装）
 	 *
-	 * @see Localized#getText(String) 本地化文本获取细则
+	 * @see Key#Key(String, String, String, boolean, Var...) 参数用途
+	 * @see Value#parse() 数据的处理方式
 	 *
-	 * @param key 文本节点
-	 * @param vars 文本参数
-	 * @return 经过覆盖的本地化文本
+	 * @return 值
 	 */
-	public static String get (String key, Var... vars) {
-		String text = get(key);
-		for (Var var : vars) {
-			text = text.replaceAll(
-					SimpleUtils.escapeExprSpecialWord("${" + var.key + "}"),
-					var.value.replaceAll("\\$", "\\\\\\$") // 对于替换值存在 ${xxx} 格式的内容的兼容处理
-			);
+	public static String getText (String key, String defaults, Var... vars) {
+		return get(key, defaults, vars).parse();
+	}
+	
+	/**
+	 * 获取一个本地化值的封装（的简略写法（其二））
+	 *
+	 * @see Key#Key(String, String, String, boolean, Var...) 参数用途
+	 *
+	 * @return 值的封装
+	 */
+	public static Value get (String key, String defaults, Var... vars) {
+		return get(new Key(key, defaults, vars));
+	}
+	
+	/**
+	 * 获取一个本地化值的封装（的简略写法（其一））
+	 *
+	 * @see Key#Key(String, String, String, boolean, Var...) 参数用途
+	 *
+	 * @return 值的封装
+	 */
+	public static Value get (String key, Var... vars) {
+		return get(new Key(key, vars));
+	}
+	
+	/**
+	 * 获取一个本地化值的封装
+	 *
+	 * @param request 请求键的封装
+	 * @return 值的封装
+	 */
+	public static Value get (Key request) {
+		
+		Localized from;
+		if (request.langTag == null) {
+			from = curr;
+		} else if (languages.containsKey(request.langTag)) {
+			from = languages.get(request.langTag);
+		} else {
+			throw new RuntimeException("");
 		}
-		return text;
+		return new Value(request, request.isTraversal ? from.get(request.key) : from.getOnly(request.key));
+		
 	}
 	
 	public static Localized getLocalized (String langTag) {
@@ -373,6 +611,7 @@ public class I18n {
 	 *
 	 * @throws ParseException 在读取文件或者解析文件时出现错误
 	 */
+	@SuppressWarnings("DuplicatedCode")
 	public static void index () throws ParseException {
 		
 		Map<String, Localized> newLanguages = new HashMap<>();
@@ -380,60 +619,89 @@ public class I18n {
 		newLanguages.put(Localized.ROOT_LANG_TAG, newRoot);
 		
 		// 从磁盘加载语言文件的索引配置
-		Properties index = new Properties();
+		Map<String, IndexNode> index = new HashMap<>();
 		try {
 			Log.logger.debug("Trying to load lang.conf in the core...");
-			Properties def = new Properties();
-			def.load(new InputStreamReader(Resources.ASSETS_PACKAGE.getResource(LANG_DIR + "/" + LANG_INDEX_FILENAME).read(), Resources.CHARSET));
-			index.putAll(def);
+			Scanner scanner = new Scanner(Resources.ASSETS_PACKAGE.getResource(LANG_DIR + "/" + LANG_INDEX_FILENAME).read(), Resources.CHARSET.name());
+			int lineCounter = 0;
+			while (scanner.hasNextLine()) {
+				lineCounter++;
+				try {
+					IndexNode node = new IndexNode(scanner.nextLine());
+					index.put(node.langTag, node);
+				}
+				catch (ParseException e) { throw new ParseException(String.format(
+						"from icee-core line %d:\n\t%s",
+						lineCounter, e.getMessage()
+				)); }
+			}
 			Log.logger.debug("Done.");
-		} catch (IOException ignored) {
-			Log.logger.debug("Failed.");
+		} catch (IOException e) {
+			Log.logger.debug("Failed: ", e);
 		}
-		Resources.MODULES_ASSETS.forEach(modPack -> {
-			try {
-				Properties def = new Properties();
-				def.load(new InputStreamReader(modPack.getResource(LANG_DIR + "/" + LANG_INDEX_FILENAME).read(), Resources.CHARSET));
-				index.putAll(def);
-				Log.logger.debug("Succeed loaded lang.conf at module [{}].", modPack.toString());
-			} catch (IOException ignored) { }
-		});
+		AtomicReference<String> errorMessage = new AtomicReference<>();
+		try {
+			Resources.MODULES_ASSETS.forEach(modPack -> {
+				try {
+					Scanner scanner = new Scanner(Resources.ASSETS_PACKAGE.getResource(LANG_DIR + "/" + LANG_INDEX_FILENAME).read(), Resources.CHARSET.name());
+					int lineCounter = 0;
+					while (scanner.hasNextLine()) {
+						lineCounter++;
+						try {
+							IndexNode node = new IndexNode(scanner.nextLine());
+							index.put(node.langTag, node);
+						}
+						catch (ParseException e) {
+							errorMessage.set(String.format(
+									"from module:%s line %d:\n\t%s",
+									modPack.toString(), lineCounter, e.getMessage()
+							));
+							throw TagAsException.INSTANCE;
+						}
+						Log.logger.debug("Succeed loaded lang.conf at module [{}].", modPack.toString());
+					}
+				} catch (IOException ignored) { }
+			});
+		} catch (TagAsException tag) {
+			throw new ParseException(errorMessage.get());
+		}
 		File customs = Resources.getCustomAssets(LANG_DIR + "/" + LANG_INDEX_FILENAME);
 		if (customs.isFile()) {
 			try {
-				Properties def = new Properties();
-				def.load(new InputStreamReader(new FileInputStream(customs), Resources.CHARSET));
-				index.putAll(def);
+				Scanner scanner = new Scanner(Resources.ASSETS_PACKAGE.getResource(LANG_DIR + "/" + LANG_INDEX_FILENAME).read(), Resources.CHARSET.name());
+				int lineCounter = 0;
+				while (scanner.hasNextLine()) {
+					lineCounter++;
+					try {
+						IndexNode node = new IndexNode(scanner.nextLine());
+						index.put(node.langTag, node);
+					}
+					catch (ParseException e) { throw new ParseException(String.format(
+							"from assets-pack line %s:\n\t%s",
+							lineCounter, e.getMessage()
+					)); }
+				}
 				Log.logger.debug("Succeed loaded lang.conf at user assets pack.");
 			} catch (IOException ignored) { }
 		}
 		
 		// 生成索引中所包含的语言
-		index.keySet().forEach(_k -> {
-			String k = (String)_k;
+		index.forEach((k, v) -> {
 			if (!newLanguages.containsKey(k))
 				newLanguages.put(k, new Localized(k, newRoot, 0));
 		});
 		
 		// 构建依赖树
 		Log.logger.debug("Parsing language tree...");
-		for (Map.Entry<Object, Object> entry : index.entrySet()) {
-			String k = (String)entry.getKey();
-			String v = (String)entry.getValue();
-			Localized curr = newLanguages.get(k);
+		for (Map.Entry<String, IndexNode> entry : index.entrySet()) {
+			IndexNode node = entry.getValue();
+			Localized curr = newLanguages.get(node.langTag);
 			if (curr == null)
-				throw new ParseException(String.format("Current language %s not found on language map while summon tree", k));
-			String[] meta = (v).split("%");
-			if (meta.length > 2)
-				throw new ParseException(String.format("Too much language meta defined on %s", k));
-			if (newLanguages.containsKey(meta[0])) {
-				curr.setSuperior(newLanguages.get(meta[0]));
-			} else throw new ParseException(String.format("The superior %s of %s is not a valid language", meta[0], k));
-			try {
-				curr.setPriority(meta.length > 1 ? Integer.parseInt(meta[1]) : 0);
-			} catch (NumberFormatException e) {
-				throw new ParseException(String.format("The priority of %s is defined as a non-numerical or too large value %s", meta[1], k));
-			}
+				throw new ParseException(String.format("Current language %s not found on language map while summon tree", node.langTag));
+			if (newLanguages.containsKey(node.superior)) {
+				curr.setSuperior(newLanguages.get(node.superior));
+			} else throw new ParseException(String.format("The superior %s of %s is not a valid language", node.superior, node.langTag));
+			curr.setPriority(node.priority);
 		}
 		
 		// 写入与后处理
@@ -480,6 +748,36 @@ public class I18n {
 		
 		public ParseException (String message) {
 			super(message);
+		}
+		
+	}
+	
+	private static class IndexNode {
+		
+		final String langTag;
+		final String superior;
+		final int priority;
+		
+		IndexNode (String line) throws ParseException {
+			String[] data = line.split("=", 2);
+			String[] meta = data[1].split("%");
+			langTag = data[0];
+			superior = meta[0];
+			if (meta.length > 2)
+				throw new ParseException("Too much language meta defined");
+			try {
+				priority = meta.length > 1 ? Integer.parseInt(meta[1]) : 0;
+			} catch (NumberFormatException e) {
+				throw new ParseException(String.format("The priority is defined as a non-numerical or too large value %s", meta[1]));
+			}
+			if (!langTag.matches(Localized.TAG_STANDARD_REGEX))
+				throw new ParseException(String.format("Tag [%s] is not an available language tag format data", langTag));
+			if (!superior.matches(Localized.TAG_STANDARD_REGEX))
+				throw new ParseException(String.format("Tag [%s] is not an available language tag format data", superior));
+			if (Localized.RESERVED_TAG_SET.contains(langTag) || Localized.WEAK_RESERVED_TAG_SET.contains(langTag))
+				throw new ParseException(String.format("Reserved tag %s define found!", langTag));
+			if (Localized.RESERVED_TAG_SET.contains(superior))
+				throw new ParseException(String.format("Reserved tag %s usage found!", superior));
 		}
 		
 	}

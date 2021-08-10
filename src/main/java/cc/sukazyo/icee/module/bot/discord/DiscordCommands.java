@@ -99,13 +99,13 @@ public class DiscordCommands extends CommandWithChildAndAlias implements IComman
 	@Nullable
 	@Override
 	public String getIntroduction () {
-		return I18n.get("core.module.jda.command.introduction");
+		return I18n.getText("core.module.jda.command.introduction");
 	}
 	
 	@Nullable
 	@Override
 	public String getHelp () {
-		return I18n.get("core.module.jda.command.help");
+		return I18n.getText("core.module.jda.command.help");
 	}
 	
 }
