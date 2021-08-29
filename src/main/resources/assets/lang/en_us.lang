@@ -8,11 +8,18 @@ core.command.help.command_help_page.page=Help of command ${command} : \n${comman
 core.command.help.command_help_page.nan=${command} : No help message provided
 core.command.help.command_help_page.unsupported=Command `${command}` does not provide help support
 core.command.help.command_help_page.unknown=Unknown command ${command}
+core.command.help.command_help_page.non_child=Cannot find command `${child}` on `${parent}`
+core.command.help.command_help_page.child_list_title=All Available Child Commands on ${command} :
 core.command.help.command_list.title=All Available Commands :
 core.command.help.command_list.single.alias_title=\u0020Alias:\u0020
-core.command.help.too_much_argument=Too much arguments for command help
 # module tools
 core.command.module.introduction=Module Manager Tools
+# log-colors
+core.command.log-colors.introduction=Print all the 16 colors of log4j2 supported.
+# i18n
+core.command.i18n.introduction=Queue(WIP) or Reload(Ready to use) the localized data.
+# gc
+core.command.gc.introduction=Execute `System.gc()` immediately.
 
 ### Modules
 # Java Discord API

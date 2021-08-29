@@ -27,4 +27,8 @@ public abstract class CommandWithChild extends CommandContainer implements IComm
 		}
 	}
 	
+	public boolean isHelpShowCommandLists () {
+		return true;
+	}
+	
 }

@@ -8,9 +8,10 @@ core.command.help.command_help_page.page=命令 ${command} 的帮助信息 : \n$
 core.command.help.command_help_page.nan=${command} : 无帮助信息
 core.command.help.command_help_page.unsupported=命令 `${command}` 不支持帮助
 core.command.help.command_help_page.unknown=未知命令 ${command}
+core.command.help.command_help_page.non_child=无法在 ${parent} 中找到子命令 ${child}
+core.command.help.command_help_page.child_list_title=命令 ${command} 的子命令列表
 core.command.help.command_list.title=所有可用命令 :
 core.command.help.command_list.single.alias_title=\u0020别名:\u0020
-core.command.help.too_much_argument=为命令 help 定义的参数过多
 # module tools
 core.command.module.introduction=模块管理工具集
 # log-colors

@@ -18,9 +18,10 @@ core.command.help.command_help_page.page=${core.command.help.command_help_page.p
 core.command.help.command_help_page.nan=${core.command.help.command_help_page.nan/tracker/=command}
 core.command.help.command_help_page.unsupported=${core.command.help.command_help_page.unsupported/tracker/=command}
 core.command.help.command_help_page.unknown=${core.command.help.command_help_page.unknown/tracker/=command}
+core.command.help.command_help_page.non_child=${core.command.help.command_help_page.non_child/tracker/=parent, next}
+core.command.help.command_help_page.child_list_title=${core.command.help.command_help_page.child_list_title/tracker/=command}
 core.command.help.command_list.title=${core.command.help.command_list.title/tracker}
 core.command.help.command_list.single.alias_title=${core.command.help.command_list.single.alias_title/tracker}
-core.command.help.too_much_argument=${core.command.help.too_much_argument/tracker}
 # module tools
 core.command.module.introduction=${core.command.module.introduction/tracker}
 # log-colors
