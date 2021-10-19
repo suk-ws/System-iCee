@@ -2,7 +2,8 @@
 
 ![post.png](post-card@0.75x.png)
 
-一个 Java 平台上的综合性 Bot 系统
+一个 Java 平台上的 Bot 框架<br/>
+~~亦或不只是 Bot 的框架~~
 
 [~~English~~]()
 | *Chinese*
