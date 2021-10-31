@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class CommandModulesHelper extends CommandWithChild implements ICommandHelped {
 	
@@ -62,7 +61,7 @@ public class CommandModulesHelper extends CommandWithChild implements ICommandHe
 		}
 		
 		@Override
-		public void execute (String[] args, Map<String, String> parameters) {
+		public void execute (String[] args) {
 			Log.logger.info("\n" + ModuleManager.getModulesDevelopmentTable());
 		}
 		

@@ -5,8 +5,6 @@ import cc.sukazyo.icee.system.I18n;
 import cc.sukazyo.icee.system.command.CommandWithAlias;
 import cc.sukazyo.icee.system.command.ICommandHelped;
 
-import java.util.Map;
-
 public class CommandExit extends CommandWithAlias implements ICommandHelped {
 	
 	public static final String NAME = "exit";
@@ -28,7 +26,7 @@ public class CommandExit extends CommandWithAlias implements ICommandHelped {
 	}
 	
 	@Override
-	public void execute (String[] args, Map<String, String> parameters) {
+	public void execute (String[] args) {
 		iCee.exit(0);
 	}
 	

@@ -1,7 +1,6 @@
 package cc.sukazyo.icee.system.command;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ICommand {
 	
@@ -9,7 +8,7 @@ public interface ICommand {
 	
 	CommandType getType();
 	
-	void execute(String[] args, Map<String, String> parameters) throws CommandException;
+	void execute(String[] args) throws CommandException;
 	
 	enum CommandType {
 		

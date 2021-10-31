@@ -54,7 +54,7 @@ public class iCee {
 				// 运行 CLI
 				initializeAsCLIMode();
 				try {
-					CommandManager.execute(args);
+					CommandManager.run(args);
 				} catch (CommandException e) {
 					Log.logger.fatal("The command cannot be executed due to the following reasons:\n" + e.getMessage());
 				}

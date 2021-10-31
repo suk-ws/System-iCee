@@ -29,6 +29,7 @@ core.command.log-colors.introduction=${core.command.log-colors.introduction/trac
 # i18n
 core.command.i18n.introduction=${core.command.i18n.introduction/tracker}
 core.command.i18n.help=${core.command.i18n.help/tracker}
+core.command.i18n.get.title=${core.command.i18n.get.title/tracker/=key}
 # gc
 core.command.gc.introduction=#{core.command.gc.introduction/tracker}
 

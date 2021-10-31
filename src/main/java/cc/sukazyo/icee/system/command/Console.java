@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 public class Console {
 	
+	private static final Listener listener = new Listener();
 	private static class Listener extends Thread {
 		
 		private static final String THREAD_NAME = "Console";
@@ -31,7 +32,7 @@ public class Console {
 					try {
 						final String[] args = CommandHelper.format(lastLine);
 						Log.logger.trace("Command parse:{}", Arrays.toString(args));
-						CommandManager.execute(args);
+						CommandManager.run(args);
 					} catch (CommandException e) {
 						Log.logger.error("The command cannot be executed due to the following reasons:\n" + e.getMessage());
 					}
@@ -44,7 +45,6 @@ public class Console {
 		}
 		
 	}
-	private static final Listener listener = new Listener();
 	
 	public static void start () {
 		listener.start();

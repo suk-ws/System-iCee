@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class CommandLogColorTest implements ICommand, ICommandHelped {
 	
@@ -28,7 +27,7 @@ public class CommandLogColorTest implements ICommand, ICommandHelped {
 	}
 	
 	@Override
-	public void execute (String[] args, Map<String, String> parameters) {
+	public void execute (String[] args) {
 		Log.logger.info("Start echo colors log.");
 		if ("off".equals(Configure.getString(Configure.CORE_ID, "system.log.color.theme"))) {
 			Log.logger.warn("Color preview is not available while system.log.color.theme is OFF!");

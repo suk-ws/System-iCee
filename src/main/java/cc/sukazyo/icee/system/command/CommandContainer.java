@@ -22,31 +22,21 @@ public abstract class CommandContainer {
 		return commands;
 	}
 	
-	public void run (String[] args)
+	public void execute (String[] args)
 	throws CommandException {
-		String command = null;
+		String command = null; // 待运行的命令
 		final ArrayList<String> argsNew = new ArrayList<>();
-		final HashMap<String, String> parameters = new HashMap<>();
-		for (int i = 0; i < args.length; i++) {
-			if (args[i].startsWith("-")) {
-				if (!parameters.containsKey(args[i])) {
-					if (args.length > i+1) {
-						parameters.put(args[i], args[i+1]);
-					} else {
-						throw new CommandException.ParameterValueUnavailableException(args[i], null);
-					}
-				} else {
-					throw new CommandException.ParameterDuplicatedException(args[i], parameters.get(args[i]), args[i + 1]);
-				}
-				i++;
-			} else if (command == null) {
-				command = args[i];
+		for (String arg : args) {
+			if (command == null) {
+				if (arg.startsWith("-")) {
+				throw new CommandException.ParameterUnsupportedException(arg);
+				} else command = arg;
 			} else {
-				argsNew.add(args[i]);
+				argsNew.add(arg);
 			}
 		}
 		if (commands.containsKey(command)) {
-			commands.get(command).execute((argsNew.toArray(new String[0])), parameters);
+			commands.get(command).execute((argsNew.toArray(new String[0])));
 		} else {
 			throw new CommandException.CommandNotFoundException(command);
 		}

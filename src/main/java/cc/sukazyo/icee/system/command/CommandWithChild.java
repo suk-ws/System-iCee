@@ -2,8 +2,6 @@ package cc.sukazyo.icee.system.command;
 
 import cc.sukazyo.icee.system.Log;
 
-import java.util.Map;
-
 public abstract class CommandWithChild extends CommandContainer implements ICommand {
 	
 	@Override
@@ -17,9 +15,9 @@ public abstract class CommandWithChild extends CommandContainer implements IComm
 	}
 	
 	@Override
-	public void execute(String[] args, Map<String, String> parameters) {
+	public void execute(String[] args) {
 		try {
-			run(args);
+			super.execute(args);
 		} catch (CommandException.CommandNotFoundException e) {
 			Log.logger.error("Child command <" + e.getCommandName() + "> not found on " + getRegistryName().toString());
 		} catch (CommandException e) {

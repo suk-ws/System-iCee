@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class DiscordCommands extends CommandWithChildAndAlias implements ICommandHelped {
 	
@@ -28,7 +27,7 @@ public class DiscordCommands extends CommandWithChildAndAlias implements IComman
 		}
 		
 		@Override
-		public void execute (String[] args, Map<String, String> parameters) {
+		public void execute (String[] args) {
 			Modules.discord.stop();
 		}
 		
@@ -47,7 +46,7 @@ public class DiscordCommands extends CommandWithChildAndAlias implements IComman
 		}
 		
 		@Override
-		public void execute (String[] args, Map<String, String> parameters) {
+		public void execute (String[] args) {
 			Modules.discord.start();
 		}
 		
@@ -66,7 +65,7 @@ public class DiscordCommands extends CommandWithChildAndAlias implements IComman
 		}
 		
 		@Override
-		public void execute (String[] args, Map<String, String> parameters) {
+		public void execute (String[] args) {
 			Log.logger.info("Status of mirai qq bot: {}", Modules.discord.getStatus().name());
 		}
 		

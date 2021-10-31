@@ -2,14 +2,12 @@ package cc.sukazyo.icee.system.command.core;
 
 import cc.sukazyo.icee.system.I18n;
 import cc.sukazyo.icee.system.Log;
-import cc.sukazyo.icee.system.command.CommandException;
-import cc.sukazyo.icee.system.command.CommandWithAlias;
-import cc.sukazyo.icee.system.command.CommandWithChildAndAlias;
-import cc.sukazyo.icee.system.command.ICommandHelped;
+import cc.sukazyo.icee.system.command.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 
 public class CommandI18n extends CommandWithChildAndAlias implements ICommandHelped {
 	
@@ -26,10 +24,14 @@ public class CommandI18n extends CommandWithChildAndAlias implements ICommandHel
 		putCommand(childUpdate);
 	}
 	
-	
-	private static class Reload extends CommandWithAlias {
+	private static class Reload implements ICommand {
 		
 		public static final String NAME = "reload";
+		
+		@Override
+		public List<String> getRegistryName () {
+			return Collections.singletonList(NAME);
+		}
 		
 		@Override
 		public CommandType getType () {
@@ -37,11 +39,8 @@ public class CommandI18n extends CommandWithChildAndAlias implements ICommandHel
 		}
 		
 		@Override
-		public void execute (String[] args, Map<String, String> parameters)
+		public void execute (String[] args)
 		throws CommandException.ParameterUnsupportedException {
-			if (!parameters.isEmpty()) {
-				throw new CommandException.ParameterUnsupportedException(parameters);
-			}
 			if (args.length == 0) {
 				I18n.forEach(I18n.Localized::load);
 				Log.logger.info("All language update done.");
@@ -58,21 +57,16 @@ public class CommandI18n extends CommandWithChildAndAlias implements ICommandHel
 			}
 		}
 		
-		@Override
-		public String getName () {
-			return NAME;
-		}
-		
-		@Override
-		public String[] getAliases () {
-			return new String[0];
-		}
-		
 	}
 	
-	private static class Index extends CommandWithAlias {
+	private static class Index implements ICommand {
 		
 		public static final String NAME = "index";
+		
+		@Override
+		public List<String> getRegistryName () {
+			return Collections.singletonList(NAME);
+		}
 		
 		@Override
 		public CommandType getType () {
@@ -80,11 +74,8 @@ public class CommandI18n extends CommandWithChildAndAlias implements ICommandHel
 		}
 		
 		@Override
-		public void execute (String[] args, Map<String, String> parameters)
+		public void execute (String[] args)
 		throws CommandException.ParameterUnsupportedException, CommandException.ArgumentUnavailableException {
-			if (!parameters.isEmpty()) {
-				throw new CommandException.ParameterUnsupportedException(parameters);
-			}
 			if (args.length == 0) {
 				try {
 					I18n.index();
@@ -96,21 +87,16 @@ public class CommandI18n extends CommandWithChildAndAlias implements ICommandHel
 			}
 		}
 		
-		@Override
-		public String getName () {
-			return NAME;
-		}
-		
-		@Override
-		public String[] getAliases () {
-			return new String[0];
-		}
-		
 	}
 	
-	private static class Update extends CommandWithAlias {
+	private static class Update implements ICommand {
 		
 		public static final String NAME = "update";
+		
+		@Override
+		public List<String> getRegistryName () {
+			return Collections.singletonList(NAME);
+		}
 		
 		@Override
 		public CommandType getType () {
@@ -118,27 +104,14 @@ public class CommandI18n extends CommandWithChildAndAlias implements ICommandHel
 		}
 		
 		@Override
-		public void execute (String[] args, Map<String, String> parameters)
+		public void execute (String[] args)
 		throws CommandException.ParameterUnsupportedException, CommandException.ArgumentUnavailableException {
-			if (!parameters.isEmpty()) {
-				throw new CommandException.ParameterUnsupportedException(parameters);
-			}
 			if (args.length == 0) {
-				childIndex.execute(new String[0], parameters);
-				childReload.execute(args, parameters);
+				childIndex.execute(new String[0]);
+				childReload.execute(args);
 			} else {
 				throw new CommandException.ArgumentUnavailableException(Arrays.toString(args), CommandException.ArgumentUnavailableException.EXCESSIVE_ARGUMENT);
 			}
-		}
-		
-		@Override
-		public String getName () {
-			return NAME;
-		}
-		
-		@Override
-		public String[] getAliases () {
-			return new String[0];
 		}
 		
 	}

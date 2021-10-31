@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class CommandGc implements ICommand, ICommandHelped {
 	
@@ -24,7 +23,7 @@ public class CommandGc implements ICommand, ICommandHelped {
 	}
 	
 	@Override
-	public void execute (String[] args, Map<String, String> parameters) {
+	public void execute (String[] args) {
 		System.gc();
 	}
 	

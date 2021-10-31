@@ -20,9 +20,9 @@ public class CommandManager extends CommandContainer {
 		return INSTANCE.getCommands();
 	}
 	
-	public static void execute(String[] args)
+	public static void run (String[] args)
 	throws CommandException {
-		INSTANCE.run(args);
+		INSTANCE.execute(args);
 	}
 	
 }

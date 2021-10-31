@@ -1,8 +1,6 @@
 buildscript {
 	repositories {
-		maven {
-			url 'https://maven.aliyun.com/nexus/content/groups/public/'
-		}
+		mavenCentral()
 	}
 	dependencies {
 		classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
@@ -19,11 +17,8 @@ version VERSION
 repositories {
 	mavenCentral()
 	google()
-	maven { url 'https://jitpack.io' }
-	maven {
-		name 'm2-dv8tion'
-		url 'https://m2.dv8tion.net/releases'
-	}
+	maven { name 'github'; url 'https://jitpack.io' }
+	maven { name 'm2-dv8tion'; url 'https://m2.dv8tion.net/releases' }
 }
 
 dependencies {
@@ -31,10 +26,10 @@ dependencies {
 	implementation "net.dv8tion:JDA:${javaDiscordApiVersion}"
 	implementation "com.google.code.gson:gson:${gsonVersion}"
 	implementation "com.typesafe:config:${typesafeVersion}"
-	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4jVersion
-	compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4jVersion
+	implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+	implementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
 	implementation "com.github.Eyre-S:ResourceTools:${resToolsVersion}"
-	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+	implementation 'org.apache.commons:commons-lang3:3.12.0'
 	
 }
 

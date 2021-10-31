@@ -20,6 +20,10 @@ public abstract class CommandException extends Exception {
 			super("Param `" + param + "` have already been set to `" + oldValue + "`, conflict with new value `" + newValue + "`!");
 		}
 		
+		public ParameterDuplicatedException (String paramA, String paramB) {
+			super("Param `" + paramA + "` conflicted with `"+ paramB + "`!");
+		}
+		
 	}
 	
 	public static class CommandNotFoundException extends CommandException {
@@ -39,21 +43,19 @@ public abstract class CommandException extends Exception {
 	
 	public static class ParameterUnsupportedException extends CommandException {
 		
-		private final Map<String, String> unsupportedParams;
-		
 		public ParameterUnsupportedException (Map<String, String> unsupportedParams) {
-			super(
-					"Parameter" +
-					(unsupportedParams.size()>1?"s \"":" \"") +
-					unsupportedParams.keySet().toString().substring(1, unsupportedParams.keySet().toString().length()-1) +
-					(unsupportedParams.size()>1? "\" are" : "\" is") +
-					" not supported."
+			super(String.format(
+					"Parameter%s \"%s\" %s not supported.",
+					unsupportedParams.size()>1?"s":"",
+					unsupportedParams.keySet().toString().substring(1, unsupportedParams.keySet().toString().length()-1),
+					unsupportedParams.size()>1? "are" : "is")
 			);
-			this.unsupportedParams = unsupportedParams;
 		}
 		
-		public Map<String, String> getUnsupportedParams () {
-			return unsupportedParams;
+		public ParameterUnsupportedException (String parameterName) {
+			super(
+					"Parameter" + parameterName + " is not supported."
+			);
 		}
 		
 	}
