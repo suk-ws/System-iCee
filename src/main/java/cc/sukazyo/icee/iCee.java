@@ -19,8 +19,7 @@ import java.util.Calendar;
 public class iCee {
 	
 	public static final String PACKID = "icee";
-	public static final String VERSION = "0.3.2-dev";
-	public static final int BUILD_VER = 52;
+	public static final String VERSION = "0.3.4";
 	public static final boolean DEBUG_MODE = true;
 	
 	/**
@@ -76,7 +75,7 @@ public class iCee {
 		else Log.logger.info("iCee System exit with status " + status);
 		InstanceManager.releaseLock();
 		if (status == Integer.MIN_VALUE)
-		System.exit(0);
+			System.exit(0);
 		System.exit(status);
 	}
 	

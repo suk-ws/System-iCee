@@ -7,8 +7,8 @@ import cc.sukazyo.icee.system.command.CommandWithChild;
 import cc.sukazyo.icee.system.command.ICommand;
 import cc.sukazyo.icee.system.command.ICommandHelped;
 import cc.sukazyo.icee.system.module.ModuleManager;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 

@@ -7,8 +7,8 @@ import cc.sukazyo.icee.system.command.ICommand;
 import cc.sukazyo.icee.system.command.ICommandHelped;
 import cc.sukazyo.icee.system.config.Configure;
 import org.apache.logging.log4j.message.FormattedMessage;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 

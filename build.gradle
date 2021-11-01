@@ -23,13 +23,18 @@ repositories {
 
 dependencies {
 	
-	implementation "net.dv8tion:JDA:${javaDiscordApiVersion}"
+	// javax.annotation.Nonnull&Nullable ..yes.
+	implementation "com.github.spotbugs:spotbugs-annotations:${spotbugsVersion}"
+	
+	// (好像没用了..?)
 	implementation "com.google.code.gson:gson:${gsonVersion}"
+	// 配置文件 hocon 解析类库
 	implementation "com.typesafe:config:${typesafeVersion}"
+	// log 核心类库
 	implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
 	implementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
+	// jar内资源文件读取
 	implementation "com.github.Eyre-S:ResourceTools:${resToolsVersion}"
-	implementation 'org.apache.commons:commons-lang3:3.12.0'
 	
 }
 
@@ -49,5 +54,5 @@ apply plugin: 'application'
 shadowJar {
 	mainClassName = 'cc.sukazyo.icee.iCee'
 	archiveBaseName.set("System_iCee")
-	archiveVersion.set("${VERSION}-build${BUILD}")
+	archiveVersion.set(VERSION)
 }

@@ -3,8 +3,8 @@ package cc.sukazyo.icee.system.command.core;
 import cc.sukazyo.icee.system.I18n;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.command.*;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

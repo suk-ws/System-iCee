@@ -5,13 +5,14 @@ import cc.sukazyo.icee.module.Modules;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.util.SimpleUtils;
 import cc.sukazyo.icee.util.Var;
-import org.apache.commons.collections4.map.LinkedMap;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ModuleManager {
 	
-	private static final LinkedMap<IModule, Class<?>> modules = new LinkedMap<>();
+	private static final LinkedHashMap<IModule, Class<?>> modules = new LinkedHashMap<>();
 	
 	/**
 	 * 将一些模块注册进入 iCee 的模块管理器中<br/>

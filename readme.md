@@ -12,6 +12,12 @@
 | [核心程序文档](https://book.sukazyo.cc/icee/)
 | [模块开发手册](https://book.sukazyo.cc/icee-module-dev/)
 
+[~~iCommonBotsCee~~](https://github.com/suk-ws/iCommonBotsCee)
+| [~~iTgDcCee~~](https://github.com/suk-ws/iTgDcCee)
+| [~~iMiraiCee~~](https://github.com/suk-ws/iMiraiCee)
+| [~~Coeur-iCee~~](https://github.com/suk-ws/Coeur-iCee)
+| [~~iScriptCee~~](https://github.com/suk-ws/iScriptCee)
+| [~~iGradleCee~~](https://github.com/suk-ws/iGradleCee)
 
 </div>
 
@@ -47,9 +53,12 @@ System iCee 是一个 Sukazyo Workshop 计划中的跨聊天平台(和系统平�
 - [ ] 更加复杂~~好用~~灵活的启动逻辑
 
 计划/考虑中的内容
+- [ ] 以 [hytrans][hytrans-doc] 作为翻译规范
 - [ ] 多语言的 JavaDoc 之类的（尽管很想但是相关资料很不好找）
 - [ ] 自动构建一类的东西（目前看起来并不是那么的必要，而且这个东西配置起来极~麻烦，不过总之还是要有的）
 - [ ] iGradleCee，用于 iCee 的~~插件~~外置模块开发环境（不确定是否需要，毕竟太远了，而且 Sukazyo 对此不了解，所以优先级很低）
+
+[hytrans-doc]: https://book.sukazyo.cc/hytrans/
 
 <br/>
 
@@ -70,12 +79,15 @@ Sukazyo 同样欢迎对还没做出来的功能或已经做出来的功能的功
 
 #### 依赖的开源项目们
 
-- <del>[Mirai QQ](https://github.com/mamoe/mirai) 感谢 mamoe 团队做出的绝妙的支持 Java 的 Kotlin QQ API！</del>
-  目前，iCee 核心已经脱离了对 MiraiQQ 的依赖关系。对 MiraiQQ 的支持在未来或将会以单独的模块的形式实现
-- [Java Discord API](https://github.com/DV8FromTheWorld/JDA) Discord 的 API 类库
-- [Typesafe Config](https://lightbend.github.io/config/) HOCON 格式配置文件的 Java 工具类库
-- [log4j2](https://logging.apache.org/log4j/2.x/)
-- [Google Gson](https://github.com/google/gson)
+- [[Apa2][LCS-apa2]] [Typesafe Config](https://lightbend.github.io/config/)
+HOCON 格式配置文件的 Java 工具类库
+- [[Apa2][LCS-Apa2]] [log4j2](https://logging.apache.org/log4j/2.x/)
+- [[Apa2][LCS-Apa2]] [Google Gson](https://github.com/google/gson)
+
+
+- [[Apa2][LCS-Apa2]] [Resource Tools](https://github.com/Eyre-S/ResourceTools)
+
+[LCS-Apa2]: https://www.apache.org/licenses/LICENSE-2.0
 
 #### About the image
 
