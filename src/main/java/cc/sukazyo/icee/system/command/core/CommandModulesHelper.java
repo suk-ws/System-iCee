@@ -2,17 +2,17 @@ package cc.sukazyo.icee.system.command.core;
 
 import cc.sukazyo.icee.system.I18n;
 import cc.sukazyo.icee.system.Log;
-import cc.sukazyo.icee.system.command.CommandException;
-import cc.sukazyo.icee.system.command.CommandWithChild;
-import cc.sukazyo.icee.system.command.ICommand;
-import cc.sukazyo.icee.system.command.ICommandHelped;
+import cc.sukazyo.icee.system.command.*;
+import cc.sukazyo.icee.system.command.template.AbsCommandSimplest;
+import cc.sukazyo.icee.system.command.template.AbsCommandWithChild;
 import cc.sukazyo.icee.system.module.ModuleManager;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class CommandModulesHelper extends CommandWithChild implements ICommandHelped {
+public class CommandModulesHelper extends AbsCommandWithChild implements ICommandHelped {
 	
 	public static final String NAME = "module";
 	
@@ -46,13 +46,14 @@ public class CommandModulesHelper extends CommandWithChild implements ICommandHe
 		return null;
 	}
 	
-	public static class ListModule implements ICommand {
+	public static class ListModule extends AbsCommandSimplest {
 		
 		public static final String NAME = "list";
 		
+		@Nonnull
 		@Override
-		public List<String> getRegistryName () {
-			return Collections.singletonList(NAME);
+		public String getName () {
+			return NAME;
 		}
 		
 		@Override
@@ -61,7 +62,7 @@ public class CommandModulesHelper extends CommandWithChild implements ICommandHe
 		}
 		
 		@Override
-		public void execute (String[] args) {
+		public void execute () {
 			Log.logger.info("\n" + ModuleManager.getModulesDevelopmentTable());
 		}
 		

@@ -1,9 +1,11 @@
-package cc.sukazyo.icee.system.command;
+package cc.sukazyo.icee.system.command.template;
+
+import cc.sukazyo.icee.system.command.CommandManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class CommandWithChildAndAlias extends CommandWithChild implements ICommandWithAlias {
+public abstract class AbsCommandWithChildAndAlias extends AbsCommandWithChild implements ICommandWithAlias {
 	
 	public List<String> getAvailableAliases () {
 		List<String> names = new ArrayList<>();

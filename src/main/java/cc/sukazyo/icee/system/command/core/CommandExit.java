@@ -2,14 +2,17 @@ package cc.sukazyo.icee.system.command.core;
 
 import cc.sukazyo.icee.iCee;
 import cc.sukazyo.icee.system.I18n;
-import cc.sukazyo.icee.system.command.CommandWithAlias;
+import cc.sukazyo.icee.system.command.template.AbsCommandSimplestWithAlias;
 import cc.sukazyo.icee.system.command.ICommandHelped;
 
-public class CommandExit extends CommandWithAlias implements ICommandHelped {
+import javax.annotation.Nonnull;
+
+public class CommandExit extends AbsCommandSimplestWithAlias implements ICommandHelped {
 	
 	public static final String NAME = "exit";
 	public static final String[] ALIAS = new String[]{"quit", "stop"};
 	
+	@Nonnull
 	@Override
 	public String getName () {
 		return NAME;
@@ -26,7 +29,7 @@ public class CommandExit extends CommandWithAlias implements ICommandHelped {
 	}
 	
 	@Override
-	public void execute (String[] args) {
+	public void execute () {
 		iCee.exit(0);
 	}
 	

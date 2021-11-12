@@ -4,7 +4,7 @@ import java.util.Map;
 
 public abstract class CommandException extends Exception {
 	
-	private CommandException (String message) { super(message); }
+	public CommandException (String message) { super(message); }
 	
 	public static class CommandNameConflictException extends CommandException {
 		

@@ -3,22 +3,22 @@ package cc.sukazyo.icee.system.command.core;
 import cc.sukazyo.icee.system.I18n;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.LogExtraColorLevel;
-import cc.sukazyo.icee.system.command.ICommand;
+import cc.sukazyo.icee.system.command.template.AbsCommandSimplest;
 import cc.sukazyo.icee.system.command.ICommandHelped;
 import cc.sukazyo.icee.system.config.Configure;
 import org.apache.logging.log4j.message.FormattedMessage;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
 
-public class CommandLogColorTest implements ICommand, ICommandHelped {
+public class CommandLogColorTest extends AbsCommandSimplest implements ICommandHelped {
 	
 	public static final String NAME = "log-colors";
 	
+	@Nonnull
 	@Override
-	public List<String> getRegistryName () {
-		return Collections.singletonList(NAME);
+	public String getName () {
+		return NAME;
 	}
 	
 	@Override
@@ -27,7 +27,7 @@ public class CommandLogColorTest implements ICommand, ICommandHelped {
 	}
 	
 	@Override
-	public void execute (String[] args) {
+	public void execute () {
 		Log.logger.info("Start echo colors log.");
 		if ("off".equals(Configure.getString(Configure.CORE_ID, "system.log.color.theme"))) {
 			Log.logger.warn("Color preview is not available while system.log.color.theme is OFF!");

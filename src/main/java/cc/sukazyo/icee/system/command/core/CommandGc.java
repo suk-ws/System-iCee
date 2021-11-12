@@ -1,20 +1,20 @@
 package cc.sukazyo.icee.system.command.core;
 
 import cc.sukazyo.icee.system.I18n;
-import cc.sukazyo.icee.system.command.ICommand;
+import cc.sukazyo.icee.system.command.template.AbsCommandSimplest;
 import cc.sukazyo.icee.system.command.ICommandHelped;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
 
-public class CommandGc implements ICommand, ICommandHelped {
+public class CommandGc extends AbsCommandSimplest implements ICommandHelped {
 	
 	public static final String NAME = "gc";
 	
+	@Nonnull
 	@Override
-	public List<String> getRegistryName () {
-		return Collections.singletonList(NAME);
+	public String getName () {
+		return NAME;
 	}
 	
 	@Override
@@ -23,7 +23,7 @@ public class CommandGc implements ICommand, ICommandHelped {
 	}
 	
 	@Override
-	public void execute (String[] args) {
+	public void execute () {
 		System.gc();
 	}
 	

@@ -3,18 +3,21 @@ package cc.sukazyo.icee.system.command.core;
 import cc.sukazyo.icee.system.I18n;
 import cc.sukazyo.icee.system.Log;
 import cc.sukazyo.icee.system.command.*;
+import cc.sukazyo.icee.system.command.template.AbsCommandSimple;
+import cc.sukazyo.icee.system.command.template.AbsCommandWithChild;
+import cc.sukazyo.icee.system.command.template.ICommandWithAlias;
 import cc.sukazyo.icee.util.Var;
 
-import java.util.Collections;
-import java.util.List;
+import javax.annotation.Nonnull;
 
-public class CommandHelp implements ICommand, ICommandHelped {
+public class CommandHelp extends AbsCommandSimple implements ICommandHelped {
 	
 	public static final String NAME = "help";
 	
+	@Nonnull
 	@Override
-	public List<String> getRegistryName () {
-		return Collections.singletonList(NAME);
+	public String getName () {
+		return NAME;
 	}
 	
 	@Override
@@ -33,8 +36,8 @@ public class CommandHelp implements ICommand, ICommandHelped {
 				ICommand target = CommandManager.getRegisteredCommandsMap().get(args[0]);
 				StringBuilder commandName = new StringBuilder(args[0]);
 				for (int i = 1; i < args.length; i++) {
-					if (target instanceof CommandWithChild) {
-						target = ((CommandWithChild)target).getCommands().get(args[i]);
+					if (target instanceof AbsCommandWithChild) {
+						target = ((AbsCommandWithChild)target).getCommands().get(args[i]);
 						commandName.append(' ').append(args[i]);
 					} else {
 						Log.logger.info(I18n.getText(
@@ -64,11 +67,11 @@ public class CommandHelp implements ICommand, ICommandHelped {
 						)).append('\n');
 					}
 				}
-				if (target instanceof CommandWithChild && ((CommandWithChild)target).isHelpShowCommandLists()) {
+				if (target instanceof AbsCommandWithChild && ((AbsCommandWithChild)target).isHelpShowCommandLists()) {
 					isUnsupported = false;
 					helper.append(I18n.getText("core.command.help.command_help_page.child_list_title", commandNameVar));
 					helper.append('\n');
-					((CommandWithChild)target).getCommands().forEach(
+					((AbsCommandWithChild)target).getCommands().forEach(
 							(name ,command) -> listCommandsToBuilder(name, command, helper)
 					);
 				}
@@ -100,7 +103,7 @@ public class CommandHelp implements ICommand, ICommandHelped {
 	
 	@Override
 	public String getGrammar () {
-		return "[command]";
+		return "[command] [--page <page>]";
 	}
 	
 	@Override

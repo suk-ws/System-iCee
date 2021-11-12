@@ -1,8 +1,13 @@
-package cc.sukazyo.icee.system.command;
+package cc.sukazyo.icee.system.command.template;
 
 import cc.sukazyo.icee.system.Log;
+import cc.sukazyo.icee.system.command.CommandContainer;
+import cc.sukazyo.icee.system.command.CommandException;
+import cc.sukazyo.icee.system.command.ICommand;
 
-public abstract class CommandWithChild extends CommandContainer implements ICommand {
+import javax.annotation.Nonnull;
+
+public abstract class AbsCommandWithChild extends CommandContainer implements ICommand {
 	
 	@Override
 	public CommandType getType() {
@@ -10,7 +15,7 @@ public abstract class CommandWithChild extends CommandContainer implements IComm
 	}
 	
 	@Override
-	public void putCommand (ICommand child) throws CommandException.CommandNameConflictException {
+	public void putCommand (@Nonnull ICommand child) throws CommandException.CommandNameConflictException {
 		super.putCommand(child);
 	}
 	
