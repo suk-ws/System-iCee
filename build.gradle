@@ -66,10 +66,12 @@ shadowJar {
 publishing {
 	repositories{
 		maven {
+			name 'builds'
 			url = "file://" + new File("./build/publishing").getAbsolutePath()
 		}
 		maven {
-			url = publishMvnRepoUrl
+			name '-ws-'
+			url publishMvnRepoUrl
 			credentials {
 				username publishMvnRepoUsername
 				password publishMvnRepoPassword
