@@ -1,27 +1,27 @@
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
-	}
-}
-
 plugins {
 	id 'java'
+	id 'maven-publish'
+	id 'application'
+	id 'com.github.johnrengelman.shadow' version '7.1.0'
 }
 
 group 'cc.sukazyo'
 version VERSION
+project.ext.archiveBaseName = 'System_iCee'
+project.ext.artifactId = 'icee-core'
+mainClassName = 'cc.sukazyo.icee.iCee'
 
 repositories {
 	mavenCentral()
 	google()
-	maven { name 'github'; url 'https://jitpack.io' }
-	maven { name 'm2-dv8tion'; url 'https://m2.dv8tion.net/releases' }
+	maven { name '-ws'; url 'https://mvn.sukazyo.cc' }
 }
 
 dependencies {
+	
+	// 单元测试核心类库
+	testImplementation platform("org.junit:junit-bom:${junitJupiterVersion}")
+	testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
 	
 	// javax.annotation.Nonnull&Nullable ..yes.
 	implementation "com.github.spotbugs:spotbugs-annotations:${spotbugsVersion}"
@@ -34,8 +34,12 @@ dependencies {
 	implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
 	implementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
 	// jar内资源文件读取
-	implementation "com.github.Eyre-S:ResourceTools:${resToolsVersion}"
+	implementation "cc.sukazyo:resource-tools:${resToolsVersion}"
 	
+}
+
+java {
+	withSourcesJar()
 }
 
 tasks.withType(JavaCompile) {
@@ -48,11 +52,35 @@ tasks.withType(Javadoc) {
 	options.charSet = 'UTF-8'
 }
 
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'application'
+tasks.test {
+	useJUnitPlatform()
+}
 
 shadowJar {
-	mainClassName = 'cc.sukazyo.icee.iCee'
-	archiveBaseName.set("System_iCee")
-	archiveVersion.set(VERSION)
+	archiveBaseName.set("${project.ext.archiveBaseName}")
+	archiveVersion.set("${VERSION}")
+	archiveClassifier.set("fat")
+}
+
+publishing {
+	repositories{
+		maven {
+			url = "file://" + new File("./build/publishing").getAbsolutePath()
+		}
+		maven {
+			url = publishMvnRepoUrl
+			credentials {
+				username publishMvnRepoUsername
+				password publishMvnRepoPassword
+			}
+		}
+	}
+	publications {
+		main (MavenPublication) {
+			from components.java
+			groupId = project.group
+			artifactId = project.ext.artifactId
+			version = project.version
+		}
+	}
 }
