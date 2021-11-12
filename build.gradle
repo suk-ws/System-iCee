@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'java-library'
 	id 'maven-publish'
 	id 'application'
 	id 'com.github.johnrengelman.shadow' version '7.1.0'
@@ -24,15 +25,15 @@ dependencies {
 	testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
 	
 	// javax.annotation.Nonnull&Nullable ..yes.
-	implementation "com.github.spotbugs:spotbugs-annotations:${spotbugsVersion}"
+	compileOnlyApi "com.github.spotbugs:spotbugs-annotations:${spotbugsVersion}"
 	
 	// (好像没用了..?)
 	implementation "com.google.code.gson:gson:${gsonVersion}"
 	// 配置文件 hocon 解析类库
 	implementation "com.typesafe:config:${typesafeVersion}"
 	// log 核心类库
+	compileOnlyApi "org.apache.logging.log4j:log4j-api:${log4jVersion}"
 	implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
-	implementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
 	// jar内资源文件读取
 	implementation "cc.sukazyo:resource-tools:${resToolsVersion}"
 	
