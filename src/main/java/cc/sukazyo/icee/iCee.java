@@ -44,6 +44,8 @@ public class iCee {
 	 */
 	public static void main (String[] args) {
 		
+		Exit.configureSafeExit();
+		
 		try {
 			
 			if (args == null || args.length == 0) {
@@ -73,9 +75,7 @@ public class iCee {
 	public static void exit(int status) {
 		if (status == Integer.MIN_VALUE) Log.logger.info("iCee System exit with debug tag!~");
 		else Log.logger.info("iCee System exit with status " + status);
-		InstanceManager.releaseLock();
-		if (status == Integer.MIN_VALUE)
-			System.exit(0);
+		if (status == Integer.MIN_VALUE) System.exit(0);
 		System.exit(status);
 	}
 	
