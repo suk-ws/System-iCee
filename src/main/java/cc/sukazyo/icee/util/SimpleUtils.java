@@ -182,4 +182,22 @@ public class SimpleUtils {
 		
 	}
 	
+	/**
+	 * @param mac 以数组形式存储的 mac 地址
+	 * @return 小写字符串形式的 mac 地址
+	 */
+	public static String macByteToString (byte[] mac) {
+		if (mac == null || mac.length != 6) {
+			throw new IllegalArgumentException("MAC Address of byte array MUST be length of 6.");
+		}
+		StringBuilder address = new StringBuilder();
+		for (int i = 0; i < 6; i++) {
+			int d = mac[i] - Byte.MIN_VALUE;
+			if (d < 16) address.append('0');
+			address.append(Integer.toHexString(d).toLowerCase());
+			if (i != 5) address.append(':');
+		}
+		return address.toString();
+	}
+	
 }

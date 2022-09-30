@@ -15,7 +15,7 @@ mainClassName = 'cc.sukazyo.icee.iCee'
 repositories {
 	mavenCentral()
 	google()
-	maven { name '-ws'; url 'https://mvn.sukazyo.cc' }
+	maven { name '-ws'; url 'https://mvn.sukazyo.cc/releases' }
 }
 
 dependencies {
@@ -38,6 +38,35 @@ dependencies {
 	implementation "cc.sukazyo:resource-tools:${resToolsVersion}"
 	
 }
+
+static String localMacAddress () {
+	try {
+		byte[] mac = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress()
+		StringBuilder ax = new StringBuilder('new byte[]{')
+		for (int i = 0; i < 6; i++) {
+			ax.append(mac[i])
+			if (i != 5) ax.append(',')
+		}
+		ax.append('}')
+		return ax.toString()
+	} catch (Exception ignored) {
+		return "null"
+	}
+}
+
+task updateGradleConfigurations {
+	ant.replaceregexp(match:'VERSION = ["a-zA-Z0-9.\\-_+@]+;', replace:"VERSION = \"$project.version\";", flags:'g', byline:true) {
+		fileset(dir: 'src/main/java/cc/sukazyo/icee', includes: 'GradleProjectConfigurations.java')
+	}
+	ant.replaceregexp(match:'COMPILE_TIMESTAMP = [0-9]+L;', replace:"COMPILE_TIMESTAMP = ${System.currentTimeMillis()}L;", flags:'g', byline:true) {
+		fileset(dir: 'src/main/java/cc/sukazyo/icee', includes: 'GradleProjectConfigurations.java')
+	}
+	ant.replaceregexp(match:'COMPILER_MAC_ADDRESS = [a-zA-Z0-9\\[\\]{},. ]+;', replace:"COMPILER_MAC_ADDRESS = ${localMacAddress()};", flags:'g', byline:true) {
+		fileset(dir: 'src/main/java/cc/sukazyo/icee', includes: 'GradleProjectConfigurations.java')
+	} // new byte[]{0,0,0,0,0,0};
+}
+
+compileJava.dependsOn updateGradleConfigurations
 
 java {
 	withSourcesJar()
